@@ -1259,7 +1259,7 @@ MonoBehaviour:
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
+  m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
@@ -1324,8 +1324,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.000000059604645, y: -0.28503025}
-  m_Size: {x: 0.644153, y: 1.6355846}
+  m_Offset: {x: -0.005732298, y: -0.21523488}
+  m_Size: {x: 0.51804316, y: 1.7682838}
   m_Direction: 0
 --- !u!212 &1283264664
 SpriteRenderer:
@@ -1482,7 +1482,7 @@ Transform:
   m_GameObject: {fileID: 1283264659}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.13, y: -0.59, z: 0}
+  m_LocalPosition: {x: 0.994, y: -0.396, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
