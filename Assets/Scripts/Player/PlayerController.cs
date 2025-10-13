@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour, UniversalController
     // Movement
     public int jumpCooldown;
     public int dodgeCooldown;
+    public int jumpImpulse;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

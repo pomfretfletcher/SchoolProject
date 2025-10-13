@@ -1183,7 +1183,19 @@ MonoBehaviour:
       m_Calls: []
   m_ActionEvents:
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1283264669}
+        m_TargetAssemblyTypeName: PlayerInputHandler, Assembly-CSharp
+        m_MethodName: MovePlayer
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 351f2ccd-1f9f-44bf-9bec-d62ac5c5f408
     m_ActionName: 'Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
   - m_PersistentCalls:
@@ -1289,7 +1301,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!70 &1283264663
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -1324,8 +1336,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.005732298, y: -0.21523488}
-  m_Size: {x: 0.51804316, y: 1.7682838}
+  m_Offset: {x: 0.0019107461, y: -0.21523488}
+  m_Size: {x: 0.5562582, y: 1.7682838}
   m_Direction: 0
 --- !u!212 &1283264664
 SpriteRenderer:
@@ -1461,8 +1473,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fullHealth: 736
   currentHealth: 0
-  maxSpeed: 0
-  currentSpeed: 0
+  maxSpeed: 5
+  currentSpeed: 3
   minMeleeDamage: 0
   defaultMeleeDamage: 0
   currentMeleeDamage: 0
