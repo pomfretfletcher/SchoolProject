@@ -101,25 +101,25 @@ public class PlayerInputHandler : MonoBehaviour
     }
 
     public void checkCooldowns() { 
-        int referenceIndex = 0;
         // Checks each timer, if they are currently ticking up and running (thus greater than zero), checks if the timer has been running longer than its
         // cooldown. If so, it sets the status of that cooldown to 0, so it will no longer tickup as well as reseting the timer value itself.
-        foreach (var i in timerList)
+        for (var i = 0; i< timerList.Count; i++)
         {
-            int cooldown = cooldownList[referenceIndex];
-            float duration = timerList[referenceIndex];
-            int status = timerStatusList[referenceIndex];
+            // Grabs the currently  being checked cooldown, timer and status variables
+            int cooldown = cooldownList[i];
+            float duration = timerList[i];
+            int status = timerStatusList[i];
+            // If the timer is active, tick it up by the time since last frame
             if (status == 1)
             {
-                timerList[referenceIndex] = duration + Time.deltaTime;
+                timerList[i] = duration + Time.deltaTime;
             }
+            // If the timer has reached past the relevant cooldown, the timer is reset, the active status is set to 0 (false). This allows the relevant ability/action to be used again
             if (duration + Time.deltaTime >= cooldown)
             {
-                timerList[referenceIndex] = 0;
-                timerStatusList[referenceIndex] = 0;
+                timerList[i] = 0;
+                timerStatusList[i] = 0;
             }
-            // Iterate the referenceIndex
-            referenceIndex += 1;
         }
     }
 
