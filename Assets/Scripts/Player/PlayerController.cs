@@ -29,6 +29,11 @@ public class PlayerController : MonoBehaviour, UniversalController
     public int jumpCooldown;
     public int dodgeCooldown;
     public int jumpImpulse;
+    public int dashImpulse;
+    public float dashLockTime;
+
+    // -----
+    public bool IsInvulnerable { get; private set; }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
