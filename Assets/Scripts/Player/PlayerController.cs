@@ -33,7 +33,9 @@ public class PlayerController : MonoBehaviour, UniversalController
     public float dashLockTime;
 
     // -----
-    public bool IsInvulnerable { get; private set; }
+    public bool IsInvulnerable { get { return isInvulnerable; } private set { isInvulnerable = value; } }
+    [SerializeField]
+    private bool isInvulnerable = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
