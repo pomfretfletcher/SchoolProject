@@ -16,7 +16,7 @@ public class EnemyPathfinding : MonoBehaviour
     private int _playerRequiredProximity;
 
     // Cooldown Variables
-    private int _attackCooldown;
+    private float _attackCooldown;
     
     // Movement Variables
     private int _maxSpeed;

@@ -3,19 +3,22 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour, UniversalController
 {
+    // Interface Cast Variables
+    public int FullHealth { get => fullHealth; set => fullHealth = value; }
+    public int CurrentHealth { get => currentHealth; set => currentHealth = value; }
+    public int MeleeDamageAmount { get => meleeDamage; set => meleeDamage = value; }
+    public bool IsInvulnerable { get => isInvulnerable; set => isInvulnerable = value; }
+
     // Health Variables
     public int fullHealth;
     public int currentHealth;
-    // These following variables are used with the universal controller script to allow the hp handler script to work for either the player or enemy controller
-    public int _fullHealth => fullHealth;
-    public int _currentHealth => currentHealth;
 
     // Speed Variables
     public int maxSpeed;
     public float currentSpeed;
 
     // Attack Variables
-    public int attackCooldown;
+    public float attackCooldown;
     public int meleeDamage;
     public int rangedDamage;
     
@@ -26,15 +29,12 @@ public class EnemyController : MonoBehaviour, UniversalController
     // Player Reference Variables
     public int playerRequiredProximity;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    // Misc Variables
+    public bool isInvulnerable = false;
 
-    // Update is called once per frame
-    void Update()
+    void Awake()
     {
-        
+        // Sets current values of variables to default values
+        currentHealth = fullHealth;
     }
 }

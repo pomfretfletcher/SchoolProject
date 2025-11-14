@@ -2,12 +2,15 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour, UniversalController
 {
+    // Interface Cast Variables
+    public int FullHealth { get => fullHealth; set => fullHealth = value; }
+    public int CurrentHealth { get => currentHealth; set => currentHealth = value; }
+    public int MeleeDamageAmount { get => currentMeleeDamage; set => currentMeleeDamage = value; }
+    public bool IsInvulnerable { get => isInvulnerable; set => isInvulnerable = value; }
+
     // Health Variables
     public int fullHealth;
     public int currentHealth;
-    // These following variables are used with the universal controller script to allow the hp handler script to work for either the player or enemy controller
-    public int _fullHealth => fullHealth;
-    public int _currentHealth => currentHealth;
 
     // Speed Variables
     public int maxSpeed;
@@ -17,35 +20,29 @@ public class PlayerController : MonoBehaviour, UniversalController
     public int minMeleeDamage;
     public int defaultMeleeDamage;
     public int currentMeleeDamage;
-    public int meleeAttackCooldown;
+    public float meleeAttackCooldown;
 
     // Ranged Attack Variables
     public int minRangedDamage;
     public int defaultRangedDamage;
     public int currentRangedDamage;
-    public int rangedAttackCooldown;
+    public float rangedAttackCooldown;
 
     // Movement
-    public int jumpCooldown;
-    public int dodgeCooldown;
+    public float jumpCooldown;
+    public float dodgeCooldown;
     public int jumpImpulse;
     public int dashImpulse;
     public float dashLockTime;
 
-    // -----
-    public bool IsInvulnerable { get { return isInvulnerable; } private set { isInvulnerable = value; } }
-    [SerializeField]
-    private bool isInvulnerable = false;
+    // Misc Variables
+    public bool isInvulnerable = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        // Sets current values of variables to default values
+        currentMeleeDamage = defaultMeleeDamage;
+        currentRangedDamage = defaultRangedDamage;
+        currentHealth = fullHealth;
     }
 }
