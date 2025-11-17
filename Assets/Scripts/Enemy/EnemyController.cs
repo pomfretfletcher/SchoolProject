@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class EnemyController : MonoBehaviour, UniversalController
 {
@@ -21,7 +22,8 @@ public class EnemyController : MonoBehaviour, UniversalController
     public float attackCooldown;
     public int meleeDamage;
     public int rangedDamage;
-    
+    public float attackLockTime;
+
     // Waypoint variables
     public Transform nextWaypoint;
     public List<Transform> waypointList;
@@ -31,6 +33,7 @@ public class EnemyController : MonoBehaviour, UniversalController
 
     // Misc Variables
     public bool isInvulnerable = false;
+    public float invulnerableOnHitTime;
 
     void Awake()
     {

@@ -37,6 +37,7 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
     private float _dashLockTime;
     private float _meleeAttackCooldown;
     private float _rangedAttackCooldown;
+    private float _invulnerableOnHitTime;
 
     // Input Variables
     Vector2 moveInput;
@@ -81,9 +82,10 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         _meleeAttackCooldown = controller.meleeAttackCooldown;
         _rangedAttackCooldown = controller.rangedAttackCooldown;
         _IsInvulnerable = controller.IsInvulnerable;
+        _invulnerableOnHitTime = controller.invulnerableOnHitTime;
 
-        List<string> keyList = new List<string> {"jumpCooldown", "dodgeCooldown", "dashLockTime", "meleeAttackCooldown", "rangedAttackCooldown"};
-        List<float> lengthList = new List<float> { _jumpCooldown, _dodgeCooldown, _dashLockTime, _meleeAttackCooldown, _rangedAttackCooldown};
+        List<string> keyList = new List<string> {"jumpCooldown", "dodgeCooldown", "dashLockTime", "meleeAttackCooldown", "rangedAttackCooldown", "invulnerableOnHitTime"};
+        List<float> lengthList = new List<float> { _jumpCooldown, _dodgeCooldown, _dashLockTime, _meleeAttackCooldown, _rangedAttackCooldown, _invulnerableOnHitTime};
         cooldownHandler.SetupTimers(keyList, lengthList, self);
     }
 
@@ -131,15 +133,17 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         // Updates the animator's yVelocity value for air state animations
         animator.SetFloat("yVelocity", rigidbody.linearVelocityY);
     }
-
     
     // Allows specific processes to be coded in to happen once a cooldown ends
     public void CooldownEndProcess(string key) {
-        // Dash Lock Time
         if (key == "dashLockTime")
         {
             IsDashing = false;
-            _IsInvulnerable = false;
+            controller.IsInvulnerable = false;
+        }
+        if (key == "invulnerableOnHitTime")
+        {
+            controller.IsInvulnerable = false;
         }
     }
 
@@ -216,10 +220,8 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
     }
 
     public void ExecutePlayerMeleeAttack(InputAction.CallbackContext context) {
-        //if (timerStatusList[3] == 0 && CanAttack)
         if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack)
         {
-            //timerStatusList[3] = 1;
             cooldownHandler.timerStatusDict["meleeAttackCooldown"] = 1;
             animator.SetTrigger("meleeAttacked");
         }
@@ -227,10 +229,8 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
 
     public void ExecutePlayerRangedAttack(InputAction.CallbackContext context)
     {
-        //if (timerStatusList[3] == 0 && CanAttack)
         if (cooldownHandler.timerStatusDict["rangedAttackCooldown"] == 0 && CanAttack)
         {
-            //timerStatusList[3] = 1;
             cooldownHandler.timerStatusDict["rangedAttackCooldown"] = 1;
             animator.SetTrigger("rangedAttacked");
         }

@@ -10,21 +10,25 @@ public class DetectionZone : MonoBehaviour
     public UnityEvent newCollision;
         // Method that will trigger when no collisions are within the detection zone (such as the ground ending into a cliff)
     public UnityEvent noCollisionsRemain;
+        //
+    public UnityEvent collisionStay;
 
     // Misc Variables
     public List<Collider2D> detectedColliders = new List<Collider2D>();
-    public int zoneType; // 0 for on enter zones and 1 for exit zones
+    public int zoneType; // 0 for on enter zones and 1 for exit zones and 2 for stay zones
 
     // Stores every collision within the collider
     private void OnTriggerEnter2D(Collider2D collision)
     {
         detectedColliders.Add(collision);
+    }
 
-        if (collision.gameObject.tag == "Player" && zoneType == 0)
+    private void FixedUpdate()
+    {
+        // If a collider is within the detection zone, call the associated method every set interval of 0.02 seconds
+        if (detectedColliders.Count > 0 && zoneType == 2)
         {
-            // Call enemy attack function
-            // newCollision.Invoke();
-            Debug.Log("ATTACK");
+            collisionStay.Invoke();
         }
     }
 

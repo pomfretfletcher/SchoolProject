@@ -6,6 +6,7 @@ public class HPHandler : MonoBehaviour
 {
     // Script + Component Links
     UniversalController controller;
+    CooldownTimer cooldownHandler;
     Animator animator;
 
     void Awake()
@@ -13,13 +14,22 @@ public class HPHandler : MonoBehaviour
         // Grabs all linked scripts + components
         controller = GetComponent<UniversalController>();
         animator = GetComponent<Animator>();
+        cooldownHandler = GetComponent<CooldownTimer>();
     }
 
     public void TakeDamage(int damageDealt) 
     {
+        int lastHealth = controller.CurrentHealth;
         controller.CurrentHealth = controller.CurrentHealth - damageDealt;
         animator.SetTrigger("damaged");
         controller.IsInvulnerable = true;
+        cooldownHandler.timerStatusDict["invulnerableOnHitTime"] = 1;
+
+        if (controller.CurrentHealth <= 0 && lastHealth > 0)
+        {
+            animator.SetTrigger("dead");
+            animator.SetBool("inDeathState", true);
+        }
     }
 
     public void HealDamage(int damageHealed) { }

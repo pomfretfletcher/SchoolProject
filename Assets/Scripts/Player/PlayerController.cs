@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour, UniversalController
 
     // Misc Variables
     public bool isInvulnerable = false;
+    public float invulnerableOnHitTime;
 
     private void Awake()
     {
