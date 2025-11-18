@@ -9,8 +9,8 @@ public class AttackZone : MonoBehaviour
     GameObject parent;
     GameObject collisionParent;
     Collider2D attackHitbox;
-    public UniversalController controller;
-    public UniversalController collisionController;
+    UniversalController controller;
+    UniversalController collisionController;
 
     // Attack Variables
     [SerializeField]

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class KnightPathfinding : MonoBehaviour, UsesCooldown
 {
@@ -36,7 +37,7 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
     private int lookDirection = 1;
     [SerializeField]
     private int moveDirection;
-    public int trackButNotMoveProximity;
+    public float trackButNotMoveProximity;
 
     // States
     public bool IsMoving { get { return isMoving; } private set { isMoving = value; animator.SetBool("isMoving", value); } }
@@ -120,8 +121,16 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
                 transform.localScale *= new Vector2(-1, 1);
             }
         }
-        if (trackingOffCliff && cliffDetectionZone.detectedColliders.Count > 0) { trackingOffCliff = false; }
-
+        // Turns off tracking off cliff if there is no longer a cliff detected, used when turning the enemy away from cliff
+        if (trackingOffCliff && cliffDetectionZone.detectedColliders.Count > 0) 
+        { 
+            trackingOffCliff = false; 
+        }
+        // Keep enemy looking at player while in track but not move zone
+        if (trackingButNotMove && ((transform.position.x - player.transform.position.x > 0 && lookDirection != -1) || (transform.position.x - player.transform.position.x < 0 && lookDirection != 1)))
+        {
+            lookDirection *= -1;
+        }
 
         // Tracking player movement decisions
         if (CurrentlyTrackingPlayer && touchingDirections.IsGrounded)
@@ -251,8 +260,8 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
         Vector2 offset = transform.position - player.transform.position;
         distanceToPlayer = offset.magnitude;
 
-        // Once in a set distance of the player, continue tracking them but stand still
-        if (distanceToPlayer <= trackButNotMoveProximity)
+        // Once in a set x distance of the player, continue tracking them but stand still
+        if (Math.Abs(transform.position.x - player.transform.position.x) <= trackButNotMoveProximity)
         {
             trackingButNotMove = true;
         }

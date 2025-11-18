@@ -20,6 +20,7 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
     Collider2D selfCollider;
     PlayerInputHandler self;
     CooldownTimer cooldownHandler;
+    ProjectileLauncher projectileLauncher;
 
     // Controller Variables
     private int _maxSpeed;
@@ -38,6 +39,7 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
     private float _meleeAttackCooldown;
     private float _rangedAttackCooldown;
     private float _invulnerableOnHitTime;
+    public float projectileFireDelay = 1f;
 
     // Input Variables
     Vector2 moveInput;
@@ -66,9 +68,9 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         selfCollider = GetComponent<Collider2D>();
         self = GetComponent<PlayerInputHandler>();
         cooldownHandler = GetComponent<CooldownTimer>();
+        projectileLauncher = GetComponent<ProjectileLauncher>();
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // Grabs variables from controller
@@ -84,12 +86,11 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         _IsInvulnerable = controller.IsInvulnerable;
         _invulnerableOnHitTime = controller.invulnerableOnHitTime;
 
-        List<string> keyList = new List<string> {"jumpCooldown", "dodgeCooldown", "dashLockTime", "meleeAttackCooldown", "rangedAttackCooldown", "invulnerableOnHitTime"};
-        List<float> lengthList = new List<float> { _jumpCooldown, _dodgeCooldown, _dashLockTime, _meleeAttackCooldown, _rangedAttackCooldown, _invulnerableOnHitTime};
+        List<string> keyList = new List<string> {"jumpCooldown", "dodgeCooldown", "dashLockTime", "meleeAttackCooldown", "rangedAttackCooldown", "invulnerableOnHitTime", "projectileFireDelay" };
+        List<float> lengthList = new List<float> { _jumpCooldown, _dodgeCooldown, _dashLockTime, _meleeAttackCooldown, _rangedAttackCooldown, _invulnerableOnHitTime, projectileFireDelay };
         cooldownHandler.SetupTimers(keyList, lengthList, self);
     }
 
-    // Fixed Update is called every set interval (about every 0.02 seconds)
     void FixedUpdate()
     {
         // Checks Collisions with Level
@@ -135,7 +136,8 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
     }
     
     // Allows specific processes to be coded in to happen once a cooldown ends
-    public void CooldownEndProcess(string key) {
+    public void CooldownEndProcess(string key) 
+    {
         if (key == "dashLockTime")
         {
             IsDashing = false;
@@ -145,11 +147,15 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         {
             controller.IsInvulnerable = false;
         }
+        if (key == "projectileFireDelay")
+        {
+            projectileLauncher.SpawnProjectile();
+        }
     }
 
     public void LookingDirection()
     {
-        if (moveInput.x >= 0 && lookDirection != 1)
+        if (moveInput.x > 0 && lookDirection != 1)
         {
             // Changes look direction to 1 (right)
             lookDirection = 1;
@@ -165,7 +171,8 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         }
     }
 
-    public void MovePlayer(InputAction.CallbackContext context) {
+    public void MovePlayer(InputAction.CallbackContext context) 
+    {
         // Changes context to the readable move input
         moveInput = context.ReadValue<Vector2>();
 
@@ -173,7 +180,8 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         IsMoving = moveInput != Vector2.zero;
     }
 
-    public void ExecutePlayerJump(InputAction.CallbackContext context) {
+    public void ExecutePlayerJump(InputAction.CallbackContext context) 
+    {
         // Checks if player is grounded before jumping and the jump is available
         //if (IsGrounded && timerStatusList[0] == 0 && CanMove)
         if (touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["jumpCooldown"] == 0 && CanMove)
@@ -189,10 +197,10 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         }
     }
 
-    public void ExecutePlayerDodge(InputAction.CallbackContext context) {
+    public void ExecutePlayerDodge(InputAction.CallbackContext context) 
+    {
         // Checks if the player's dash is available
-        //if (timerStatusList[1] == 0 && CanMove)
-        if (cooldownHandler.timerStatusDict["dodgeCooldown"] == 0 && CanMove)
+        if (cooldownHandler.timerStatusDict["dodgeCooldown"] == 0 && CanMove && !IsDashing)
         {
             // Currently going right, dash right
             if (rigidbody.linearVelocityX > 0)
@@ -208,7 +216,7 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
             if (rigidbody.linearVelocityX != 0)
             {
                 // Sets the status of the dash timer to 1, flagging that it should start ticking
-                cooldownHandler.timerStatusDict["dashCooldown"] = 1;
+                cooldownHandler.timerStatusDict["dodgeCooldown"] = 1;
                 //timerStatusList[1] = 1;
                 // Sets status of dash lock timer to 1, so player can't input movement
                 cooldownHandler.timerStatusDict["dashLockTime"] = 1;
@@ -219,7 +227,9 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         }
     }
 
-    public void ExecutePlayerMeleeAttack(InputAction.CallbackContext context) {
+    public void ExecutePlayerMeleeAttack(InputAction.CallbackContext context) 
+    {
+        // Tell animator to start melee attack animation and starts melee attack cooldown
         if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack)
         {
             cooldownHandler.timerStatusDict["meleeAttackCooldown"] = 1;
@@ -229,10 +239,12 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
 
     public void ExecutePlayerRangedAttack(InputAction.CallbackContext context)
     {
+        // Tell animator to start ranged attack animation and starts ranged attack cooldown
         if (cooldownHandler.timerStatusDict["rangedAttackCooldown"] == 0 && CanAttack)
         {
             cooldownHandler.timerStatusDict["rangedAttackCooldown"] = 1;
             animator.SetTrigger("rangedAttacked");
+            cooldownHandler.timerStatusDict["projectileFireDelay"] = 1;
         }
     }
 
