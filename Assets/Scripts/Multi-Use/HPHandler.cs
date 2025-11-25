@@ -20,6 +20,7 @@ public class HPHandler : MonoBehaviour
     public void TakeDamage(int damageDealt) 
     {
         int lastHealth = controller.CurrentHealth;
+        if (controller.IsInvulnerable) { return; }
         controller.CurrentHealth = controller.CurrentHealth - damageDealt;
         animator.SetTrigger("damaged");
         controller.IsInvulnerable = true;

@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour, UniversalController
     public int defaultMeleeDamage;
     public int currentMeleeDamage;
     public float meleeAttackCooldown;
+    public float comboTime;
 
     // Ranged Attack Variables
     public int minRangedDamage;

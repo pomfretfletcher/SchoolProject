@@ -37,9 +37,12 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
     private float _dodgeCooldown;
     private float _dashLockTime;
     private float _meleeAttackCooldown;
+    private float _comboTime;
     private float _rangedAttackCooldown;
     private float _invulnerableOnHitTime;
     public float projectileFireDelay = 1f;
+    [SerializeField]
+    private int attackCombo = 0;
 
     // Input Variables
     Vector2 moveInput;
@@ -82,12 +85,13 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         _jumpCooldown = controller.jumpCooldown;
         _dodgeCooldown = controller.dodgeCooldown;
         _meleeAttackCooldown = controller.meleeAttackCooldown;
+        _comboTime = controller.comboTime;
         _rangedAttackCooldown = controller.rangedAttackCooldown;
         _IsInvulnerable = controller.IsInvulnerable;
         _invulnerableOnHitTime = controller.invulnerableOnHitTime;
 
-        List<string> keyList = new List<string> {"jumpCooldown", "dodgeCooldown", "dashLockTime", "meleeAttackCooldown", "rangedAttackCooldown", "invulnerableOnHitTime", "projectileFireDelay" };
-        List<float> lengthList = new List<float> { _jumpCooldown, _dodgeCooldown, _dashLockTime, _meleeAttackCooldown, _rangedAttackCooldown, _invulnerableOnHitTime, projectileFireDelay };
+        List<string> keyList = new List<string> {"jumpCooldown", "dodgeCooldown", "dashLockTime", "meleeAttackCooldown", "rangedAttackCooldown", "invulnerableOnHitTime", "projectileFireDelay", "comboTime" };
+        List<float> lengthList = new List<float> { _jumpCooldown, _dodgeCooldown, _dashLockTime, _meleeAttackCooldown, _rangedAttackCooldown, _invulnerableOnHitTime, projectileFireDelay, _comboTime };
         cooldownHandler.SetupTimers(keyList, lengthList, self);
     }
 
@@ -145,7 +149,12 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         }
         if (key == "invulnerableOnHitTime")
         {
-            controller.IsInvulnerable = false;
+            // Only reset is invulnerable if not dashing which also keeps us invulnerable
+            if (!IsDashing) 
+            { 
+                controller.IsInvulnerable = false;
+            }
+            
         }
         if (key == "projectileFireDelay")
         {
@@ -222,7 +231,7 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
                 cooldownHandler.timerStatusDict["dashLockTime"] = 1;
                 //timerStatusList[2] = 1;
                 IsDashing = true;
-                _IsInvulnerable = true;
+                controller.IsInvulnerable = true;
             }
         }
     }
@@ -230,10 +239,41 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
     public void ExecutePlayerMeleeAttack(InputAction.CallbackContext context) 
     {
         // Tell animator to start melee attack animation and starts melee attack cooldown
-        if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack)
+        if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack && cooldownHandler.timerStatusDict["comboTime"] == 1)
+        {
+            if (attackCombo == 1)
+            {
+                // Starts timer
+                cooldownHandler.timerStatusDict["meleeAttackCooldown"] = 1;
+                // Resets combotime
+                cooldownHandler.timerDict["comboTime"] = 0;
+                animator.SetTrigger("comboAttack1");
+                attackCombo = 2;
+            }
+            else if (attackCombo == 2)
+            {
+                // Starts timer
+                cooldownHandler.timerStatusDict["meleeAttackCooldown"] = 1;
+                // Resets combotime
+                cooldownHandler.timerDict["comboTime"] = 0;
+                animator.SetTrigger("comboAttack2");
+                attackCombo = 3;
+            }
+            else
+            {
+                // Finish combo, reset timer and turn it off
+                cooldownHandler.timerDict["comboTime"] = 0;
+                cooldownHandler.timerStatusDict["comboTime"] = 0;
+            }
+        }
+
+        // Regular melee attack
+        if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack && cooldownHandler.timerStatusDict["comboTime"] == 0)
         {
             cooldownHandler.timerStatusDict["meleeAttackCooldown"] = 1;
+            cooldownHandler.timerStatusDict["comboTime"] = 1;
             animator.SetTrigger("meleeAttacked");
+            attackCombo = 1;
         }
     }
 
