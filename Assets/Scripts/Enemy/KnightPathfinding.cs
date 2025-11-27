@@ -12,32 +12,13 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
     TouchingDirections touchingDirections;
     Collider2D selfCollider;
     DetectionZone cliffDetectionZone;
-    KnightPathfinding self;
     CooldownTimer cooldownHandler;
 
-    // Waypoint Variables
-    private Transform _nextWaypoint;
-    private List<Transform> _waypointList;
 
-    // Distance Variables
-    public float distanceToPlayer;
-    private int _playerRequiredProximity;
-
-    // Cooldown Variables
-    private float _attackCooldown;
-    private int cliffDetectionInterval = 3;
-    private float _invulnerableOnHitTime;
-    private float _attackLockTime;
-
-    // Movement Variables
-    private int _maxSpeed;
-    private float _currentSpeed;
+    private float distanceToPlayer;
     private float yVelocity;
-    [SerializeField]
     private int lookDirection = 1;
-    [SerializeField]
     private int moveDirection;
-    public float trackButNotMoveProximity;
 
     // States
     public bool IsMoving { get { return isMoving; } private set { isMoving = value; animator.SetBool("isMoving", value); } }
@@ -61,7 +42,6 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
         touchingDirections = GetComponent<TouchingDirections>();
         controller = GetComponent<EnemyController>();
         selfCollider = GetComponent<Collider2D>();
-        self = GetComponent<KnightPathfinding>();
         cooldownHandler = GetComponent<CooldownTimer>();
         player = GameObject.Find("Player");
         cliffDetectionZone = GameObject.Find("CliffDetectionZone").GetComponent<DetectionZone>();
@@ -70,19 +50,10 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // Grabs variables from controller
-        _nextWaypoint = controller.nextWaypoint;
-        _waypointList = controller.waypointList;
-        _playerRequiredProximity = controller.playerRequiredProximity;
-        _maxSpeed = controller.maxSpeed;
-        _currentSpeed = controller.currentSpeed;
-        _attackCooldown = controller.attackCooldown;
-        _invulnerableOnHitTime = controller.invulnerableOnHitTime;
-        _attackLockTime = controller.attackLockTime;
-
+        //
         List<string> keyList = new List<string> { "attackCooldown", "cliffDetectionInterval", "attackLockTime", "invulnerableOnHitTime" };
-        List<float> lengthList = new List<float> { _attackCooldown, cliffDetectionInterval, _attackLockTime, _invulnerableOnHitTime };
-        cooldownHandler.SetupTimers(keyList, lengthList, self);
+        List<float> lengthList = new List<float> { controller.attackCooldown, controller.cliffDetectionInterval, controller.attackLockTime, controller.invulnerableOnHitTime };
+        cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
 
     // Fixed Update is called every set interval (about every 0.02 seconds)
@@ -102,7 +73,7 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
 
 
         // If the player is within the enemy's tracking proximity
-        if (distanceToPlayer <= _playerRequiredProximity)
+        if (distanceToPlayer <= controller.playerRequiredProximity)
         {
             // If not curently tracking player, the enemy is now tracking the player
             CurrentlyTrackingPlayer = true;
@@ -190,13 +161,13 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
         if (lookDirection == 1 && transform.localScale.x < 0) { transform.localScale *= new Vector2(-1, 1); }
 
         // Limit enemy movement to maxspeed
-        if (_currentSpeed <= _maxSpeed)
+        if (controller.currentSpeed <= controller.maxSpeed)
         {
-            rigidbody.linearVelocity = new Vector2(_currentSpeed * moveDirection, yVelocity);
+            rigidbody.linearVelocity = new Vector2(controller.currentSpeed * moveDirection, yVelocity);
         }
-        else if (_currentSpeed > _maxSpeed)
+        else if (controller.currentSpeed > controller.maxSpeed)
         {
-            rigidbody.linearVelocity = new Vector2(_maxSpeed * moveDirection, yVelocity);
+            rigidbody.linearVelocity = new Vector2(controller.maxSpeed * moveDirection, yVelocity);
         }
 
         // Update ismoving variable and animator parameter based on current movement
@@ -261,7 +232,7 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
         distanceToPlayer = offset.magnitude;
 
         // Once in a set x distance of the player, continue tracking them but stand still
-        if (Math.Abs(transform.position.x - player.transform.position.x) <= trackButNotMoveProximity)
+        if (Math.Abs(transform.position.x - player.transform.position.x) <= controller.trackButNotMoveProximity)
         {
             trackingButNotMove = true;
         }

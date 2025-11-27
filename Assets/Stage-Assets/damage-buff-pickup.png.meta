@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 0a97a8527b1011e449ee4ffcc6ee7857
+guid: 12ed10a9d20a33741af53c94f2dff455
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7486391065832679481
-    second: fc2156_0
+      213: -8223202585035615336
+    second: damage-buff-pickup_0
+  - first:
+      213: 1200227260465311070
+    second: damage-buff-pickup_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +103,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: fc2156_0
+      name: damage-buff-pickup_0
       rect:
         serializedVersion: 2
-        x: 7
-        y: 7
-        width: 50
-        height: 50
+        x: 3
+        y: 3
+        width: 58
+        height: 58
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +118,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7c7926f7dfefa1890800000000000000
-      internalID: -7486391065832679481
+      spriteID: 893d0ea31d051ed80800000000000000
+      internalID: -8223202585035615336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: damage-buff-pickup_1
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 0
+        width: 21
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5d66c5955018a010800000000000000
+      internalID: 1200227260465311070
       vertices: []
       indices: 
       edges: []

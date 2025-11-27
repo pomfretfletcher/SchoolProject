@@ -17,9 +17,9 @@ public class HPHandler : MonoBehaviour
         cooldownHandler = GetComponent<CooldownTimer>();
     }
 
-    public void TakeDamage(int damageDealt) 
+    public void TakeDamage(float damageDealt) 
     {
-        int lastHealth = controller.CurrentHealth;
+        float lastHealth = controller.CurrentHealth;
         if (controller.IsInvulnerable) { return; }
         controller.CurrentHealth = controller.CurrentHealth - damageDealt;
         animator.SetTrigger("damaged");
@@ -33,7 +33,15 @@ public class HPHandler : MonoBehaviour
         }
     }
 
-    public void HealDamage(int damageHealed) { }
+    public void HealDamage(float damageHealed) 
+    {
+        controller.CurrentHealth += damageHealed;
+        if (controller.CurrentHealth > controller.FullHealth)
+        {
+            controller.CurrentHealth = controller.FullHealth;   
+        }
+    }
+
     public void ResetHealth() { }
     public void StartDrain(int drainDamageAmount, int drainTimeLeft) { }
     public void ChangeDrainAmount(int newDrainDamageAmount, int newDrainTimeLeft) { }

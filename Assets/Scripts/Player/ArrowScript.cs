@@ -8,11 +8,11 @@ public class ArrowScript : MonoBehaviour
 
     // Attack Variables
     [SerializeField]
-    private int attackDamage;
+    private float attackDamage;
     public Vector2 knockback = Vector2.zero;
 
     // Movement Variables
-    public int moveSpeed;
+    public float moveSpeed;
 
     void Awake()
     {
@@ -51,7 +51,6 @@ public class ArrowScript : MonoBehaviour
             // Deal damage through hp handler component
             hpHandler.TakeDamage(attackDamage);
         }
-        Debug.Log(("hit", collisionParent.gameObject.tag));
         // Destroy self
         Destroy(this.gameObject);
     }

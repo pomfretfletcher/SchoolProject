@@ -2,8 +2,8 @@ using UnityEngine;
 
 public interface UniversalController
 {
-    int FullHealth { get; set; }
-    int CurrentHealth { get; set; }
-    int MeleeDamageAmount { get; set; }
+    float FullHealth { get; set; }
+    float CurrentHealth { get; set; }
+    float MeleeDamageAmount { get; set; }
     bool IsInvulnerable { get; set; }
 }

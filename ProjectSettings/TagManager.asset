@@ -13,14 +13,14 @@ TagManager:
   - Water
   - UI
   - Player
-  - Enemy
+  - EnemY
   - Player Hitbox
   - Player Hurtbox
   - Enemy Hitbox
   - Enemy Hurtbox
   - Collidable
   - Non-Collidable
-  - 
+  - Pickup
   - 
   - 
   - 

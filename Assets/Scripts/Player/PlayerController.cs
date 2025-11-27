@@ -3,37 +3,38 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour, UniversalController
 {
     // Interface Cast Variables
-    public int FullHealth { get => fullHealth; set => fullHealth = value; }
-    public int CurrentHealth { get => currentHealth; set => currentHealth = value; }
-    public int MeleeDamageAmount { get => currentMeleeDamage; set => currentMeleeDamage = value; }
+    public float FullHealth { get => fullHealth; set => fullHealth = value; }
+    public float CurrentHealth { get => currentHealth; set => currentHealth = value; }
+    public float MeleeDamageAmount { get => currentMeleeDamage; set => currentMeleeDamage = value; }
     public bool IsInvulnerable { get => isInvulnerable; set => isInvulnerable = value; }
 
     // Health Variables
-    public int fullHealth;
-    public int currentHealth;
+    public float fullHealth;
+    public float currentHealth;
 
     // Speed Variables
-    public int maxSpeed;
+    public float maxSpeed;
     public float currentSpeed;
 
     // Melee Attack Variables
-    public int minMeleeDamage;
-    public int defaultMeleeDamage;
-    public int currentMeleeDamage;
+    public float minMeleeDamage;
+    public float defaultMeleeDamage;
+    public float currentMeleeDamage;
     public float meleeAttackCooldown;
     public float comboTime;
 
     // Ranged Attack Variables
-    public int minRangedDamage;
-    public int defaultRangedDamage;
-    public int currentRangedDamage;
+    public float minRangedDamage;
+    public float defaultRangedDamage;
+    public float currentRangedDamage;
     public float rangedAttackCooldown;
+    public float projectileFireDelay;
 
     // Movement
     public float jumpCooldown;
     public float dodgeCooldown;
-    public int jumpImpulse;
-    public int dashImpulse;
+    public float jumpImpulse;
+    public float dashImpulse;
     public float dashLockTime;
 
     // Misc Variables

@@ -18,31 +18,15 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
     Animator animator;
     TouchingDirections touchingDirections;
     Collider2D selfCollider;
-    PlayerInputHandler self;
     CooldownTimer cooldownHandler;
     ProjectileLauncher projectileLauncher;
 
-    // Controller Variables
-    private int _maxSpeed;
-    private float _currentSpeed;
-    private float yVelocity;
-    private int _jumpImpulse;
-    private int _dashImpulse;
+    //
     private int currentDashDirection = 1;
     private int lookDirection = 1;
-    private bool _IsInvulnerable;
-
-    // Private cooldown variables to grab from Player Controller
-    private float _jumpCooldown;
-    private float _dodgeCooldown;
-    private float _dashLockTime;
-    private float _meleeAttackCooldown;
-    private float _comboTime;
-    private float _rangedAttackCooldown;
-    private float _invulnerableOnHitTime;
-    public float projectileFireDelay = 1f;
-    [SerializeField]
     private int attackCombo = 0;
+    private float xVelocity;
+    private float yVelocity;
 
     // Input Variables
     Vector2 moveInput;
@@ -69,30 +53,16 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         controller = GetComponent<PlayerController>();
         touchingDirections = GetComponent<TouchingDirections>();
         selfCollider = GetComponent<Collider2D>();
-        self = GetComponent<PlayerInputHandler>();
         cooldownHandler = GetComponent<CooldownTimer>();
         projectileLauncher = GetComponent<ProjectileLauncher>();
     }
 
     void Start()
     {
-        // Grabs variables from controller
-        _maxSpeed = controller.maxSpeed;
-        _jumpImpulse = controller.jumpImpulse;
-        _dashImpulse = controller.dashImpulse;
-        _currentSpeed = controller.currentSpeed;
-        _dashLockTime = controller.dashLockTime;
-        _jumpCooldown = controller.jumpCooldown;
-        _dodgeCooldown = controller.dodgeCooldown;
-        _meleeAttackCooldown = controller.meleeAttackCooldown;
-        _comboTime = controller.comboTime;
-        _rangedAttackCooldown = controller.rangedAttackCooldown;
-        _IsInvulnerable = controller.IsInvulnerable;
-        _invulnerableOnHitTime = controller.invulnerableOnHitTime;
-
+        //
         List<string> keyList = new List<string> {"jumpCooldown", "dodgeCooldown", "dashLockTime", "meleeAttackCooldown", "rangedAttackCooldown", "invulnerableOnHitTime", "projectileFireDelay", "comboTime" };
-        List<float> lengthList = new List<float> { _jumpCooldown, _dodgeCooldown, _dashLockTime, _meleeAttackCooldown, _rangedAttackCooldown, _invulnerableOnHitTime, projectileFireDelay, _comboTime };
-        cooldownHandler.SetupTimers(keyList, lengthList, self);
+        List<float> lengthList = new List<float> { controller.jumpCooldown, controller.dodgeCooldown, controller.dashLockTime, controller.meleeAttackCooldown, controller.rangedAttackCooldown, controller.invulnerableOnHitTime, controller.projectileFireDelay, controller.comboTime };
+        cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
 
     void FixedUpdate()
@@ -110,29 +80,29 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
             // Only move in response to input if not dashing and you can move
         if (IsDashing && CanMove)
         {
-            _currentSpeed = _dashImpulse * currentDashDirection;
+            xVelocity = controller.dashImpulse * currentDashDirection;
             yVelocity = 0;
         }
             // Regular movement based input
         if (!IsDashing && CanMove)
         {
-            _currentSpeed = controller.currentSpeed * moveInput.x;
+            xVelocity = controller.currentSpeed * moveInput.x;
             yVelocity = rigidbody.linearVelocityY;
         }
             // Stops horizontal movement if on wall
         if (touchingDirections.IsOnWall)
         {
-            _currentSpeed = 0;
+            xVelocity = 0;
         }
 
         // Updates the velocity of the player while limiting it to the player's max speed
-        if (_currentSpeed <= _maxSpeed)
+        if (xVelocity <= controller.maxSpeed)
         {
-            rigidbody.linearVelocity = new Vector2(_currentSpeed, yVelocity);
+            rigidbody.linearVelocity = new Vector2(xVelocity, yVelocity);
         }
-        if (_currentSpeed > _maxSpeed)
+        if (xVelocity > controller.maxSpeed)
         {
-            rigidbody.linearVelocity = new Vector2(_maxSpeed, yVelocity);
+            rigidbody.linearVelocity = new Vector2(controller.maxSpeed, yVelocity);
         }
 
         // Updates the animator's yVelocity value for air state animations
@@ -195,11 +165,10 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         //if (IsGrounded && timerStatusList[0] == 0 && CanMove)
         if (touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["jumpCooldown"] == 0 && CanMove)
         {
-            rigidbody.linearVelocityY = _jumpImpulse;
+            rigidbody.linearVelocityY = controller.jumpImpulse;
 
             // Sets the status of the jump timer to 1, flagging that it should start ticking
             cooldownHandler.timerStatusDict["jumpCooldown"] = 1;
-            //timerStatusList[0] = 1;
 
             // Tells the animator that the player jumped
             animator.SetTrigger("jumped");
@@ -226,10 +195,8 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
             {
                 // Sets the status of the dash timer to 1, flagging that it should start ticking
                 cooldownHandler.timerStatusDict["dodgeCooldown"] = 1;
-                //timerStatusList[1] = 1;
                 // Sets status of dash lock timer to 1, so player can't input movement
                 cooldownHandler.timerStatusDict["dashLockTime"] = 1;
-                //timerStatusList[2] = 1;
                 IsDashing = true;
                 controller.IsInvulnerable = true;
             }

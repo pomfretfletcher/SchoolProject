@@ -5,31 +5,35 @@ using UnityEngine.Rendering;
 public class EnemyController : MonoBehaviour, UniversalController
 {
     // Interface Cast Variables
-    public int FullHealth { get => fullHealth; set => fullHealth = value; }
-    public int CurrentHealth { get => currentHealth; set => currentHealth = value; }
-    public int MeleeDamageAmount { get => meleeDamage; set => meleeDamage = value; }
+    public float FullHealth { get => fullHealth; set => fullHealth = value; }
+    public float CurrentHealth { get => currentHealth; set => currentHealth = value; }
+    public float MeleeDamageAmount { get => meleeDamage; set => meleeDamage = value; }
     public bool IsInvulnerable { get => isInvulnerable; set => isInvulnerable = value; }
 
     // Health Variables
-    public int fullHealth;
-    public int currentHealth;
+    public float fullHealth;
+    public float currentHealth;
 
     // Speed Variables
-    public int maxSpeed;
+    public float maxSpeed;
     public float currentSpeed;
 
     // Attack Variables
     public float attackCooldown;
-    public int meleeDamage;
-    public int rangedDamage;
+    public float meleeDamage;
+    public float rangedDamage;
     public float attackLockTime;
 
-    // Waypoint variables
+    // Waypoint Variables
     public Transform nextWaypoint;
     public List<Transform> waypointList;
 
+    // Cliff Detection Zone Variables
+    public int cliffDetectionInterval;
+
     // Player Reference Variables
     public int playerRequiredProximity;
+    public int trackButNotMoveProximity;
 
     // Misc Variables
     public bool isInvulnerable = false;
