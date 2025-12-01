@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class KnightPathfinding : MonoBehaviour, UsesCooldown
+public class MushroomPathfinding : MonoBehaviour, UsesCooldown
 {
     // Script + Component Links
     EnemyController controller;
@@ -93,9 +93,9 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
             }
         }
         // Turns off tracking off cliff if there is no longer a cliff detected, used when turning the enemy away from cliff
-        if (trackingOffCliff && cliffDetectionZone.detectedColliders.Count > 0) 
-        { 
-            trackingOffCliff = false; 
+        if (trackingOffCliff && cliffDetectionZone.detectedColliders.Count > 0)
+        {
+            trackingOffCliff = false;
         }
         // Keep enemy looking at player while in track but not move zone
         if (trackingButNotMove && CanMove && ((transform.position.x - player.transform.position.x > 0 && lookDirection != -1) || (transform.position.x - player.transform.position.x < 0 && lookDirection != 1)))
@@ -157,7 +157,7 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
         }
 
         // Ovveride previous decisions if can't move
-        if (!CanMove) 
+        if (!CanMove)
         {
             moveDirection = 0;
         }
@@ -220,7 +220,7 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
 
     // Detection Methods
     public void OnCliffDetected()
-    {   
+    {
         // Flip enemy if a cliff is detected, but only every few seconds to avoid erratic and repeated flipping
         if (!CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["cliffDetectionInterval"] == 0)
         {
@@ -231,7 +231,7 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
         }
     }
 
-    public void CalcDistanceToPlayer() 
+    public void CalcDistanceToPlayer()
     {
         // Calculate the distance to the player with vector math
         Vector2 offset = transform.position - player.transform.position;
@@ -249,14 +249,8 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
     }
 
     public void FindOptimalMovePath() { }
-    public void ExecuteEnemyAttack() 
+
+    public void ExecuteEnemyAttack()
     {
-        if (cooldownHandler.timerStatusDict["attackCooldown"] == 0 && CanAttack)
-        {
-            cooldownHandler.timerStatusDict["attackCooldown"] = 1;
-            cooldownHandler.timerStatusDict["attackLockTime"] = 1;
-            animator.SetTrigger("attacked");
-            CanMove = false;
-        }
     }
 }

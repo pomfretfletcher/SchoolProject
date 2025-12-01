@@ -3,7 +3,7 @@ using UnityEngine;
 public class ProjectileLauncher : MonoBehaviour
 {
     public GameObject projectile;
-    public ArrowScript projectileController;
+    private ArrowScript projectileController;
 
     public void SpawnProjectile()
     {

@@ -34,12 +34,16 @@ public class RegenPickup : MonoBehaviour, IsPickup, UsesCooldown
     // Called by pickup script when this pickup is collected
     public bool OnPickup()
     {
-        // Starts timer to heal every set interval
-        cooldownHandler.timerStatusDict["regenInterval"] = 1;
+        // Only starts buff if health left to gain
+        if (controller.currentHealth < controller.fullHealth)
+        {
+            // Starts timer to heal every set interval
+            cooldownHandler.timerStatusDict["regenInterval"] = 1;
 
-        // Make invisible and uncollidable so act as a background buff
-        renderer.enabled = false;
-        collider.enabled = false;
+            // Make invisible and uncollidable so act as a background buff
+            renderer.enabled = false;
+            collider.enabled = false;
+        }
 
         // Tells general pickup script to not delete the pickup
         return false;
