@@ -249,6 +249,7 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
     }
 
     public void FindOptimalMovePath() { }
+
     public void ExecuteEnemyAttack() 
     {
         if (cooldownHandler.timerStatusDict["attackCooldown"] == 0 && CanAttack)

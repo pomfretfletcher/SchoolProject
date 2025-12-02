@@ -13,20 +13,15 @@ public class AttackZone : MonoBehaviour
     UniversalController collisionController;
 
     // Attack Variables
-    [SerializeField]
-    private float attackDamage;
     public float damageIncrease;
     public Vector2 knockback = Vector2.zero;
 
     // This is a start rather than awake as the 'current' variables for stuff like melee damage are done within the Awake methods, so we want these to be done after
-    private void Start() 
+    private void Awake() 
     {
         // Grabs all linked scripts + components
         parent = transform.root.gameObject;
         controller = parent.GetComponent<UniversalController>();
-
-        // Increases attack damaged based on the damageIncrease variable within the inspector
-        attackDamage = controller.MeleeDamageAmount + damageIncrease;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -41,7 +36,7 @@ public class AttackZone : MonoBehaviour
         {
             if (!collisionController.IsInvulnerable)
             {
-                hpHandler.TakeDamage(attackDamage);
+                hpHandler.TakeDamage(controller.MeleeDamageAmount + damageIncrease);
             }
         }
     }

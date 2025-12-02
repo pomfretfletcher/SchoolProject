@@ -34,12 +34,14 @@ public class EnemyController : MonoBehaviour, UniversalController
     // Player Reference Variables
     public int playerRequiredProximity;
     public int trackButNotMoveProximity;
+    public int runAwayTrackingProximity;
+    public float runAwayTime;
 
     // Misc Variables
     public bool isInvulnerable = false;
     public float invulnerableOnHitTime;
 
-    void Awake()
+    void Start()
     {
         // Sets current values of variables to default values
         currentHealth = fullHealth;

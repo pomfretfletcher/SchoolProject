@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour, UniversalController
     public bool isInvulnerable = false;
     public float invulnerableOnHitTime;
 
-    private void Awake()
+    private void Start()
     {
         // Sets current values of variables to default values
         currentMeleeDamage = defaultMeleeDamage;

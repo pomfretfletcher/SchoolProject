@@ -7,8 +7,6 @@ public class ArrowScript : MonoBehaviour
     Rigidbody2D rigidbody;
 
     // Attack Variables
-    [SerializeField]
-    private float attackDamage;
     public Vector2 knockback = Vector2.zero;
 
     // Movement Variables
@@ -19,13 +17,6 @@ public class ArrowScript : MonoBehaviour
         // Grabs all linked scripts + components
         rigidbody = GetComponent<Rigidbody2D>();
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
-    }
-
-    // This is a start rather than awake as the 'current' variables for stuff like melee damage are done within the Awake methods, so we want these to be done after
-    private void Start()
-    {
-        // Increases attack damaged based on the damageIncrease variable within the inspector
-        attackDamage = playerController.currentRangedDamage;
     }
 
     void FixedUpdate()
@@ -49,7 +40,7 @@ public class ArrowScript : MonoBehaviour
             HPHandler hpHandler = collisionParent.GetComponent<HPHandler>();
 
             // Deal damage through hp handler component
-            hpHandler.TakeDamage(attackDamage);
+            hpHandler.TakeDamage(playerController.currentRangedDamage);
         }
         // Destroy self
         Destroy(this.gameObject);

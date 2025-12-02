@@ -31,8 +31,7 @@ public class MushroomPathfinding : MonoBehaviour, UsesCooldown
     [SerializeField]
     private bool canAttack = true;
     public bool CurrentlyTrackingPlayer;
-    public bool trackingButNotMove;
-    public bool trackingOffCliff;
+    public bool runAwayTracking;
 
     void Awake()
     {
@@ -51,8 +50,8 @@ public class MushroomPathfinding : MonoBehaviour, UsesCooldown
     void Start()
     {
         //
-        List<string> keyList = new List<string> { "attackCooldown", "cliffDetectionInterval", "attackLockTime", "invulnerableOnHitTime" };
-        List<float> lengthList = new List<float> { controller.attackCooldown, controller.cliffDetectionInterval, controller.attackLockTime, controller.invulnerableOnHitTime };
+        List<string> keyList = new List<string> { "attackCooldown", "cliffDetectionInterval", "attackLockTime", "invulnerableOnHitTime", "runAwayTime" };
+        List<float> lengthList = new List<float> { controller.attackCooldown, controller.cliffDetectionInterval, controller.attackLockTime, controller.invulnerableOnHitTime, controller.runAwayTime  };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
 
@@ -72,66 +71,34 @@ public class MushroomPathfinding : MonoBehaviour, UsesCooldown
         CalcDistanceToPlayer();
 
 
-        // If the player is within the enemy's tracking proximity
-        if (distanceToPlayer <= controller.playerRequiredProximity)
+        // If the player is within the enemy's tracking proximity and at a higher y value, stops tracking through walls as much
+        if (distanceToPlayer <= controller.playerRequiredProximity && player.transform.position.y > selfCollider.transform.position.y)
         {
-            // If not curently tracking player, the enemy is now tracking the player
+            // If not curently tracking player, the mushroom is now tracking the player, they will stand stil and begin to fire projectiles
             CurrentlyTrackingPlayer = true;
         }
         // If player leaves proximity, the enemy stops tracking them
         else
         {
             CurrentlyTrackingPlayer = false;
-            trackingOffCliff = false;
-            trackingButNotMove = false;
-            // If stop tracking player but still at cliff edge, flip direction
-            if (cliffDetectionZone.detectedColliders.Count == 0)
-            {
-                lookDirection = -1 * lookDirection;
-                moveDirection = lookDirection;
-                transform.localScale *= new Vector2(-1, 1);
-            }
-        }
-        // Turns off tracking off cliff if there is no longer a cliff detected, used when turning the enemy away from cliff
-        if (trackingOffCliff && cliffDetectionZone.detectedColliders.Count > 0)
-        {
-            trackingOffCliff = false;
-        }
-        // Keep enemy looking at player while in track but not move zone
-        if (trackingButNotMove && CanMove && ((transform.position.x - player.transform.position.x > 0 && lookDirection != -1) || (transform.position.x - player.transform.position.x < 0 && lookDirection != 1)))
-        {
-            lookDirection *= -1;
+            runAwayTracking = false;
+            // flip away from player
         }
 
         // Tracking player movement decisions
         if (CurrentlyTrackingPlayer && touchingDirections.IsGrounded)
         {
-            // Stops enemy from moving if they are still tracking, but at cliff edge
-            if (cliffDetectionZone.detectedColliders.Count == 0)
+            if (runAwayTracking)
+            {
+                moveDirection = -1 * (player.transform.position.x > selfCollider.transform.position.x ? 1 : -1);
+                lookDirection = moveDirection;
+            }
+            else 
             {
                 moveDirection = 0;
-                yVelocity = 0;
-            }
-            // Stops enemy from moving if they are within a small proximity of the player
-            else if (trackingButNotMove && touchingDirections.IsGrounded)
-            {
-                moveDirection = 0;
-                yVelocity = 0;
-            }
-            // Prevents running into a wall repeteably while tracking player
-            else if (touchingDirections.IsOnWall)
-            {
-                moveDirection = 0;
-                yVelocity = 0;
-            }
-            else
-            {
-                // Decides what direction to move when tracking towards to player
-                lookDirection = player.transform.position.x > transform.position.x ? 1 : -1;
-                moveDirection = lookDirection;
+                lookDirection = player.transform.position.x > selfCollider.transform.position.x ? 1 : -1;
             }
         }
-
 
         // Non tracking movement decisions
         else
@@ -198,6 +165,10 @@ public class MushroomPathfinding : MonoBehaviour, UsesCooldown
         {
             controller.IsInvulnerable = false;
         }
+        if (key == "runAwayTime")
+        {
+            runAwayTracking = false;
+        }
     }
 
     public void LookingDirection()
@@ -238,13 +209,10 @@ public class MushroomPathfinding : MonoBehaviour, UsesCooldown
         distanceToPlayer = offset.magnitude;
 
         // Once in a set x distance of the player, continue tracking them but stand still
-        if (Math.Abs(transform.position.x - player.transform.position.x) <= controller.trackButNotMoveProximity)
+        if (Math.Abs(transform.position.x - player.transform.position.x) <= controller.runAwayTrackingProximity && runAwayTracking == false)
         {
-            trackingButNotMove = true;
-        }
-        else
-        {
-            trackingButNotMove = false;
+            runAwayTracking = true;
+            cooldownHandler.timerStatusDict["runAwayTime"] = 1;
         }
     }
 
