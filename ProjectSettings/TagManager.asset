@@ -13,15 +13,15 @@ TagManager:
   - Water
   - UI
   - Player
-  - EnemY
+  - Enemy
   - Player Hitbox
-  - Player Hurtbox
+  - 
   - Enemy Hitbox
-  - Enemy Hurtbox
+  - 
   - Collidable
   - Non-Collidable
   - Pickup
-  - 
+  - Cliff Detection Zone
   - 
   - 
   - 

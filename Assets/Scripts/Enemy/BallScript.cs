@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class ArrowScript : MonoBehaviour, ProjectileScript
+public class BallScript : MonoBehaviour, ProjectileScript
 {
     // Script + Component Links
-    PlayerController playerController;
+    EnemyController enemyController;
     Rigidbody2D rigidbody;
 
     // Attack Variables
@@ -16,7 +16,7 @@ public class ArrowScript : MonoBehaviour, ProjectileScript
     {
         // Grabs all linked scripts + components
         rigidbody = GetComponent<Rigidbody2D>();
-        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
+        //controller = GameObject.Find("").GetComponent<PlayerController>();
     }
 
     void FixedUpdate()
@@ -24,30 +24,31 @@ public class ArrowScript : MonoBehaviour, ProjectileScript
         rigidbody.linearVelocityX = moveSpeed;
     }
 
-    public void AssignOwner(GameObject owner) { }
+    public void AssignOwner(GameObject owner)
+    {
+        enemyController = owner.GetComponent<EnemyController>();
+    }
 
     public void FlipDirection()
     {
         moveSpeed *= -1;
-
     }
+
     // Stores every collision within the collider
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Calculate knockback
         Vector2 deliveredKnockback = transform.localScale.x > 0 ? knockback : new Vector2(-knockback.x, knockback.y);
 
-
         GameObject collisionParent = collision.transform.root.gameObject;
 
-        // If enemy
-        if (collisionParent.gameObject.tag == "Enemy")
+        // If player
+        if (collisionParent.gameObject.tag == "Player")
         {
             // Get hp handler component
             HPHandler hpHandler = collisionParent.GetComponent<HPHandler>();
-
             // Deal damage through hp handler component
-            hpHandler.TakeDamage(playerController.currentRangedDamage);
+            hpHandler.TakeDamage(enemyController.rangedDamage);
         }
         // Destroy self
         Destroy(this.gameObject);

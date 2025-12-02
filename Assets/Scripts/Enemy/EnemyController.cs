@@ -10,34 +10,35 @@ public class EnemyController : MonoBehaviour, UniversalController
     public float MeleeDamageAmount { get => meleeDamage; set => meleeDamage = value; }
     public bool IsInvulnerable { get => isInvulnerable; set => isInvulnerable = value; }
 
-    // Health Variables
+    [Header("Health Variables")]
     public float fullHealth;
     public float currentHealth;
 
-    // Speed Variables
+    [Header("Speed Variables")]
     public float maxSpeed;
     public float currentSpeed;
 
-    // Attack Variables
-    public float attackCooldown;
+    [Header("Damage Variables")]
     public float meleeDamage;
     public float rangedDamage;
-    public float attackLockTime;
 
-    // Waypoint Variables
+    [Header("Attack Cooldowns and Delays")]
+    public float attackLockTime;
+    public float projectileFireDelay;
+    public float attackCooldown;
+
+    [Header("Waypoint and Cliff Detection Variables")]
     public Transform nextWaypoint;
     public List<Transform> waypointList;
-
-    // Cliff Detection Zone Variables
     public int cliffDetectionInterval;
 
-    // Player Reference Variables
+    [Header("Player Reference Variables")]
     public int playerRequiredProximity;
     public int trackButNotMoveProximity;
     public int runAwayTrackingProximity;
     public float runAwayTime;
 
-    // Misc Variables
+    [Header("Invulnerability Variables")]
     public bool isInvulnerable = false;
     public float invulnerableOnHitTime;
 

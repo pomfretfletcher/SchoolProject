@@ -8,36 +8,38 @@ public class PlayerController : MonoBehaviour, UniversalController
     public float MeleeDamageAmount { get => currentMeleeDamage; set => currentMeleeDamage = value; }
     public bool IsInvulnerable { get => isInvulnerable; set => isInvulnerable = value; }
 
-    // Health Variables
+    [Header("Health Variables")]
     public float fullHealth;
     public float currentHealth;
 
-    // Speed Variables
+    [Header("Speed and Impulse Variables")]
     public float maxSpeed;
     public float currentSpeed;
+    public float jumpImpulse;
+    public float dashImpulse;
 
-    // Melee Attack Variables
+    [Header("Melee Damage Variables")]
     public float minMeleeDamage;
     public float defaultMeleeDamage;
     public float currentMeleeDamage;
-    public float meleeAttackCooldown;
-    public float comboTime;
 
-    // Ranged Attack Variables
+    [Header("Ranged Damage Variables")]
     public float minRangedDamage;
     public float defaultRangedDamage;
     public float currentRangedDamage;
+
+    [Header("Movement Cooldowns")]
+    public float jumpCooldown;
+    public float dodgeCooldown;
+    public float dashLockTime;
+
+    [Header("Attack Cooldowns and Delays")]
+    public float meleeAttackCooldown;
+    public float comboTime;
     public float rangedAttackCooldown;
     public float projectileFireDelay;
 
-    // Movement
-    public float jumpCooldown;
-    public float dodgeCooldown;
-    public float jumpImpulse;
-    public float dashImpulse;
-    public float dashLockTime;
-
-    // Misc Variables
+    [Header("Invulnerability Variables")]
     public bool isInvulnerable = false;
     public float invulnerableOnHitTime;
 

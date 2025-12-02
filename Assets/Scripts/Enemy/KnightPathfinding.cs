@@ -104,7 +104,7 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
         }
 
         // Tracking player movement decisions
-        if (CurrentlyTrackingPlayer && touchingDirections.IsGrounded)
+        if (CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["attackLockTime"] == 0)
         {
             // Stops enemy from moving if they are still tracking, but at cliff edge
             if (cliffDetectionZone.detectedColliders.Count == 0)
@@ -134,7 +134,7 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
 
 
         // Non tracking movement decisions
-        else
+        else if (cooldownHandler.timerStatusDict["attackLockTime"] == 0)
         {
             // Default walk cycle movement
             if (touchingDirections.IsGrounded)

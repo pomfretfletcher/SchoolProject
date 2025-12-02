@@ -3,7 +3,7 @@ using UnityEngine;
 public class ProjectileLauncher : MonoBehaviour
 {
     public GameObject projectile;
-    private ArrowScript projectileController;
+    private ProjectileScript projectileController;
 
     public void SpawnProjectile()
     {
@@ -18,7 +18,12 @@ public class ProjectileLauncher : MonoBehaviour
         }
         GameObject firedProjectile = Instantiate(projectile, new Vector3(transform.position.x + 0.3f, transform.position.y, transform.position.z), Quaternion.Euler(0, 0, angle));
 
-        projectileController = firedProjectile.GetComponent<ArrowScript>();
-        if (angle == 135f) { projectileController.moveSpeed *= -1; }
+        projectileController = firedProjectile.GetComponent<ProjectileScript>();
+        if (angle == 135f) { projectileController.FlipDirection(); }
+
+        if (gameObject.tag == "Enemy")
+        {
+            projectileController.AssignOwner(gameObject);
+        }
     }
 }

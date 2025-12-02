@@ -3287,6 +3287,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.074
       objectReference: {fileID: 0}
+    - target: {fileID: 1729888562075068813, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
+      propertyPath: m_Layer
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 2935056452586687568, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
       propertyPath: noCollisionsRemain.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -3296,8 +3300,20 @@ PrefabInstance:
       value: MushroomPathfinding, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3320619710883200096, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
+      propertyPath: meleeDamage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3320619710883200096, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
       propertyPath: runAwayTime
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3320619710883200096, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
+      propertyPath: rangedDamage
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3320619710883200096, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
+      propertyPath: projectileFireDelay
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3320619710883200096, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
       propertyPath: invulnerableOnHitTime
@@ -3309,11 +3325,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3320619710883200096, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
       propertyPath: playerRequiredProximity
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3320619710883200096, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
       propertyPath: runAwayTrackingProximity
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3320619710883200096, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
       propertyPath: trackButNotMoveProximity
@@ -3365,11 +3381,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7536561995066768801, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7536561995066768801, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7536561995066768801, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3513,6 +3529,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3883379676204530457, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1118204213}
+    - targetCorrespondingSourceObject: {fileID: 3883379676204530457, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1118204223}
   m_SourcePrefab: {fileID: 100100000, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
 --- !u!1 &322935343
 GameObject:
@@ -4892,6 +4911,19 @@ MonoBehaviour:
   canAttack: 1
   CurrentlyTrackingPlayer: 0
   runAwayTracking: 0
+--- !u!114 &1118204223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1118204202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de79e72eeeedd9498a66172f3b53000, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectile: {fileID: 5519833409699763198, guid: 4c377f783f9ddd34b9a1261c70a46440, type: 3}
 --- !u!1 &1211948618
 GameObject:
   m_ObjectHideFlags: 0
@@ -5369,21 +5401,21 @@ MonoBehaviour:
   currentHealth: 0
   maxSpeed: 5
   currentSpeed: 3
+  jumpImpulse: 8
+  dashImpulse: 8
   minMeleeDamage: 0
   defaultMeleeDamage: 20
   currentMeleeDamage: 0
-  meleeAttackCooldown: 1
-  comboTime: 3
   minRangedDamage: 0
   defaultRangedDamage: 25
   currentRangedDamage: 0
-  rangedAttackCooldown: 3
-  projectileFireDelay: 1
   jumpCooldown: 1
   dodgeCooldown: 3
-  jumpImpulse: 8
-  dashImpulse: 8
   dashLockTime: 0.6
+  meleeAttackCooldown: 1
+  comboTime: 3
+  rangedAttackCooldown: 3
+  projectileFireDelay: 0.7
   isInvulnerable: 0
   invulnerableOnHitTime: 1
 --- !u!4 &1283264671
@@ -10790,11 +10822,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6970669394760569834, guid: 3c442729ff1bbf14db357b7ad5f13375, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.908929
+      value: 6.4
       objectReference: {fileID: 0}
     - target: {fileID: 6970669394760569834, guid: 3c442729ff1bbf14db357b7ad5f13375, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.9667662
+      value: -1.71
       objectReference: {fileID: 0}
     - target: {fileID: 6970669394760569834, guid: 3c442729ff1bbf14db357b7ad5f13375, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10965,11 +10997,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5025323743485289763, guid: 58d429b163196a64cacfba74cf8956b0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.907
+      value: 5.95
       objectReference: {fileID: 0}
     - target: {fileID: 5025323743485289763, guid: 58d429b163196a64cacfba74cf8956b0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.733
+      value: -1.01
       objectReference: {fileID: 0}
     - target: {fileID: 5025323743485289763, guid: 58d429b163196a64cacfba74cf8956b0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -11022,11 +11054,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7473651391040120876, guid: 337ff7c8fe662fd4abba7c4f9047c010, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.902176
+      value: 2.85
       objectReference: {fileID: 0}
     - target: {fileID: 7473651391040120876, guid: 337ff7c8fe662fd4abba7c4f9047c010, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.2538719
+      value: -2.05
       objectReference: {fileID: 0}
     - target: {fileID: 7473651391040120876, guid: 337ff7c8fe662fd4abba7c4f9047c010, type: 3}
       propertyPath: m_LocalPosition.z
@@ -11079,11 +11111,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3811095702244808846, guid: f8edeff4260648a41a3d9a2d833ebdbc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.874
+      value: 5.49
       objectReference: {fileID: 0}
     - target: {fileID: 3811095702244808846, guid: f8edeff4260648a41a3d9a2d833ebdbc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.054
+      value: -1.73
       objectReference: {fileID: 0}
     - target: {fileID: 3811095702244808846, guid: f8edeff4260648a41a3d9a2d833ebdbc, type: 3}
       propertyPath: m_LocalPosition.z
@@ -11345,6 +11377,10 @@ PrefabInstance:
     - target: {fileID: 598957012378484548, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[10].y
       value: 0.310329
+      objectReference: {fileID: 0}
+    - target: {fileID: 1729888562075068813, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
+      propertyPath: m_Layer
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 3320619710883200096, guid: 3ed1e387531c1ce4fbfa8ae2f78e1b25, type: 3}
       propertyPath: invulnerableOnHitTime

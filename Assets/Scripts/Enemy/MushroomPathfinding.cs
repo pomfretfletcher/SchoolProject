@@ -13,7 +13,7 @@ public class MushroomPathfinding : MonoBehaviour, UsesCooldown
     Collider2D selfCollider;
     DetectionZone cliffDetectionZone;
     CooldownTimer cooldownHandler;
-
+    ProjectileLauncher projectileLauncher;
 
     private float distanceToPlayer;
     private float yVelocity;
@@ -44,14 +44,15 @@ public class MushroomPathfinding : MonoBehaviour, UsesCooldown
         cooldownHandler = GetComponent<CooldownTimer>();
         player = GameObject.Find("Player");
         cliffDetectionZone = GameObject.Find("CliffDetectionZone").GetComponent<DetectionZone>();
+        projectileLauncher = GetComponent<ProjectileLauncher>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         //
-        List<string> keyList = new List<string> { "attackCooldown", "cliffDetectionInterval", "attackLockTime", "invulnerableOnHitTime", "runAwayTime" };
-        List<float> lengthList = new List<float> { controller.attackCooldown, controller.cliffDetectionInterval, controller.attackLockTime, controller.invulnerableOnHitTime, controller.runAwayTime  };
+        List<string> keyList = new List<string> { "attackCooldown", "cliffDetectionInterval", "attackLockTime", "invulnerableOnHitTime", "runAwayTime", "projectileFireDelay" };
+        List<float> lengthList = new List<float> { controller.attackCooldown, controller.cliffDetectionInterval, controller.attackLockTime, controller.invulnerableOnHitTime, controller.runAwayTime, controller.projectileFireDelay };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
 
@@ -80,13 +81,18 @@ public class MushroomPathfinding : MonoBehaviour, UsesCooldown
         // If player leaves proximity, the enemy stops tracking them
         else
         {
+            // Flip away from player if previously tracking them
+            if (CurrentlyTrackingPlayer)
+            {
+                lookDirection *= -1;
+                moveDirection = lookDirection;
+            }
             CurrentlyTrackingPlayer = false;
             runAwayTracking = false;
-            // flip away from player
         }
 
         // Tracking player movement decisions
-        if (CurrentlyTrackingPlayer && touchingDirections.IsGrounded)
+        if (CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["attackLockTime"] == 0)
         {
             if (runAwayTracking)
             {
@@ -98,10 +104,15 @@ public class MushroomPathfinding : MonoBehaviour, UsesCooldown
                 moveDirection = 0;
                 lookDirection = player.transform.position.x > selfCollider.transform.position.x ? 1 : -1;
             }
+
+            if (cooldownHandler.timerStatusDict["attackCooldown"] == 0)
+            {
+                ExecuteEnemyAttack();
+            }
         }
 
         // Non tracking movement decisions
-        else
+        else if (cooldownHandler.timerStatusDict["attackLockTime"] == 0)
         {
             // Default walk cycle movement
             if (touchingDirections.IsGrounded)
@@ -169,6 +180,10 @@ public class MushroomPathfinding : MonoBehaviour, UsesCooldown
         {
             runAwayTracking = false;
         }
+        if (key == "projectileFireDelay")
+        {
+            projectileLauncher.SpawnProjectile();
+        }
     }
 
     public void LookingDirection()
@@ -220,5 +235,13 @@ public class MushroomPathfinding : MonoBehaviour, UsesCooldown
 
     public void ExecuteEnemyAttack()
     {
+        if (cooldownHandler.timerStatusDict["attackCooldown"] == 0 && CanAttack)
+        {
+            cooldownHandler.timerStatusDict["attackCooldown"] = 1;
+            cooldownHandler.timerStatusDict["attackLockTime"] = 1;
+            cooldownHandler.timerStatusDict["projectileFireDelay"] = 1;
+            animator.SetTrigger("attacked");
+            CanMove = false;
+        }
     }
 }
