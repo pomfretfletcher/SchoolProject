@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 0a9102dea012325409346fe677163a2d
+guid: ddfc48b162280d94bbccbcc5ccf82a6a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4306428143397998654
-    second: fc1202_0
+      213: 690326449882598753
+    second: AbilityFrame_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: fc1202_0
+      name: AbilityFrame_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 64
-        height: 64
+        width: 18
+        height: 18
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e309bf9749183cb30800000000000000
-      internalID: 4306428143397998654
+      spriteID: 16d0f48af38849900800000000000000
+      internalID: 690326449882598753
       vertices: []
       indices: 
       edges: []
@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      AbilityFrame_0: 690326449882598753
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -39,9 +39,10 @@ public class PlayerController : MonoBehaviour, UniversalController
     public float rangedAttackCooldown;
     public float projectileFireDelay;
 
-    [Header("Invulnerability Variables")]
+    [Header("Misc Variables")]
     public bool isInvulnerable = false;
     public float invulnerableOnHitTime;
+    public float deathDelay;
 
     private void Start()
     {

@@ -6,6 +6,7 @@ public class HPHandler : MonoBehaviour
 {
     // Script + Component Links
     UniversalController controller;
+    LogicScript logicScript;
     CooldownTimer cooldownHandler;
     Animator animator;
 
@@ -13,6 +14,7 @@ public class HPHandler : MonoBehaviour
     {
         // Grabs all linked scripts + components
         controller = GetComponent<UniversalController>();
+        logicScript = GetComponent<LogicScript>();
         animator = GetComponent<Animator>();
         cooldownHandler = GetComponent<CooldownTimer>();
     }
@@ -30,6 +32,12 @@ public class HPHandler : MonoBehaviour
         {
             animator.SetTrigger("dead");
             animator.SetBool("inDeathState", true);
+
+            if (gameObject.tag == "Enemy")
+            {
+                cooldownHandler.timerStatusDict["deathDelay"] = 1;
+                logicScript.Deactivate();
+            }
         }
     }
 

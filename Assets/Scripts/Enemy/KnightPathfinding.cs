@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class KnightPathfinding : MonoBehaviour, UsesCooldown
+public class KnightPathfinding : MonoBehaviour, LogicScript
 {
     // Script + Component Links
     EnemyController controller;
@@ -14,27 +14,24 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
     DetectionZone cliffDetectionZone;
     CooldownTimer cooldownHandler;
 
-
+    // Private variables for internal logic
     private float distanceToPlayer;
     private float yVelocity;
     private int lookDirection = 1;
     private int moveDirection;
 
     // States
-    public bool IsMoving { get { return isMoving; } private set { isMoving = value; animator.SetBool("isMoving", value); } }
+    public bool IsMoving { get { return isMoving; } set { isMoving = value; animator.SetBool("isMoving", value); } }
+    [Header("States")]
     [SerializeField]
     private bool isMoving = false;
-    public bool CanMove { get { return canMove; } private set { canMove = value; } }
-    [SerializeField]
-    private bool canMove = true;
-    public bool CanAttack { get { return canAttack; } private set { canAttack = value; } }
-    [SerializeField]
-    private bool canAttack = true;
-    public bool CurrentlyTrackingPlayer;
-    public bool trackingButNotMove;
-    public bool trackingOffCliff;
+    public bool CanMove = true;
+    public bool CanAttack = true;
+    public bool CurrentlyTrackingPlayer = false;
+    public bool TrackingButNotMove = false;
+    public bool TrackingOffCliff = false;
 
-    void Awake()
+    private void Awake()
     {
         // Grabs all linked scripts + components
         rigidbody = GetComponent<Rigidbody2D>();
@@ -47,23 +44,11 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
         cliffDetectionZone = GameObject.Find("CliffDetectionZone").GetComponent<DetectionZone>();
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        //
-        List<string> keyList = new List<string> { "attackCooldown", "cliffDetectionInterval", "attackLockTime", "invulnerableOnHitTime" };
-        List<float> lengthList = new List<float> { controller.attackCooldown, controller.cliffDetectionInterval, controller.attackLockTime, controller.invulnerableOnHitTime };
-        cooldownHandler.SetupTimers(keyList, lengthList, this);
-    }
-
     // Fixed Update is called every set interval (about every 0.02 seconds)
     void FixedUpdate()
     {
         // Checks envionmental collisions
         touchingDirections.CheckCollisions();
-
-        // Cooldown Timer logic
-        cooldownHandler.CheckCooldowns();
 
         // Makes player look in correct direction
         LookingDirection();
@@ -82,10 +67,11 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
         else
         {
             CurrentlyTrackingPlayer = false;
-            trackingOffCliff = false;
-            trackingButNotMove = false;
+            TrackingOffCliff = false;
+            TrackingButNotMove = false;
             // If stop tracking player but still at cliff edge, flip direction
-            if (cliffDetectionZone.detectedColliders.Count == 0)
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (cliffDetectionZone.detectedColliders.Count == 0 && touchingDirections.IsGrounded)
             {
                 lookDirection = -1 * lookDirection;
                 moveDirection = lookDirection;
@@ -93,12 +79,12 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
             }
         }
         // Turns off tracking off cliff if there is no longer a cliff detected, used when turning the enemy away from cliff
-        if (trackingOffCliff && cliffDetectionZone.detectedColliders.Count > 0) 
-        { 
-            trackingOffCliff = false; 
+        if (TrackingOffCliff && cliffDetectionZone.detectedColliders.Count > 0) 
+        {
+            TrackingOffCliff = false; 
         }
         // Keep enemy looking at player while in track but not move zone
-        if (trackingButNotMove && CanMove && ((transform.position.x - player.transform.position.x > 0 && lookDirection != -1) || (transform.position.x - player.transform.position.x < 0 && lookDirection != 1)))
+        if (TrackingButNotMove && CanMove && ((transform.position.x - player.transform.position.x > 0 && lookDirection != -1) || (transform.position.x - player.transform.position.x < 0 && lookDirection != 1)))
         {
             lookDirection *= -1;
         }
@@ -113,7 +99,7 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
                 yVelocity = 0;
             }
             // Stops enemy from moving if they are within a small proximity of the player
-            else if (trackingButNotMove && touchingDirections.IsGrounded)
+            else if (TrackingButNotMove && touchingDirections.IsGrounded)
             {
                 moveDirection = 0;
                 yVelocity = 0;
@@ -187,19 +173,6 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
         }
     }
 
-    // Allows specific processes to be coded in to happen once a cooldown ends
-    public void CooldownEndProcess(string key)
-    {
-        if (key == "attackLockTime")
-        {
-            CanMove = true;
-        }
-        if (key == "invulnerableOnHitTime")
-        {
-            controller.IsInvulnerable = false;
-        }
-    }
-
     public void LookingDirection()
     {
         if (moveDirection == 1 && lookDirection != 1)
@@ -240,11 +213,11 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
         // Once in a set x distance of the player, continue tracking them but stand still
         if (Math.Abs(transform.position.x - player.transform.position.x) <= controller.trackButNotMoveProximity)
         {
-            trackingButNotMove = true;
+            TrackingButNotMove = true;
         }
         else
         {
-            trackingButNotMove = false;
+            TrackingButNotMove = false;
         }
     }
 
@@ -254,10 +227,16 @@ public class KnightPathfinding : MonoBehaviour, UsesCooldown
     {
         if (cooldownHandler.timerStatusDict["attackCooldown"] == 0 && CanAttack)
         {
+            // Start cooldowns, tell animator an attack has occured and lock movement temporarily
             cooldownHandler.timerStatusDict["attackCooldown"] = 1;
             cooldownHandler.timerStatusDict["attackLockTime"] = 1;
             animator.SetTrigger("attacked");
             CanMove = false;
         }
+    }
+
+    public void Deactivate()
+    {
+        this.enabled = false;
     }
 }

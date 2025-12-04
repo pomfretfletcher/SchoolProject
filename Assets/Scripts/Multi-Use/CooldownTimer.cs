@@ -12,7 +12,6 @@ public class CooldownTimer : MonoBehaviour
     public Dictionary<string, int> timerStatusDict = new Dictionary<string, int>();
     public Dictionary<string, UsesCooldown> scriptUsing = new Dictionary<string, UsesCooldown> {};
 
-    // Used for knowing how many cooldowns to loop through
     private int cooldownCount;
     // Stores the keys of the dictionaries, in order to be able to loop through
     public List<string> cooldownKeys;
@@ -31,7 +30,7 @@ public class CooldownTimer : MonoBehaviour
             timerDict.Add(key, 0); 
             timerStatusDict.Add(key, 0);
             scriptUsing.Add(key, usingScript);
-            cooldownCount += 1;
+            cooldownCount++;
         }
     }
 
@@ -53,7 +52,7 @@ public class CooldownTimer : MonoBehaviour
                 timerDict[currentKey] = duration + Time.deltaTime;
             }
             // If the timer has reached past the relevant cooldown, the timer is reset, the active status is set to 0 (false). This allows the relevant ability/action to be used again
-            if (duration >= cooldown)
+            if (duration >= cooldown && status == 1)
             {
                 timerDict[currentKey] = 0;
                 timerStatusDict[currentKey] = 0;

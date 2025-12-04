@@ -22,7 +22,7 @@ TagManager:
   - Non-Collidable
   - Pickup
   - Cliff Detection Zone
-  - 
+  - Attack Detection Zone
   - 
   - 
   - 
@@ -50,6 +50,9 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: AbilityIcon
+    uniqueID: 1758109757
     locked: 0
   m_RenderingLayers:
   - Default

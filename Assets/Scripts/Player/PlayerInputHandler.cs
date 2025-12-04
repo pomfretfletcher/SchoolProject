@@ -10,7 +10,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerInputHandler : MonoBehaviour, UsesCooldown
+public class PlayerInputHandler : MonoBehaviour, LogicScript
 {
     // Script + Component Links
     PlayerController controller;
@@ -21,30 +21,25 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
     CooldownTimer cooldownHandler;
     ProjectileLauncher projectileLauncher;
 
-    //
+    // Private variables for internal logic
     private int currentDashDirection = 1;
     private int lookDirection = 1;
     private int attackCombo = 0;
     private float xVelocity;
     private float yVelocity;
-
-    // Input Variables
-    Vector2 moveInput;
+    private Vector2 moveInput;
 
     // States
-    public bool IsMoving { get { return isMoving; } private set { isMoving = value; animator.SetBool("isMoving", value); } }
+    public bool IsMoving { get { return isMoving; } set { isMoving = value; animator.SetBool("isMoving", value); } }
+    public bool IsDashing { get { return isDashing; } set { isDashing = value; animator.SetBool("isDashing", value); } }
+    [Header("States")]
     [SerializeField]
     private bool isMoving = false;
-    public bool IsDashing { get { return isDashing; } private set { isDashing = value; animator.SetBool("isDashing", value); } }
     [SerializeField]
     private bool isDashing = false;
-    public bool CanMove { get { return canMove;  } private set { canMove = value; } }
-    [SerializeField]
-    private bool canMove = true;
-    public bool CanAttack { get { return canAttack; } private set { canAttack = value; } }
-    [SerializeField]
-    private bool canAttack = true;
-
+    public bool CanMove = true;
+    public bool CanAttack = true;
+    
     void Awake()
     {
         // Grabs all linked scripts + components
@@ -57,21 +52,10 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         projectileLauncher = GetComponent<ProjectileLauncher>();
     }
 
-    void Start()
-    {
-        //
-        List<string> keyList = new List<string> {"jumpCooldown", "dodgeCooldown", "dashLockTime", "meleeAttackCooldown", "rangedAttackCooldown", "invulnerableOnHitTime", "projectileFireDelay", "comboTime" };
-        List<float> lengthList = new List<float> { controller.jumpCooldown, controller.dodgeCooldown, controller.dashLockTime, controller.meleeAttackCooldown, controller.rangedAttackCooldown, controller.invulnerableOnHitTime, controller.projectileFireDelay, controller.comboTime };
-        cooldownHandler.SetupTimers(keyList, lengthList, this);
-    }
-
     void FixedUpdate()
     {
         // Checks Collisions with Level
         touchingDirections.CheckCollisions();
-
-        // Cooldown Timer logic
-        cooldownHandler.CheckCooldowns();
 
         // Makes player look in correct direction
         LookingDirection();
@@ -108,29 +92,6 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         // Updates the animator's yVelocity value for air state animations
         animator.SetFloat("yVelocity", rigidbody.linearVelocityY);
     }
-    
-    // Allows specific processes to be coded in to happen once a cooldown ends
-    public void CooldownEndProcess(string key) 
-    {
-        if (key == "dashLockTime")
-        {
-            IsDashing = false;
-            controller.IsInvulnerable = false;
-        }
-        if (key == "invulnerableOnHitTime")
-        {
-            // Only reset is invulnerable if not dashing which also keeps us invulnerable
-            if (!IsDashing) 
-            { 
-                controller.IsInvulnerable = false;
-            }
-            
-        }
-        if (key == "projectileFireDelay")
-        {
-            projectileLauncher.SpawnProjectile();
-        }
-    }
 
     public void LookingDirection()
     {
@@ -156,7 +117,7 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
         moveInput = context.ReadValue<Vector2>();
 
         // Sets IsMoving to true or false dependent on input being zero or not
-        IsMoving = moveInput != Vector2.zero;
+        IsMoving = moveInput.x != 0;
     }
 
     public void ExecutePlayerJump(InputAction.CallbackContext context) 
@@ -256,4 +217,9 @@ public class PlayerInputHandler : MonoBehaviour, UsesCooldown
     }
 
     public void ExecutePlayerAbility() { }
+
+    public void Deactivate()
+    {
+        this.enabled = false;
+    }
 }

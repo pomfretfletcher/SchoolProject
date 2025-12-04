@@ -38,9 +38,10 @@ public class EnemyController : MonoBehaviour, UniversalController
     public int runAwayTrackingProximity;
     public float runAwayTime;
 
-    [Header("Invulnerability Variables")]
+    [Header("Misc Variables")]
     public bool isInvulnerable = false;
     public float invulnerableOnHitTime;
+    public float deathDelay;
 
     void Start()
     {
