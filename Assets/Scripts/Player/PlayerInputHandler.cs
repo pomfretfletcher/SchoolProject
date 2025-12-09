@@ -28,6 +28,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
     private float xVelocity;
     private float yVelocity;
     private Vector2 moveInput;
+    public bool invulnerableFromAnotherSource = false;
 
     // States
     public bool IsMoving { get { return isMoving; } set { isMoving = value; animator.SetBool("isMoving", value); } }

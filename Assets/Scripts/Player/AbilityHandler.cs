@@ -45,7 +45,6 @@ public class AbilityHandler : MonoBehaviour
     {
         if (abilityOne != null && cooldownHandler.timerStatusDict["abilityOneCooldown"] == 0)
         {
-            Debug.Log("ability1 part 1 works");
             cooldownHandler.timerStatusDict["abilityOneCooldown"] = 1;
             abilityOne.OnUse();
         }
@@ -54,7 +53,6 @@ public class AbilityHandler : MonoBehaviour
     {
         if (abilityTwo != null && cooldownHandler.timerStatusDict["abilityTwoCooldown"] == 0)
         {
-            Debug.Log("ability2 part 1 works");
             cooldownHandler.timerStatusDict["abilityTwoCooldown"] = 1;
             abilityTwo.OnUse();
         }
@@ -63,7 +61,6 @@ public class AbilityHandler : MonoBehaviour
     {
         if (abilityThree != null && cooldownHandler.timerStatusDict["abilityThreeCooldown"] == 0)
         {
-            Debug.Log("ability3 part 1 works");
             cooldownHandler.timerStatusDict["abilityThreeCooldown"] = 1;
             abilityThree.OnUse();
         }

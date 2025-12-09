@@ -18,7 +18,9 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
     // Private variables for internal logic
     private float distanceToPlayer;
     private float yVelocity;
+    [SerializeField]
     private int lookDirection = 1;
+    [SerializeField]
     private int moveDirection;
 
     // States
@@ -41,7 +43,7 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
         selfCollider = GetComponent<Collider2D>();
         cooldownHandler = GetComponent<CooldownTimer>();
         player = GameObject.Find("Player");
-        cliffDetectionZone = GameObject.Find("CliffDetectionZone").GetComponent<DetectionZone>();
+        cliffDetectionZone = transform.Find("CliffDetectionZone").GetComponent<DetectionZone>();
         projectileLauncher = GetComponent<ProjectileLauncher>();
     }
 
@@ -172,12 +174,11 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
     public void OnCliffDetected()
     {
         // Flip enemy if a cliff is detected, but only every few seconds to avoid erratic and repeated flipping
-        if (!CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["cliffDetectionInterval"] == 0)
+        if (!CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cliffDetectionZone.detectedColliders.Count == 0)
         {
             lookDirection = -1 * lookDirection;
             moveDirection = lookDirection;
             transform.localScale *= new Vector2(-1, 1);
-            cooldownHandler.timerStatusDict["cliffDetectionInterval"] = 1;
         }
     }
 

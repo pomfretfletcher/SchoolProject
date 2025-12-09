@@ -55,7 +55,7 @@ public class DamageBoostPickup : MonoBehaviour, IsConsumable, UsesCooldown
 
     public void CooldownEndProcess(string key)
     {
-        // Reset speed
+        // Reset damage values
         controller.currentMeleeDamage = _prevMeleeDamage;
         controller.currentRangedDamage = _prevRangedDamage;
         // Destroy self

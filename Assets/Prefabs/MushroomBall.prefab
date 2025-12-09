@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1612833285519756856}
   - component: {fileID: 4155877295291441565}
   - component: {fileID: -1603862193274691544}
+  - component: {fileID: 2815010543040387970}
   m_Layer: 10
   m_Name: MushroomBall
   m_TagString: Untagged
@@ -168,3 +169,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   knockback: {x: 0, y: 0}
   moveSpeed: 8
+  lifeLength: 10
+--- !u!114 &2815010543040387970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5519833409699763198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e8a32987c457244aa482c53d42d0b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cooldownKeys: []

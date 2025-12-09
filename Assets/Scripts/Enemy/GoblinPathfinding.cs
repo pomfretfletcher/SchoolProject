@@ -17,7 +17,9 @@ public class GoblinPathfinding : MonoBehaviour, LogicScript
     // Private variables for internal logic
     private float distanceToPlayer;
     private float yVelocity;
+    [SerializeField]
     private int lookDirection = 1;
+    [SerializeField]
     private int moveDirection;
 
     // States
@@ -42,7 +44,7 @@ public class GoblinPathfinding : MonoBehaviour, LogicScript
         selfCollider = GetComponent<Collider2D>();
         cooldownHandler = GetComponent<CooldownTimer>();
         player = GameObject.Find("Player");
-        cliffDetectionZone = GameObject.Find("CliffDetectionZone").GetComponent<DetectionZone>();
+        cliffDetectionZone = transform.Find("CliffDetectionZone").GetComponent<DetectionZone>();
     }
 
     // Fixed Update is called every set interval (about every 0.02 seconds)
@@ -123,7 +125,6 @@ public class GoblinPathfinding : MonoBehaviour, LogicScript
             }
         }
 
-
         // Non tracking movement decisions
         else if (cooldownHandler.timerStatusDict["attackLockTime"] == 0)
         {
@@ -200,12 +201,16 @@ public class GoblinPathfinding : MonoBehaviour, LogicScript
     public void OnCliffDetected()
     {
         // Flip enemy if a cliff is detected, but only every few seconds to avoid erratic and repeated flipping
-        if (!CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["cliffDetectionInterval"] == 0)
+        if (!CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["cliffDetectionInterval"] == 0 && cliffDetectionZone.detectedColliders.Count == 0)
         {
             lookDirection = -1 * lookDirection;
             moveDirection = lookDirection;
             transform.localScale *= new Vector2(-1, 1);
             cooldownHandler.timerStatusDict["cliffDetectionInterval"] = 1;
+        }
+        else if (CurrentlyTrackingPlayer)
+        {
+            TrackingOffCliff = true;
         }
     }
 

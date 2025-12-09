@@ -14,12 +14,7 @@ public class AbilityScript : MonoBehaviour
 
     public void OnUse()
     {
-        Debug.Log("ability part 2 works");
-        bool needToDelete = specificAbilityScript.OnActivation();
-        if (needToDelete)
-        {
-            Destroy(this.gameObject);
-        }
-        Debug.Log("ability part 4 works");
+        // Runs the specific abilities function
+        specificAbilityScript.OnActivation();
     }
 }

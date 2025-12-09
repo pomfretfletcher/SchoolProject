@@ -1,15 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class BallScript : MonoBehaviour, ProjectileScript, UsesCooldown
+public class FireBallScript : MonoBehaviour, UsesCooldown
 {
     // Script + Component Links
-    EnemyController enemyController;
+    FireRain callingScript;
     Rigidbody2D rigidbody;
     CooldownTimer cooldownHandler;
-
-    // Attack Variables
-    public Vector2 knockback = Vector2.zero;
 
     // Movement Variables
     public float moveSpeed;
@@ -20,8 +17,8 @@ public class BallScript : MonoBehaviour, ProjectileScript, UsesCooldown
         // Grabs all linked scripts + components
         rigidbody = GetComponent<Rigidbody2D>();
         cooldownHandler = GetComponent<CooldownTimer>();
-
-        // Setup cooldown for how long ball will last
+        
+        // Setup cooldown for how long fire ball will last
         List<string> keyList = new List<string> { "lifeLength" };
         List<float> lengthList = new List<float> { lifeLength };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
@@ -30,20 +27,10 @@ public class BallScript : MonoBehaviour, ProjectileScript, UsesCooldown
 
     void FixedUpdate()
     {
-        rigidbody.linearVelocityX = moveSpeed;
+        rigidbody.linearVelocityY = -moveSpeed;
         cooldownHandler.CheckCooldowns();
     }
-
-    public void AssignOwner(GameObject owner)
-    {
-        enemyController = owner.GetComponent<EnemyController>();
-    }
-
-    public void FlipDirection()
-    {
-        moveSpeed *= -1;
-    }
-
+    
     public void CooldownEndProcess(string key)
     {
         // Destroys self after a set period of time being alive
@@ -53,18 +40,15 @@ public class BallScript : MonoBehaviour, ProjectileScript, UsesCooldown
     // Stores every collision within the collider
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Calculate knockback
-        Vector2 deliveredKnockback = transform.localScale.x > 0 ? knockback : new Vector2(-knockback.x, knockback.y);
-
         GameObject collisionParent = collision.transform.root.gameObject;
 
         // If player
-        if (collisionParent.gameObject.tag == "Player")
+        if (collisionParent.gameObject.tag == "Enemy")
         {
             // Get hp handler component
             HPHandler hpHandler = collisionParent.GetComponent<HPHandler>();
             // Deal damage through hp handler component
-            hpHandler.TakeDamage(enemyController.rangedDamage);
+            hpHandler.TakeDamage(callingScript.damage);
         }
         // Destroy self
         Destroy(this.gameObject);

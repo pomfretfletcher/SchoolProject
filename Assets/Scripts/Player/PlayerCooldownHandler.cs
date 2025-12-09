@@ -63,16 +63,18 @@ public class PlayerCooldownHandler : MonoBehaviour, UsesCooldown
         if (key == "dashLockTime")
         {
             inputHandler.IsDashing = false;
-            controller.IsInvulnerable = false;
+            if (!inputHandler.invulnerableFromAnotherSource)
+            {
+                controller.IsInvulnerable = false;
+            }
         }
         if (key == "invulnerableOnHitTime")
         {
             // Only reset to invulnerable if not dashing which also keeps us invulnerable
-            if (!inputHandler.IsDashing)
+            if (!inputHandler.IsDashing && !inputHandler.invulnerableFromAnotherSource)
             {
                 controller.IsInvulnerable = false;
             }
-
         }
         if (key == "projectileFireDelay")
         {

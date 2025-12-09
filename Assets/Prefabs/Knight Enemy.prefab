@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8837627627258771421}
   - component: {fileID: 3029541690598201537}
   - component: {fileID: 1934532727921806045}
-  m_Layer: 10
+  m_Layer: 16
   m_Name: AttackDetectionZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -67,7 +67,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   detectedColliders: []
-  zoneType: 2
 --- !u!61 &1934532727921806045
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -172,7 +171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fullHealth: 80
   currentHealth: 0
-  maxSpeed: 5
+  maxSpeed: 7
   currentSpeed: 3
   meleeDamage: 20
   rangedDamage: 0
@@ -388,12 +387,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5d202195a02da341b5dca831b2ea39e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lookDirection: 1
+  moveDirection: 0
   isMoving: 0
-  canMove: 1
-  canAttack: 1
+  CanMove: 1
+  CanAttack: 1
   CurrentlyTrackingPlayer: 0
-  trackingButNotMove: 0
-  trackingOffCliff: 0
+  TrackingButNotMove: 0
+  TrackingOffCliff: 0
 --- !u!114 &5718356393530698385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -579,7 +580,7 @@ MonoBehaviour:
   noCollisionsRemain:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3727741529880963275}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: KnightPathfinding, Assembly-CSharp
         m_MethodName: OnCliffDetected
         m_Mode: 1
@@ -595,7 +596,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   detectedColliders: []
-  zoneType: 1
 --- !u!61 &605902985224340027
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -630,7 +630,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.278157, y: -0.29157567}
+  m_Offset: {x: 0.3, y: -0.28}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -640,7 +640,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.042668015, y: 0.05329597}
+  m_Size: {x: 0.06, y: 0.07}
   m_EdgeRadius: 0
 --- !u!1 &3744578540504295641
 GameObject:
