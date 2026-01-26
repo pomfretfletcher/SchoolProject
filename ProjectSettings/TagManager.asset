@@ -17,7 +17,7 @@ TagManager:
   - Player Hitbox
   - 
   - Enemy Hitbox
-  - 
+  - Door
   - Collidable
   - Non-Collidable
   - Pickup
@@ -39,6 +39,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: DoorBlock
+    uniqueID: 2202279773
+    locked: 0
   - name: Background
     uniqueID: 1754484807
     locked: 0
@@ -47,6 +50,9 @@ TagManager:
     locked: 0
   - name: Collidable
     uniqueID: 3445763413
+    locked: 0
+  - name: Consumables
+    uniqueID: 3422463149
     locked: 0
   - name: Default
     uniqueID: 0

@@ -169,7 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   knockback: {x: 0, y: 0}
   moveSpeed: 8
-  lifeLength: 10
+  travelTime: 8
 --- !u!114 &2815010543040387970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,4 +182,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e8a32987c457244aa482c53d42d0b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visibleLists: []
   cooldownKeys: []

@@ -9,19 +9,16 @@ public class ArrowScript : MonoBehaviour, ProjectileScript, UsesCooldown
     Collider2D selfCollider;
     CooldownTimer cooldownHandler;
 
-    // Attack Variables
+    // Customizable Values
     public Vector2 knockback = Vector2.zero;
-
-    // Movement Variables
     public float moveSpeed;
-
-    public float lifeLength;
+    public float travelTime;
 
     // Private variables/objects for filter
     private ContactFilter2D filter;
     private Collider2D[] results = new Collider2D[16];
 
-    void Awake()
+    private void Awake()
     {
         // Grabs all linked scripts + components
         rigidbody = GetComponent<Rigidbody2D>();
@@ -36,15 +33,15 @@ public class ArrowScript : MonoBehaviour, ProjectileScript, UsesCooldown
         filter.layerMask = 1 << layerIndex;
 
         // Setup cooldown for how long arrow will last
-        List<string> keyList = new List<string> { "lifeLength" };
-        List<float> lengthList = new List<float> { lifeLength };
+        List<string> keyList = new List<string> { "travelTime" };
+        List<float> lengthList = new List<float> { travelTime };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
-        cooldownHandler.timerStatusDict["lifeLength"] = 1;
+        cooldownHandler.timerStatusDict["travelTime"] = 1;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        // Sets speed to move by each frame
+        // Sets speed to move speed each frame
         rigidbody.linearVelocityX = moveSpeed;
 
         // Detects if colliding will wall, if so, deletes self
@@ -53,8 +50,6 @@ public class ArrowScript : MonoBehaviour, ProjectileScript, UsesCooldown
         {
             Destroy(this.gameObject);
         }
-
-        cooldownHandler.CheckCooldowns();
     }
 
     // Used for enemy projectile scripts but needs to be here for the interface to work properly

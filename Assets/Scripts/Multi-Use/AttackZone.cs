@@ -12,11 +12,10 @@ public class AttackZone : MonoBehaviour
     UniversalController controller;
     UniversalController collisionController;
 
-    // Attack Variables
+    // Customizable Values
     public float damageIncrease;
     public Vector2 knockback = Vector2.zero;
 
-    // This is a start rather than awake as the 'current' variables for stuff like melee damage are done within the Awake methods, so we want these to be done after
     private void Awake() 
     {
         // Grabs all linked scripts + components
@@ -26,12 +25,15 @@ public class AttackZone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // Decide what knockback is applied
         Vector2 deliveredKnockback = transform.parent.localScale.x > 0 ? knockback : new Vector2(-knockback.x, knockback.y);
+
+        // Grab the object that is colliding with
         collisionParent = collision.transform.root.gameObject;
-        // See if it can be hit
+        collisionController = collisionParent.GetComponent<UniversalController>();
         HPHandler hpHandler = collisionParent.GetComponent<HPHandler>();
 
-        collisionController = collisionParent.GetComponent<UniversalController>();
+        // If of opposing tags, deal damage to the opponent collider
         if ((collisionParent.gameObject.tag == "Enemy" && parent.gameObject.tag == "Player") || (collisionParent.gameObject.tag == "Player" && parent.gameObject.tag == "Enemy"))
         {
             if (!collisionController.IsInvulnerable)

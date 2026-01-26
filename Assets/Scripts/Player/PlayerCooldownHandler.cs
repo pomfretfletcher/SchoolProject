@@ -10,7 +10,7 @@ public class PlayerCooldownHandler : MonoBehaviour, UsesCooldown
     PlayerInputHandler inputHandler;
     AbilityHandler abilityHandler;
 
-    void Awake()
+    private void Awake()
     {
         // Grabs all linked scripts + components
         cooldownHandler = GetComponent<CooldownTimer>();
@@ -20,11 +20,10 @@ public class PlayerCooldownHandler : MonoBehaviour, UsesCooldown
         abilityHandler = GetComponent<AbilityHandler>();
     }
 
-    void Start()
+    private void Start()
     {
         // Gives cooldown handler necessary values to setup timers
-        List<string> keyList = new List<string> { "jumpCooldown",
-                                                  "dodgeCooldown",
+        List<string> keyList = new List<string> { "dodgeCooldown",
                                                   "dashLockTime",
                                                   "meleeAttackCooldown",
                                                   "rangedAttackCooldown",
@@ -34,9 +33,11 @@ public class PlayerCooldownHandler : MonoBehaviour, UsesCooldown
                                                   "deathDelay",
                                                   "abilityOneCooldown",
                                                   "abilityTwoCooldown",
-                                                  "abilityThreeCooldown" };
-        List<float> lengthList = new List<float> { controller.jumpCooldown,
-                                                   controller.dodgeCooldown,
+                                                  "abilityThreeCooldown",
+                                                  "isMeleeAttacking",
+                                                  "isRangedAttacking"
+                                                  };
+        List<float> lengthList = new List<float> { controller.dodgeCooldown,
                                                    controller.dashLockTime,
                                                    controller.meleeAttackCooldown,
                                                    controller.rangedAttackCooldown,
@@ -46,15 +47,11 @@ public class PlayerCooldownHandler : MonoBehaviour, UsesCooldown
                                                    controller.deathDelay,
                                                    0,   // Filler for ability cooldowns
                                                    0,   // Filler for ability cooldowns
-                                                   0    // Filler for ability cooldowns
+                                                   0,   // Filler for ability cooldowns
+                                                   1,   // Filler for how long melee attack is going on
+                                                   1.2f // Filler for how long ranged attack is going on
                                                    };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
-    }
-
-    void FixedUpdate()
-    {
-        // Updates cooldown progress
-        cooldownHandler.CheckCooldowns();
     }
 
     // Allows specific processes to be coded in to happen once a cooldown ends
@@ -98,6 +95,17 @@ public class PlayerCooldownHandler : MonoBehaviour, UsesCooldown
         {
             // Used for setting ability sprite to full brightness once timer finished
             abilityHandler.SetTimerProgression(3);
+        }
+        if (key == "isMeleeAttacking")
+        {
+            // Used for preventing melee or ranged attacking while in the other
+            inputHandler.isMeleeAttacking = false;
+        }
+        if (key == "isRangedAttacking")
+        {
+            // Used for preventing melee or ranged attacking while in the other
+            inputHandler.isRangedAttacking = false;
+            inputHandler.CanMove = true;
         }
     }
 }

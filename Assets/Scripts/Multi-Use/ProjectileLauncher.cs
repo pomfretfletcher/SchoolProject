@@ -5,11 +5,12 @@ public class ProjectileLauncher : MonoBehaviour
     // Script + Component Links
     private ProjectileScript projectileController;
 
-    // Projectile to be fired, able to be assigned in inspector
+    // Fired Projectile - Assigned in inspector
     public GameObject projectile;
     
-    // Private internal logic variables
+    // Internal Logic Variables
     private float angle;
+    private float offset;
 
     public void SpawnProjectile()
     {
@@ -17,14 +18,16 @@ public class ProjectileLauncher : MonoBehaviour
         if (transform.localScale.x < 0)
         {
             angle = 135f;
+            offset = -0.5f;
         }
         else
         {
             angle = -45f;
+            offset = 0.5f;
         }
 
         // Creates the firing projectile
-        GameObject firedProjectile = Instantiate(projectile, new Vector3(transform.position.x + 0.3f, transform.position.y, transform.position.z), Quaternion.Euler(0, 0, angle));
+        GameObject firedProjectile = Instantiate(projectile, new Vector3(transform.position.x + offset, transform.position.y - 0.1f, transform.position.z), Quaternion.Euler(0, 0, angle));
 
         // Flips projectile if needed
         projectileController = firedProjectile.GetComponent<ProjectileScript>();

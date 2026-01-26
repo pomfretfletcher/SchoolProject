@@ -4,11 +4,16 @@ public class ConsumableScript : MonoBehaviour
 {
     // Script + Component Links
     IsConsumable consumableSpecificScript;
+    VisualAndSoundEffectHandling vsfxHandler;
 
-    void Awake()
+    // Audio clip that will be played when the consumable is collected - assigned in inspector
+    public AudioClip pickupSound;
+
+    private void Awake()
     {
         // Grabs all linked scripts + components
         consumableSpecificScript = GetComponent<IsConsumable>();
+        vsfxHandler = GameObject.Find("GameHandler").GetComponent<VisualAndSoundEffectHandling>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -21,5 +26,8 @@ public class ConsumableScript : MonoBehaviour
             // Destroy self
             Destroy(this.gameObject);
         }
+
+        // Play sound if avaiable and if picked up
+        if (pickupSound != null && consumableSpecificScript.PickedUp == true) { vsfxHandler.PlaySound(pickupSound, 1f); }
     }
 }

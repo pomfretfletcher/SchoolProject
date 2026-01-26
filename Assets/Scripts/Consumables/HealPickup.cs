@@ -6,8 +6,14 @@ public class HealPickup : MonoBehaviour, IsConsumable
     PlayerController controller;
     HPHandler hpHandler;
 
-    // Amount the player will be healed on pickup
+    // Interface Cast Variables
+    public bool PickedUp { get => pickedUp; set => pickedUp = value; }
+
+    // Customizable Values
     public float healAmount;
+
+    // Internal Logic Variables
+    private bool pickedUp = false;
 
     private void Awake()
     {
@@ -23,7 +29,9 @@ public class HealPickup : MonoBehaviour, IsConsumable
         if (controller.currentHealth < controller.fullHealth)
         {
             hpHandler.HealDamage(healAmount);
+
             // Returns true if picked up
+            pickedUp = true;
             return true;
         }
         else

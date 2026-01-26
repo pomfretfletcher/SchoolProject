@@ -15,7 +15,7 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
     CooldownTimer cooldownHandler;
     ProjectileLauncher projectileLauncher;
 
-    // Private variables for internal logic
+    // Internal Logic Variables
     private float distanceToPlayer;
     private float yVelocity;
     [SerializeField]
@@ -33,7 +33,7 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
     public bool CurrentlyTrackingPlayer = false;
     public bool RunAwayTracking = false;
 
-    void Awake()
+    private void Awake()
     {
         // Grabs all linked scripts + components
         rigidbody = GetComponent<Rigidbody2D>();
@@ -48,7 +48,7 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
     }
 
     // Fixed Update is called every set interval (about every 0.02 seconds)
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         // Checks envionmental collisions
         touchingDirections.CheckCollisions();
@@ -92,7 +92,7 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
                 lookDirection = player.transform.position.x > selfCollider.transform.position.x ? 1 : -1;
             }
 
-            if (cooldownHandler.timerStatusDict["attackCooldown"] == 0)
+            if (cooldownHandler.timerStatusDict["attackCooldown"] == 0 && !RunAwayTracking)
             {
                 ExecuteEnemyAttack();
             }

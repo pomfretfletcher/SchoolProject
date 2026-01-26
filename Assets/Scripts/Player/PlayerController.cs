@@ -29,7 +29,6 @@ public class PlayerController : MonoBehaviour, UniversalController
     public float currentRangedDamage;
 
     [Header("Movement Cooldowns")]
-    public float jumpCooldown;
     public float dodgeCooldown;
     public float dashLockTime;
 

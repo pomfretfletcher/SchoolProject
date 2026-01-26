@@ -7,18 +7,18 @@ public class DetectionZone : MonoBehaviour
     // Script + Component Links
     private Collider2D selfCollider;
 
-    [Header("Unity Events")]
+    // Unity Events called by detections
     public UnityEvent newCollision;
     public UnityEvent noCollisionsRemain;
     public UnityEvent collisionStay;
 
-    // Private variables/objects for dealing with collision layer filtering
+    // Internal Logic Variables
+        // Filtering
     private ContactFilter2D filter;
     private ContactFilter2D playerFilter;
     private Collider2D[] tempResults = new Collider2D[16];
     public List<Collider2D> detectedColliders = new List<Collider2D>();
-
-    // Private variables to store current state of collision logic
+        // Misc/Player Interaction
     private bool hasCollisions = false;
     private bool playerSeen = false;
 

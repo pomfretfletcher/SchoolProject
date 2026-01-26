@@ -9,10 +9,16 @@ public class SpeedPickup : MonoBehaviour, IsConsumable, UsesCooldown
     Collider2D collider;
     CooldownTimer cooldownHandler;
 
-    // Amount the player will be healed on pickup
+    // Interface Cast Variables
+    public bool PickedUp { get => pickedUp; set => pickedUp = value; }
+
+    // Customizable Values
     public float speedBoostPercentage;
     public float speedBoostLength;
+
+    // Internal Logic Variables
     private float _prevSpeed;
+    private bool pickedUp = false;
 
     private void Awake()
     {
@@ -36,18 +42,20 @@ public class SpeedPickup : MonoBehaviour, IsConsumable, UsesCooldown
     {
         // Stores initial speed variable to reset to after buff finishes
         _prevSpeed = controller.currentSpeed;
+
         // Increase player speed
         controller.currentSpeed *= (1 + speedBoostPercentage);
+
+        // Make sprite invisible
         renderer.enabled = false;
         collider.enabled = false;
+
+        // Starts timer for how long effect will last
         cooldownHandler.timerStatusDict["speedBoostLength"] = 1;
-        // Tells general pickup script to not delete the pickup
+
+        // Tells general pickup script it has been picked up and to not delete the pickup
+        pickedUp = true;
         return false;
-    }
-    
-    public void FixedUpdate() 
-    {
-        cooldownHandler.CheckCooldowns();
     }
 
     public void CooldownEndProcess(string key)

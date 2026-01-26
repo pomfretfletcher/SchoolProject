@@ -33,9 +33,9 @@ public class EnemyController : MonoBehaviour, UniversalController
     public int cliffDetectionInterval;
 
     [Header("Player Reference Variables")]
-    public int playerRequiredProximity;
-    public int trackButNotMoveProximity;
-    public int runAwayTrackingProximity;
+    public float playerRequiredProximity;
+    public float trackButNotMoveProximity;
+    public float runAwayTrackingProximity;
     public float runAwayTime;
 
     [Header("Misc Variables")]
@@ -43,9 +43,19 @@ public class EnemyController : MonoBehaviour, UniversalController
     public float invulnerableOnHitTime;
     public float deathDelay;
 
-    void Start()
+    private void Start()
     {
         // Sets current values of variables to default values
         currentHealth = fullHealth;
+    }
+
+    public void DifficultyScale(float scale)
+    {
+        // Alter variables relative to the given difficulty scale
+        meleeDamage *= scale;
+        rangedDamage *= scale;
+        currentSpeed *= scale;
+        fullHealth *= scale;
+        currentHealth *= scale;
     }
 }

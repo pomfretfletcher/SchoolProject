@@ -9,9 +9,15 @@ public class DamageBoostPickup : MonoBehaviour, IsConsumable, UsesCooldown
     Collider2D collider;
     CooldownTimer cooldownHandler;
 
-    // Amount the player will be healed on pickup
+    // Interface Cast Variables
+    public bool PickedUp { get => pickedUp; set => pickedUp = value; }
+    private bool pickedUp = false;
+
+    // Customizable Values
     public float damageBoostPercentage;
     public float damageBoostLength;
+
+    // Internal Logic Variables
     private float _prevMeleeDamage;
     private float _prevRangedDamage;
 
@@ -38,19 +44,21 @@ public class DamageBoostPickup : MonoBehaviour, IsConsumable, UsesCooldown
         // Stores initial damage variables to reset to after buff finishes
         _prevMeleeDamage = controller.currentMeleeDamage;
         _prevRangedDamage = controller.currentRangedDamage;
+
         // Increase player damages
         controller.currentMeleeDamage *= (1 + damageBoostPercentage);
         controller.currentRangedDamage *= (1 + damageBoostPercentage);
+
+        // Make sprite invisible
         renderer.enabled = false;
         collider.enabled = false;
-        cooldownHandler.timerStatusDict["damageBoostLength"] = 1;
-        // Tells general pickup script to not delete the pickup
-        return false;
-    }
 
-    public void FixedUpdate()
-    {
-        cooldownHandler.CheckCooldowns();
+        // Starts timer for how long effect will last
+        cooldownHandler.timerStatusDict["damageBoostLength"] = 1;
+        
+        // Tells general pickup script that it has been picked up and to not delete the pickup
+        pickedUp = true;
+        return false;
     }
 
     public void CooldownEndProcess(string key)

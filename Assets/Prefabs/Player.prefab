@@ -944,10 +944,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fullHealth: 100
   currentHealth: 0
-  maxSpeed: 5
-  currentSpeed: 3
-  jumpImpulse: 8
-  dashImpulse: 8
+  maxSpeed: 8
+  currentSpeed: 4
+  jumpImpulse: 9
+  dashImpulse: 10
   minMeleeDamage: 0
   defaultMeleeDamage: 20
   currentMeleeDamage: 0
@@ -958,7 +958,7 @@ MonoBehaviour:
   dodgeCooldown: 3
   dashLockTime: 0.6
   meleeAttackCooldown: 1
-  comboTime: 3
+  comboTime: 2
   rangedAttackCooldown: 3
   projectileFireDelay: 0.7
   isInvulnerable: 0
@@ -976,6 +976,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53f55eaee94bb5648ba640dbf10418bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  invulnerableFromAnotherSource: 0
   isMoving: 0
   isDashing: 0
   CanMove: 1
@@ -992,6 +993,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7fd39a67d014a04a821d23d3ddb880f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitSound: {fileID: 8300000, guid: c2bfa7ca0a854474f969c673d34bdb41, type: 3}
 --- !u!114 &1745691233438173641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1004,9 +1006,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff8a6d87b64282408cf6206b7f87c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  abilityOneCooldown: 0
-  abilityTwoCooldown: 0
-  abilityThreeCooldown: 0
+  abilityOne: {fileID: 0}
+  abilityTwo: {fileID: 0}
+  abilityThree: {fileID: 0}
 --- !u!212 &8867262513154422310
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1271,6 +1273,54 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 146d553e-9f96-40e7-b244-d4f87dd62f5e
     m_ActionName: 'Player/RangedAttack[/Mouse/rightButton,/Keyboard/f]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1745691233438173641}
+        m_TargetAssemblyTypeName: AbilityHandler, Assembly-CSharp
+        m_MethodName: UseAbilityOne
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 6003b237-84f9-4184-8955-0a7d09e766c5
+    m_ActionName: 'Player/AbilityOne[/Keyboard/1]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1745691233438173641}
+        m_TargetAssemblyTypeName: AbilityHandler, Assembly-CSharp
+        m_MethodName: UseAbilityTwo
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 30efee81-b68f-4478-bf32-41e0e89553cd
+    m_ActionName: 'Player/AbilityTwo[/Keyboard/2]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1745691233438173641}
+        m_TargetAssemblyTypeName: AbilityHandler, Assembly-CSharp
+        m_MethodName: UseAbilityThree
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 1c12690f-a5a5-4635-b508-8b28cf4c3951
+    m_ActionName: 'Player/AbilityThree[/Keyboard/3]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player

@@ -8,7 +8,7 @@ public class GoblinCooldownHandler : MonoBehaviour, UsesCooldown
     EnemyController controller;
     GoblinPathfinding pathfindingScript;
 
-    void Awake()
+    private void Awake()
     {
         // Grabs all linked scripts + components
         cooldownHandler = GetComponent<CooldownTimer>();
@@ -16,7 +16,7 @@ public class GoblinCooldownHandler : MonoBehaviour, UsesCooldown
         pathfindingScript = GetComponent<GoblinPathfinding>();
     }
 
-    void Start()
+    private void Start()
     {
         // Gives cooldown handler necessary values to setup timers
         List<string> keyList = new List<string> { "attackCooldown",
@@ -32,12 +32,6 @@ public class GoblinCooldownHandler : MonoBehaviour, UsesCooldown
                                                    controller.deathDelay,
                                                    controller.runAwayTime };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
-    }
-
-    void FixedUpdate()
-    {
-        // Updates cooldown progress
-        cooldownHandler.CheckCooldowns();
     }
 
     // Allows specific processes to be coded in to happen once a cooldown ends

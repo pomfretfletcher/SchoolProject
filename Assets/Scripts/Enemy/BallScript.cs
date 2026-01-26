@@ -6,36 +6,54 @@ public class BallScript : MonoBehaviour, ProjectileScript, UsesCooldown
     // Script + Component Links
     EnemyController enemyController;
     Rigidbody2D rigidbody;
+    Collider2D selfCollider;
     CooldownTimer cooldownHandler;
 
-    // Attack Variables
+    // Customizable Values
     public Vector2 knockback = Vector2.zero;
-
-    // Movement Variables
     public float moveSpeed;
-    public float lifeLength;
+    public float travelTime;
 
-    void Awake()
+    // Private variables/objects for filter
+    private ContactFilter2D filter;
+    private Collider2D[] results = new Collider2D[16];
+
+    private void Awake()
     {
         // Grabs all linked scripts + components
         rigidbody = GetComponent<Rigidbody2D>();
         cooldownHandler = GetComponent<CooldownTimer>();
 
+        // Sets up filter for collisions with walls
+        filter = new ContactFilter2D();
+        filter.useLayerMask = true;
+        int layerIndex = LayerMask.NameToLayer("Collidable");
+        filter.layerMask = 1 << layerIndex;
+
         // Setup cooldown for how long ball will last
-        List<string> keyList = new List<string> { "lifeLength" };
-        List<float> lengthList = new List<float> { lifeLength };
+        List<string> keyList = new List<string> { "travelTime" };
+        List<float> lengthList = new List<float> { travelTime };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
-        cooldownHandler.timerStatusDict["lifeLength"] = 1;
+        cooldownHandler.timerStatusDict["travelTime"] = 1;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
+        // Make sure speed is always set to the move speed
         rigidbody.linearVelocityX = moveSpeed;
-        cooldownHandler.CheckCooldowns();
+
+        // Detects if colliding will wall, if so, deletes self
+        int count = selfCollider.Overlap(filter, results);
+        if (count > 0)
+        {
+            Debug.Log("destroying1");
+            Destroy(this.gameObject);
+        }
     }
 
     public void AssignOwner(GameObject owner)
     {
+        // Need to set owner of the projectile for enemies, as we can't just search for "player"
         enemyController = owner.GetComponent<EnemyController>();
     }
 
@@ -66,6 +84,7 @@ public class BallScript : MonoBehaviour, ProjectileScript, UsesCooldown
             // Deal damage through hp handler component
             hpHandler.TakeDamage(enemyController.rangedDamage);
         }
+
         // Destroy self
         Destroy(this.gameObject);
     }

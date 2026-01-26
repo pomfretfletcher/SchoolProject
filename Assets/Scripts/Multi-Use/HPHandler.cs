@@ -9,14 +9,19 @@ public class HPHandler : MonoBehaviour
     LogicScript logicScript;
     CooldownTimer cooldownHandler;
     Animator animator;
+    VisualAndSoundEffectHandling vsfxHandler;
 
-    void Awake()
+    // Sound played when entity hit - assigned in inspector
+    public AudioClip hitSound;
+
+    private void Awake()
     {
         // Grabs all linked scripts + components
         controller = GetComponent<UniversalController>();
         logicScript = GetComponent<LogicScript>();
         animator = GetComponent<Animator>();
         cooldownHandler = GetComponent<CooldownTimer>();
+        vsfxHandler = GameObject.Find("GameHandler").GetComponent<VisualAndSoundEffectHandling>();
     }
 
     public void TakeDamage(float damageDealt) 
@@ -39,6 +44,8 @@ public class HPHandler : MonoBehaviour
                 logicScript.Deactivate();
             }
         }
+
+        if (hitSound != null) { vsfxHandler.PlaySound(hitSound, 2f); }
     }
 
     public void HealDamage(float damageHealed) 

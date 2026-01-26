@@ -5,9 +5,15 @@ public class DamageupPowerup : MonoBehaviour, IsConsumable
     // Script + Component Links
     PlayerController controller;
 
-    // Amount the player's health will be increased by at pickup
+    // Interface Cast Variables
+    public bool PickedUp { get => pickedUp; set => pickedUp = value; }
+
+    // Cusytomizable Values
     public float damageupAmount;
     public float damageupPercent;
+
+    // Internal Logic Variables
+    private bool pickedUp = false;
 
     private void Awake()
     {
@@ -18,19 +24,21 @@ public class DamageupPowerup : MonoBehaviour, IsConsumable
     // Called by pickup script when this pickup is collected
     public bool OnPickup()
     {
-        Debug.Log((controller.currentMeleeDamage, controller.currentRangedDamage));
+        // If a set value increase
         if (damageupAmount > 0)
         {
             controller.currentMeleeDamage += damageupAmount;
             controller.currentRangedDamage += damageupAmount;
         }
+        // If a percentage value increase
         else
         {
             controller.currentMeleeDamage *= (1 + damageupPercent);
             controller.currentRangedDamage *= (1 + damageupPercent);
         }
 
-        // Tells the generic pickup script to delete this object
+        // Tells the generic pickup script that has been picked up and to delete this object
+        pickedUp = true;
         return true;
     }
 }

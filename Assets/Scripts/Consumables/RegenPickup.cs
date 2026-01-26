@@ -9,10 +9,16 @@ public class RegenPickup : MonoBehaviour, IsConsumable, UsesCooldown
     Collider2D collider;
     CooldownTimer cooldownHandler;
 
-    // Amount the player will be healed on pickup
+    // Interface Cast Variables
+    public bool PickedUp { get => pickedUp; set => pickedUp = value; }
+
+    // Customizable Values
     public float regenAmount;
     public float timesToRegen;
     public float regenInterval;
+
+    // Internal Logic Variables
+    private bool pickedUp = false;
 
     private void Awake()
     {
@@ -43,30 +49,32 @@ public class RegenPickup : MonoBehaviour, IsConsumable, UsesCooldown
             // Make invisible and uncollidable so act as a background buff
             renderer.enabled = false;
             collider.enabled = false;
-        }
 
+            // Tell general script it has been picked up
+            pickedUp = true; 
+        }
+       
         // Tells general pickup script to not delete the pickup
         return false;
-    }
-
-    public void FixedUpdate()
-    {
-        cooldownHandler.CheckCooldowns();
     }
 
     public void CooldownEndProcess(string key)
     {
         // Gain health equal to regen amount
         controller.currentHealth += regenAmount;
+
+        // Default to full health if healed above
         if (controller.currentHealth > controller.fullHealth)
         {
-            // Default to full health if healed above
             controller.currentHealth = controller.fullHealth;
         }
+
         // Restart interval timer
         cooldownHandler.timerStatusDict["regenInterval"] = 1;
+
         // Decrements how many times left to heal
         timesToRegen--;
+
         // Destroys self if regened the right amount of times
         if (timesToRegen == 0)
         {

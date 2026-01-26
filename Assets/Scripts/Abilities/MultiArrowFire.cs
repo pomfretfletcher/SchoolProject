@@ -2,24 +2,30 @@ using UnityEngine;
 
 public class MultiArrowFire : MonoBehaviour, IsAbility
 {
-    public GameObject projectile;
-    private ProjectileScript projectileController;
+    // Script + Component Links
+    ProjectileScript projectileController;
     GameObject player;
 
     // Customizable Values
     public int arrowCount;
     public float fireRange;
 
+    // The arrow that will be fired - assigned in inspector
+    public GameObject projectile;
+
     // Private internal logic variables
     private float angle;
 
-    void Awake()
+    private void Awake()
     {
         // Grabs all linked scripts + components
         player = GameObject.Find("Player");
     }
 
-    public void OnActivation() { FireArrows(); }
+    public void OnActivation() 
+    { 
+        FireArrows(); 
+    }
     
     public void FireArrows()
     {
@@ -41,7 +47,7 @@ public class MultiArrowFire : MonoBehaviour, IsAbility
             GameObject firedProjectile = Instantiate(projectile, new Vector3(player.transform.position.x + 0.5f, currentFirePosition, player.transform.position.z), Quaternion.Euler(0, 0, angle));
             
             // Seperates each arrow evenly across the fire range
-            currentFirePosition -= (fireRange / arrowCount);
+            currentFirePosition -= (fireRange / (arrowCount - 1));
             
             // Flips fired projectile if needed
             if (angle == 135f) 

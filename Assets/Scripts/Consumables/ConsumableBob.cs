@@ -2,20 +2,23 @@ using UnityEngine;
 
 public class ConsumableBob : MonoBehaviour
 {
-    //[Header("Bobbing Settings")]
-    public float amplitude = 0.25f;   // How high it moves
-    public float frequency = 1.5f;    // How fast it moves
+    // Customizable Values
+    public float amplitude = 0.25f;  
+    public float frequency = 1.5f; 
 
+    // Private internal logic variables
     private Vector3 startPos;
+    private float yOffset;
 
-    void Start()
+    private void Start()
     {
+        // Store the start position of the consumable, used for the bob calculation
         startPos = transform.position;
     }
 
-    void Update()
+    private void FixedUpdate()
     {
-        float yOffset = Mathf.Sin(Time.time * frequency) * amplitude;
+        yOffset = Mathf.Sin(Time.time * frequency) * amplitude;
         transform.position = startPos + new Vector3(0, yOffset, 0);
     }
 }

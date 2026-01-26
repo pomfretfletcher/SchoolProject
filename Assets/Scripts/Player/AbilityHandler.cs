@@ -4,9 +4,11 @@ using System.Collections.Generic;
 
 public class AbilityHandler : MonoBehaviour
 {
+    // Script + Component Links
     CooldownTimer cooldownHandler;
+    PlayerInputHandler playerInputHandler;
 
-    // Ability Storage Variables
+    // Stores the player's current abilities - can also be assigned in inspector for testing
     public AbilityScript abilityOne;
     public AbilityScript abilityTwo;
     public AbilityScript abilityThree;
@@ -15,12 +17,14 @@ public class AbilityHandler : MonoBehaviour
     public void ChangeAbilities(object newAbility, int slotToChange) { }
     public void RemoveAbilities(int slotToRemove) { }
 
-    void Awake()
+    private void Awake()
     {
+        // Grabs all linked scripts + components
         cooldownHandler = GetComponent<CooldownTimer>();
+        playerInputHandler = GetComponent<PlayerInputHandler>();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         // Updates each cooldown to keep in sync with the ability object
         if (abilityOne != null) { cooldownHandler.cooldownDict["abilityOneCooldown"] = abilityOne.cooldown; }
@@ -43,7 +47,7 @@ public class AbilityHandler : MonoBehaviour
 
     public void UseAbilityOne(InputAction.CallbackContext context)
     {
-        if (abilityOne != null && cooldownHandler.timerStatusDict["abilityOneCooldown"] == 0)
+        if (abilityOne != null && cooldownHandler.timerStatusDict["abilityOneCooldown"] == 0 && playerInputHandler.CanUseAbilities)
         {
             cooldownHandler.timerStatusDict["abilityOneCooldown"] = 1;
             abilityOne.OnUse();
@@ -51,7 +55,7 @@ public class AbilityHandler : MonoBehaviour
     }
     public void UseAbilityTwo(InputAction.CallbackContext context)
     {
-        if (abilityTwo != null && cooldownHandler.timerStatusDict["abilityTwoCooldown"] == 0)
+        if (abilityTwo != null && cooldownHandler.timerStatusDict["abilityTwoCooldown"] == 0 && playerInputHandler.CanUseAbilities)
         {
             cooldownHandler.timerStatusDict["abilityTwoCooldown"] = 1;
             abilityTwo.OnUse();
@@ -59,7 +63,7 @@ public class AbilityHandler : MonoBehaviour
     }
     public void UseAbilityThree(InputAction.CallbackContext context)
     {
-        if (abilityThree != null && cooldownHandler.timerStatusDict["abilityThreeCooldown"] == 0)
+        if (abilityThree != null && cooldownHandler.timerStatusDict["abilityThreeCooldown"] == 0 && playerInputHandler.CanUseAbilities)
         {
             cooldownHandler.timerStatusDict["abilityThreeCooldown"] = 1;
             abilityThree.OnUse();

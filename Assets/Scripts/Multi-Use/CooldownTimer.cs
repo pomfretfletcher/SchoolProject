@@ -6,31 +6,54 @@ public class CooldownTimer : MonoBehaviour
     // Script + Component Links
     UsesCooldown usingScript;
 
-    // Dictionaries
+    // Dictionaries for Cooldown Storage
     public Dictionary<string, float> cooldownDict = new Dictionary<string, float>();
     public Dictionary<string, float> timerDict = new Dictionary<string, float>();
     public Dictionary<string, int> timerStatusDict = new Dictionary<string, int>();
     public Dictionary<string, UsesCooldown> scriptUsing = new Dictionary<string, UsesCooldown> {};
+    public List<StringList> visibleLists = new List<StringList>();
 
+    // Internal Logic Variables
     private int cooldownCount;
-    // Stores the keys of the dictionaries, in order to be able to loop through
     public List<string> cooldownKeys;
-    // Stores the current key being used to access dictionaries
     private string currentKey;
 
+    private void FixedUpdate()
+    {
+        CheckCooldowns();
+        UpdateVisibleLists();
+    }
+
+    // Called by the scripts using cooldowns
     public void SetupTimers(List<string> keys, List<float> lengths, UsesCooldown callingScript)
     {
-        cooldownKeys = keys;
         usingScript = callingScript;
-        for (var i = 0; i < cooldownKeys.Count; i++)
+
+        List<string> completedKeys = new List<string>();
+
+        for (var i = 0; i < keys.Count; i++)
         {
+            // Temp variables for better access
             string key = keys[i];
             float length = lengths[i];
-            cooldownDict.Add(key, length); 
-            timerDict.Add(key, 0); 
-            timerStatusDict.Add(key, 0);
-            scriptUsing.Add(key, usingScript);
+
+            // Setup logic dictionaries
+            cooldownDict[key] = length;
+            timerDict[key] = 0;
+            timerStatusDict[key] = 0;
+            scriptUsing[key] = usingScript;
+
+            // Setup visual list
+            StringList timer = new StringList();
+            timer.objects.Add(key); timer.objects.Add(length.ToString()); timer.objects.Add("0"); timer.objects.Add("False");
+            visibleLists.Add(timer);
+
+            cooldownKeys.Add(key);
+
+            // Iterate to keep count stored for logic
             cooldownCount++;
+
+            completedKeys.Add(key);
         }
     }
 
@@ -61,4 +84,25 @@ public class CooldownTimer : MonoBehaviour
             }
         }
     }
+    
+    private void UpdateVisibleLists()
+    {
+        for (var i = 0; i < visibleLists.Count; i++) 
+        {
+            StringList timer = visibleLists[i];
+            // Length
+            timer.objects[1] = cooldownDict[timer.objects[0]].ToString();
+            // Timer Progression
+            timer.objects[2] = timerDict[timer.objects[0]].ToString();
+            // Timer Status
+            timer.objects[3] = timerStatusDict[timer.objects[0]] == 1 ? "True" : "False";
+        }
+    }
+}
+
+// A custom class designed to allow viewing of 2D arrays in the inspector
+[System.Serializable]
+public class StringList
+{
+    public List<string> objects = new List<string>();
 }

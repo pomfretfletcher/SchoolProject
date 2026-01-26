@@ -8,17 +8,17 @@ public class HealthBar : MonoBehaviour
     PlayerController controller;
     SpriteRenderer renderer;
 
-    // List of all the sprites used to show health levels
+    // List of all the sprites used to show health levels - listed in inspector
     public List<Sprite> sprites = new List<Sprite>();
 
-    void Awake()
+    private void Awake()
     {
         // Grabs all linked scripts + components
         controller = GameObject.Find("Player").GetComponent<PlayerController>();
         renderer = GetComponent<SpriteRenderer>();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         // Calculates what amount of health bar the player has remaining and chooses the most appropiate sprite for said health amount (a sprite every 5 percent)
         // Since there are 20 health levels (not including no health), we multiply it by 20

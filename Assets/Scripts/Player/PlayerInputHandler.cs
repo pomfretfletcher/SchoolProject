@@ -21,13 +21,15 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
     CooldownTimer cooldownHandler;
     ProjectileLauncher projectileLauncher;
 
-    // Private variables for internal logic
+    // Internal Logic Variables
     private int currentDashDirection = 1;
     private int lookDirection = 1;
     private int attackCombo = 0;
     private float xVelocity;
     private float yVelocity;
     private Vector2 moveInput;
+
+    // Internal/External Logic Variables
     public bool invulnerableFromAnotherSource = false;
 
     // States
@@ -40,8 +42,11 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
     private bool isDashing = false;
     public bool CanMove = true;
     public bool CanAttack = true;
+    public bool CanUseAbilities = true;
+    public bool isMeleeAttacking = false;
+    public bool isRangedAttacking = false;
     
-    void Awake()
+    private void Awake()
     {
         // Grabs all linked scripts + components
         rigidbody = GetComponent<Rigidbody2D>();
@@ -53,7 +58,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
         projectileLauncher = GetComponent<ProjectileLauncher>();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         // Checks Collisions with Level
         touchingDirections.CheckCollisions();
@@ -61,7 +66,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
         // Makes player look in correct direction
         LookingDirection();
 
-        // --- Left + Right Movement
+        // Left + Right Movement
             // Only move in response to input if not dashing and you can move
         if (IsDashing && CanMove)
         {
@@ -78,6 +83,12 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
         if (touchingDirections.IsOnWall)
         {
             xVelocity = 0;
+        }
+
+        if (!CanMove)
+        {
+            xVelocity = 0;
+            yVelocity = rigidbody.linearVelocityY;
         }
 
         // Updates the velocity of the player while limiting it to the player's max speed
@@ -124,8 +135,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
     public void ExecutePlayerJump(InputAction.CallbackContext context) 
     {
         // Checks if player is grounded before jumping and the jump is available
-        //if (IsGrounded && timerStatusList[0] == 0 && CanMove)
-        if (touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["jumpCooldown"] == 0 && CanMove)
+        if (touchingDirections.IsGrounded && CanMove)
         {
             rigidbody.linearVelocityY = controller.jumpImpulse;
 
@@ -168,56 +178,74 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
     public void ExecutePlayerMeleeAttack(InputAction.CallbackContext context) 
     {
         // Tell animator to start melee attack animation and starts melee attack cooldown
-        if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack && cooldownHandler.timerStatusDict["comboTime"] == 1)
+        if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack && cooldownHandler.timerStatusDict["comboTime"] == 1 && !isRangedAttacking)
         {
             if (attackCombo == 1)
             {
                 // Starts timer
                 cooldownHandler.timerStatusDict["meleeAttackCooldown"] = 1;
+                cooldownHandler.timerStatusDict["isMeleeAttacking"] = 1;
                 // Resets combotime
                 cooldownHandler.timerDict["comboTime"] = 0;
                 animator.SetTrigger("comboAttack1");
                 attackCombo = 2;
+                isMeleeAttacking = true;
             }
             else if (attackCombo == 2)
             {
                 // Starts timer
                 cooldownHandler.timerStatusDict["meleeAttackCooldown"] = 1;
+                cooldownHandler.timerStatusDict["isMeleeAttacking"] = 1;
                 // Resets combotime
                 cooldownHandler.timerDict["comboTime"] = 0;
                 animator.SetTrigger("comboAttack2");
                 attackCombo = 3;
+                isMeleeAttacking = true;
             }
             else
             {
                 // Finish combo, reset timer and turn it off
                 cooldownHandler.timerDict["comboTime"] = 0;
                 cooldownHandler.timerStatusDict["comboTime"] = 0;
+                attackCombo = 0;
             }
         }
 
         // Regular melee attack
-        if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack && cooldownHandler.timerStatusDict["comboTime"] == 0)
+        if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack && cooldownHandler.timerStatusDict["comboTime"] == 0 && !isRangedAttacking && touchingDirections.IsGrounded)
         {
             cooldownHandler.timerStatusDict["meleeAttackCooldown"] = 1;
+            cooldownHandler.timerStatusDict["isMeleeAttacking"] = 1;
             cooldownHandler.timerStatusDict["comboTime"] = 1;
             animator.SetTrigger("meleeAttacked");
             attackCombo = 1;
+            isMeleeAttacking = true;
+        }
+
+        // Inair melee attack
+        if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack && !isRangedAttacking && !touchingDirections.IsGrounded)
+        {
+            cooldownHandler.timerStatusDict["meleeAttackCooldown"] = 1;
+            cooldownHandler.timerStatusDict["isMeleeAttacking"] = 1;
+            attackCombo = 0;
+            animator.SetTrigger("inAirMeleeAttacked");
+            isMeleeAttacking = true;
         }
     }
 
     public void ExecutePlayerRangedAttack(InputAction.CallbackContext context)
     {
         // Tell animator to start ranged attack animation and starts ranged attack cooldown
-        if (cooldownHandler.timerStatusDict["rangedAttackCooldown"] == 0 && CanAttack)
+        if (cooldownHandler.timerStatusDict["rangedAttackCooldown"] == 0 && CanAttack && !isMeleeAttacking && touchingDirections.IsGrounded)
         {
             cooldownHandler.timerStatusDict["rangedAttackCooldown"] = 1;
+            cooldownHandler.timerStatusDict["isRangedAttacking"] = 1;
             animator.SetTrigger("rangedAttacked");
             cooldownHandler.timerStatusDict["projectileFireDelay"] = 1;
+            CanMove = false;
+            isRangedAttacking = true;
         }
     }
-
-    public void ExecutePlayerAbility() { }
 
     public void Deactivate()
     {

@@ -15,9 +15,10 @@ public class FireRain : MonoBehaviour, IsAbility, UsesCooldown
     public float damage;
     public float timeBetweenLayers;
 
+    // Private internal logic variables
     private int amountOfLayersDone = 0;
 
-    void Awake()
+    private void Awake()
     {
         // Grabs all linked scripts + components
         player = GameObject.Find("Player");
@@ -29,20 +30,16 @@ public class FireRain : MonoBehaviour, IsAbility, UsesCooldown
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
 
-    private void FixedUpdate()
-    {
-        cooldownHandler.CheckCooldowns();
-    }
-
     public void CooldownEndProcess(string key) 
     {
-        Debug.Log((amountOfLayersDone, rainLayers));
+        // If there are still layers to spawn, spawn one and reactivate the timer
         if (amountOfLayersDone < rainLayers)
         {
             RainFire();
             amountOfLayersDone++;
             cooldownHandler.timerStatusDict["timeBetweenLayers"] = 1;
         }
+        // If all layers have been spawned, reset the private layersdone variable to be ready for next activation
         else
         {
             amountOfLayersDone = 0;
@@ -51,10 +48,10 @@ public class FireRain : MonoBehaviour, IsAbility, UsesCooldown
 
     public void OnActivation() 
     {
+        // Spawn a layer of fire and activate the timer that once ended, will spawn another layer
         RainFire();
         amountOfLayersDone++;
         cooldownHandler.timerStatusDict["timeBetweenLayers"] = 1;
-        Debug.Log((amountOfLayersDone, rainLayers, cooldownHandler.timerStatusDict["timeBetweenLayers"]));
     }
 
     public void RainFire()
@@ -64,10 +61,10 @@ public class FireRain : MonoBehaviour, IsAbility, UsesCooldown
         for (var i = 1; i <= ballCount; i++)
         {
             // Creates the firing projectile
-            GameObject firedProjectile = Instantiate(projectile, new Vector3(currentFirePosition, player.transform.position.y + 0.4f, player.transform.position.z), Quaternion.Euler(0, 0, 0));
+            GameObject firedProjectile = Instantiate(projectile, new Vector3(currentFirePosition, player.transform.position.y + 0.7f, player.transform.position.z), Quaternion.Euler(0, 0, 0));
 
             // Seperates each arrow evenly across the fire range
-            currentFirePosition -= (fireRange / ballCount);
+            currentFirePosition -= (fireRange / (ballCount - 1));
         }
     }
 }

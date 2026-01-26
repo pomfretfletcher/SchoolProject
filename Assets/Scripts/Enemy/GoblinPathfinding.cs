@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -14,7 +15,7 @@ public class GoblinPathfinding : MonoBehaviour, LogicScript
     DetectionZone cliffDetectionZone;
     CooldownTimer cooldownHandler;
 
-    // Private variables for internal logic
+    // Internal Logic Variables
     private float distanceToPlayer;
     private float yVelocity;
     [SerializeField]
@@ -48,7 +49,7 @@ public class GoblinPathfinding : MonoBehaviour, LogicScript
     }
 
     // Fixed Update is called every set interval (about every 0.02 seconds)
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         // Checks envionmental collisions
         touchingDirections.CheckCollisions();

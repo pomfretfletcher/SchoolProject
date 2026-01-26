@@ -9,7 +9,7 @@ public class MushroomCooldownHandler : MonoBehaviour, UsesCooldown
     ProjectileLauncher projectileLauncher;
     MushroomPathfinding pathfindingScript;
 
-    void Awake()
+    private void Awake()
     {
         // Grabs all linked scripts + components
         cooldownHandler = GetComponent<CooldownTimer>();
@@ -18,7 +18,7 @@ public class MushroomCooldownHandler : MonoBehaviour, UsesCooldown
         pathfindingScript = GetComponent<MushroomPathfinding>();
     }
 
-    void Start()
+    private void Start()
     {
         // Gives cooldown handler necessary values to setup timers
         List<string> keyList = new List<string> { "attackCooldown",
@@ -36,12 +36,6 @@ public class MushroomCooldownHandler : MonoBehaviour, UsesCooldown
                                                    controller.projectileFireDelay,
                                                    controller.deathDelay };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
-    }
-
-    void FixedUpdate()
-    {
-        // Updates cooldown progress
-        cooldownHandler.CheckCooldowns();
     }
 
     // Allows specific processes to be coded in to happen once a cooldown ends

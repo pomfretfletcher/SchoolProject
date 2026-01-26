@@ -7,13 +7,15 @@ public class TouchingDirections : MonoBehaviour
     public Collider2D collider;
     public Animator animator;
 
-    // Collision Variables
+    // Customizable Variables
     public float groundDistance = 0.05f;
     public float wallDistance = 0.2f;
     public float ceilingDistance = 0.05f;
-    RaycastHit2D[] groundHits = new RaycastHit2D[5];
-    RaycastHit2D[] wallHits = new RaycastHit2D[5];
-    RaycastHit2D[] ceilingHits = new RaycastHit2D[5];
+
+    // Internal Logic Variables
+    private RaycastHit2D[] groundHits = new RaycastHit2D[5];
+    private RaycastHit2D[] wallHits = new RaycastHit2D[5];
+    private RaycastHit2D[] ceilingHits = new RaycastHit2D[5];
     private Vector2 wallCheckDirection;
 
     // Collision States
