@@ -140,7 +140,7 @@ public class RoomCreation : MonoBehaviour
                     GameObject chosenAbility = prefabs[Random.Range(0, prefabs.Length)];
                     GameObject newAbility = Instantiate(chosenAbility, currentNode.transform.position, Quaternion.identity);
                     AbilityScript newAbilityScript = newAbility.GetComponent<AbilityScript>();
-                    newAbilityScript.SetToConsumableMode();
+                    newAbilityScript.SetToConsumableMode(currentNode.transform);
                 }
                 else
                 {
@@ -154,7 +154,7 @@ public class RoomCreation : MonoBehaviour
                     }
                     GameObject newAbility = Instantiate(chosenAbility, currentNode.transform.position, Quaternion.identity);
                     AbilityScript newAbilityScript = newAbility.GetComponent<AbilityScript>();
-                    newAbilityScript.SetToConsumableMode();
+                    newAbilityScript.SetToConsumableMode(currentNode.transform);
                     createdSpecificAbility = true;
                 }
 

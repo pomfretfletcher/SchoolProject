@@ -32,6 +32,7 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
     public bool CanAttack = true;
     public bool CurrentlyTrackingPlayer = false;
     public bool RunAwayTracking = false;
+    public bool isAttacking = false;
 
     private void Awake()
     {
@@ -154,6 +155,9 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
 
     public void LookingDirection()
     {
+        // If enemy can't move, don't change their orientation
+        if (!CanMove) { return; }
+
         if (moveDirection == 1 && lookDirection != 1)
         {
             // Changes look direction to 1 (right)
@@ -207,6 +211,7 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
             cooldownHandler.timerStatusDict["projectileFireDelay"] = 1;
             animator.SetTrigger("attacked");
             CanMove = false;
+            isAttacking = true;
         }
     }
 

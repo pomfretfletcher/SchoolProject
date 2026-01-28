@@ -920,7 +920,7 @@ Transform:
   m_GameObject: {fileID: 7162400331628509368}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.54, y: 7.48, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -954,7 +954,6 @@ MonoBehaviour:
   minRangedDamage: 0
   defaultRangedDamage: 25
   currentRangedDamage: 0
-  jumpCooldown: 1
   dodgeCooldown: 3
   dashLockTime: 0.6
   meleeAttackCooldown: 1
@@ -981,6 +980,9 @@ MonoBehaviour:
   isDashing: 0
   CanMove: 1
   CanAttack: 1
+  CanUseAbilities: 1
+  isMeleeAttacking: 0
+  isRangedAttacking: 0
 --- !u!114 &4470012504855517827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1321,6 +1323,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 1c12690f-a5a5-4635-b508-8b28cf4c3951
     m_ActionName: 'Player/AbilityThree[/Keyboard/3]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f65f46b4-5e74-48f1-b0c4-e301f1741424
+    m_ActionName: 'Player/PickupNewAbility[/Keyboard/p]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 620412f1-794d-4625-a98c-7514f4faef00
+    m_ActionName: 'Player/SwapAbilityOne[/Keyboard/1,/Keyboard/p]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 90fbae1c-e3ef-45dd-882a-a4adcc644b55
+    m_ActionName: 'Player/SwapAbilityTwo[/Keyboard/2,/Keyboard/p]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 38f35b5b-f522-4c17-a9aa-2efb8b6a87c2
+    m_ActionName: 'Player/SwapAbilityThree[/Keyboard/3,/Keyboard/p]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
@@ -1394,6 +1412,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e8a32987c457244aa482c53d42d0b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visibleLists: []
   cooldownKeys: []
 --- !u!114 &5625247384183428240
 MonoBehaviour:

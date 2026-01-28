@@ -29,12 +29,16 @@ public class DamageupPowerup : MonoBehaviour, IsConsumable
         {
             controller.currentMeleeDamage += damageupAmount;
             controller.currentRangedDamage += damageupAmount;
+            controller.prePickupCurrentMeleeDamage += damageupAmount;
+            controller.prePickupCurrentRangedDamage += damageupAmount;
         }
         // If a percentage value increase
         else
         {
             controller.currentMeleeDamage *= (1 + damageupPercent);
             controller.currentRangedDamage *= (1 + damageupPercent);
+            controller.prePickupCurrentMeleeDamage *= (1 + damageupPercent);
+            controller.prePickupCurrentRangedDamage *= (1 + damageupPercent);
         }
 
         // Tells the generic pickup script that has been picked up and to delete this object

@@ -17,10 +17,6 @@ public class DamageBoostPickup : MonoBehaviour, IsConsumable, UsesCooldown
     public float damageBoostPercentage;
     public float damageBoostLength;
 
-    // Internal Logic Variables
-    private float _prevMeleeDamage;
-    private float _prevRangedDamage;
-
     private void Awake()
     {
         // Grabs all linked scripts + components
@@ -41,10 +37,6 @@ public class DamageBoostPickup : MonoBehaviour, IsConsumable, UsesCooldown
     // Called by pickup script when this pickup is collected
     public bool OnPickup()
     {
-        // Stores initial damage variables to reset to after buff finishes
-        _prevMeleeDamage = controller.currentMeleeDamage;
-        _prevRangedDamage = controller.currentRangedDamage;
-
         // Increase player damages
         controller.currentMeleeDamage *= (1 + damageBoostPercentage);
         controller.currentRangedDamage *= (1 + damageBoostPercentage);
@@ -63,9 +55,9 @@ public class DamageBoostPickup : MonoBehaviour, IsConsumable, UsesCooldown
 
     public void CooldownEndProcess(string key)
     {
-        // Reset damage values
-        controller.currentMeleeDamage = _prevMeleeDamage;
-        controller.currentRangedDamage = _prevRangedDamage;
+        // Reset damage values to pre pickup state
+        controller.currentMeleeDamage = controller.prePickupCurrentMeleeDamage;
+        controller.currentRangedDamage = controller.prePickupCurrentRangedDamage;
         // Destroy self
         Destroy(this.gameObject);
     }

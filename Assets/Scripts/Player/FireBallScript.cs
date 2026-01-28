@@ -22,6 +22,7 @@ public class FireBallScript : MonoBehaviour, UsesCooldown
         // Grabs all linked scripts + components
         rigidbody = GetComponent<Rigidbody2D>();
         cooldownHandler = GetComponent<CooldownTimer>();
+        selfCollider = GetComponent<Collider2D>();
 
         // Sets up filter for collisions with walls
         filter = new ContactFilter2D();

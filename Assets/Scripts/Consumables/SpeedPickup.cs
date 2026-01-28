@@ -17,7 +17,6 @@ public class SpeedPickup : MonoBehaviour, IsConsumable, UsesCooldown
     public float speedBoostLength;
 
     // Internal Logic Variables
-    private float _prevSpeed;
     private bool pickedUp = false;
 
     private void Awake()
@@ -40,9 +39,6 @@ public class SpeedPickup : MonoBehaviour, IsConsumable, UsesCooldown
     // Called by pickup script when this pickup is collected
     public bool OnPickup()
     {
-        // Stores initial speed variable to reset to after buff finishes
-        _prevSpeed = controller.currentSpeed;
-
         // Increase player speed
         controller.currentSpeed *= (1 + speedBoostPercentage);
 
@@ -60,8 +56,8 @@ public class SpeedPickup : MonoBehaviour, IsConsumable, UsesCooldown
 
     public void CooldownEndProcess(string key)
     {
-        // Reset speed
-        controller.currentSpeed = _prevSpeed;
+        // Reset speed to pre pickup value
+        controller.currentSpeed = controller.prePickupCurrentSpeed;
         // Destroy self
         Destroy(this.gameObject);
     }

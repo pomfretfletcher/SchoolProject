@@ -107,6 +107,9 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
 
     public void LookingDirection()
     {
+        // If player can't move, don't change their orientation
+        if (!CanMove) { return; }
+
         if (moveInput.x > 0 && lookDirection != 1)
         {
             // Changes look direction to 1 (right)
@@ -190,6 +193,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
                 animator.SetTrigger("comboAttack1");
                 attackCombo = 2;
                 isMeleeAttacking = true;
+                CanMove = false;
             }
             else if (attackCombo == 2)
             {
@@ -201,6 +205,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
                 animator.SetTrigger("comboAttack2");
                 attackCombo = 3;
                 isMeleeAttacking = true;
+                CanMove = false;
             }
             else
             {
@@ -220,6 +225,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
             animator.SetTrigger("meleeAttacked");
             attackCombo = 1;
             isMeleeAttacking = true;
+            CanMove = false;
         }
 
         // Inair melee attack
@@ -230,6 +236,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
             attackCombo = 0;
             animator.SetTrigger("inAirMeleeAttacked");
             isMeleeAttacking = true;
+            CanMove = false;
         }
     }
 

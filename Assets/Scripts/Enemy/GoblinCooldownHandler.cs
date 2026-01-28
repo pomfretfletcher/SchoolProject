@@ -24,13 +24,16 @@ public class GoblinCooldownHandler : MonoBehaviour, UsesCooldown
                                                   "attackLockTime",
                                                   "invulnerableOnHitTime",
                                                   "deathDelay",
-                                                  "runAwayTime" };
+                                                  "runAwayTime",
+                                                  "isAttacking" };
         List<float> lengthList = new List<float> { controller.attackCooldown,
                                                    controller.cliffDetectionInterval,
                                                    controller.attackLockTime,
                                                    controller.invulnerableOnHitTime,
                                                    controller.deathDelay,
-                                                   controller.runAwayTime };
+                                                   controller.runAwayTime,
+                                                   1f // Filler for approx how long attack lasts
+                                                   };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
 
@@ -52,6 +55,11 @@ public class GoblinCooldownHandler : MonoBehaviour, UsesCooldown
         if (key == "runAwayTime")
         {
             pathfindingScript.RunAwayTracking = false;
+        }
+        if (key == "isAttacking")
+        {
+            pathfindingScript.isAttacking = false;
+            pathfindingScript.CanMove = true;
         }
     }
 }

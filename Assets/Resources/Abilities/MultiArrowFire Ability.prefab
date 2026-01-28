@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4890074235976209583}
   - component: {fileID: 732770159847603974}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: AbilityFrame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,8 +73,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -872504147
-  m_SortingLayer: -1
+  m_SortingLayerID: 1758109757
+  m_SortingLayer: 1
   m_SortingOrder: 2
   m_Sprite: {fileID: 690326449882598753, guid: ddfc48b162280d94bbccbcc5ccf82a6a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -101,7 +101,8 @@ GameObject:
   - component: {fileID: 2854894958467490645}
   - component: {fileID: 2687844420433876035}
   - component: {fileID: 8954656113011961146}
-  m_Layer: 0
+  - component: {fileID: 706010421187440903}
+  m_Layer: 17
   m_Name: MultiArrowFire Ability
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -166,8 +167,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -872504147
-  m_SortingLayer: -1
+  m_SortingLayerID: 1758109757
+  m_SortingLayer: 1
   m_SortingOrder: 1
   m_Sprite: {fileID: 4306428143397998654, guid: 647eae4cce3da504abe496e21ef23275, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -206,6 +207,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldown: 6
   timerProgression: 0
+  currentConsumablePosition: {fileID: 0}
 --- !u!114 &2687844420433876035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228,13 +230,50 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2636194977332354177}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 50308b813055c46489da0aea630b0efe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   amplitude: 0.1
   frequency: 1.5
+  startPos: {x: 0, y: 0, z: 0}
+--- !u!58 &706010421187440903
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2636194977332354177}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 2
 --- !u!1 &6668327717414308904
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,7 +284,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6534837661570497701}
   - component: {fileID: 7135485490635618363}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: AbilityFrameBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -308,8 +347,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -872504147
-  m_SortingLayer: -1
+  m_SortingLayerID: 1758109757
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: -1722709858313294491, guid: e6958fcc5cd7374419f004b6c5b5eb24, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

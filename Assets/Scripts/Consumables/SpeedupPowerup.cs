@@ -28,11 +28,13 @@ public class SpeedupPowerup : MonoBehaviour, IsConsumable
         if (speedupAmount > 0)
         {
             controller.currentSpeed += speedupAmount;
+            controller.prePickupCurrentSpeed += speedupAmount;
         }
         // If a percentage value increase
         else
         {
             controller.currentSpeed *= (1 + speedupPercent);
+            controller.prePickupCurrentSpeed *= (1 + speedupPercent);
         }
 
         // Tells the generic pickup script it has been picked up and to delete this object

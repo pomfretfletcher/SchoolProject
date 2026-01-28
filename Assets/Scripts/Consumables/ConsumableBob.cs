@@ -6,8 +6,8 @@ public class ConsumableBob : MonoBehaviour
     public float amplitude = 0.25f;  
     public float frequency = 1.5f; 
 
-    // Private internal logic variables
-    private Vector3 startPos;
+    // Internal/External logic variables
+    public Vector3 startPos;
     private float yOffset;
 
     private void Start()

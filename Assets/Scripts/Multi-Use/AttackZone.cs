@@ -34,11 +34,28 @@ public class AttackZone : MonoBehaviour
         HPHandler hpHandler = collisionParent.GetComponent<HPHandler>();
 
         // If of opposing tags, deal damage to the opponent collider
-        if ((collisionParent.gameObject.tag == "Enemy" && parent.gameObject.tag == "Player") || (collisionParent.gameObject.tag == "Player" && parent.gameObject.tag == "Enemy"))
+        if (collisionParent.gameObject.tag == "Player" && parent.gameObject.tag == "Enemy")
         {
             if (!collisionController.IsInvulnerable)
             {
                 hpHandler.TakeDamage(controller.MeleeDamageAmount + damageIncrease);
+            }
+        }
+
+        // If of opposing tags, deal damage to the opponent collider. As well as making sure damage doesnt go below minimum damage
+        else if (collisionParent.gameObject.tag == "Enemy" && parent.gameObject.tag == "Player")
+        {
+            if (!collisionController.IsInvulnerable)
+            {
+                PlayerController playerController = parent.GetComponent<PlayerController>();
+                if (controller.MeleeDamageAmount + damageIncrease > playerController.minMeleeDamage)
+                {
+                    hpHandler.TakeDamage(controller.MeleeDamageAmount + damageIncrease);
+                }
+                else
+                {
+                    hpHandler.TakeDamage(playerController.minMeleeDamage);
+                }
             }
         }
     }

@@ -23,12 +23,15 @@ public class KnightCooldownHandler : MonoBehaviour, UsesCooldown
                                                   "cliffDetectionInterval",
                                                   "attackLockTime",
                                                   "invulnerableOnHitTime",
-                                                  "deathDelay"};
+                                                  "deathDelay",
+                                                  "isAttacking" };
         List<float> lengthList = new List<float> { controller.attackCooldown,
                                                    controller.cliffDetectionInterval,
                                                    controller.attackLockTime,
                                                    controller.invulnerableOnHitTime,
-                                                   controller.deathDelay };
+                                                   controller.deathDelay,
+                                                   1f // Filler for approx how long attack lasts
+                                                   };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
 
@@ -46,6 +49,11 @@ public class KnightCooldownHandler : MonoBehaviour, UsesCooldown
         if (key == "deathDelay")
         {
             Destroy(this.gameObject);
+        }
+        if (key == "isAttacking")
+        {
+            pathfindingScript.isAttacking = false;
+            pathfindingScript.CanMove = true;
         }
     }
 }

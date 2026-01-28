@@ -100,6 +100,7 @@ public class PlayerCooldownHandler : MonoBehaviour, UsesCooldown
         {
             // Used for preventing melee or ranged attacking while in the other
             inputHandler.isMeleeAttacking = false;
+            inputHandler.CanMove = true;
         }
         if (key == "isRangedAttacking")
         {

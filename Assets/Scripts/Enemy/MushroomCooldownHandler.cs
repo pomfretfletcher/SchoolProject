@@ -27,14 +27,17 @@ public class MushroomCooldownHandler : MonoBehaviour, UsesCooldown
                                                   "invulnerableOnHitTime",
                                                   "runAwayTime",
                                                   "projectileFireDelay",
-                                                  "deathDelay" };
+                                                  "deathDelay",
+                                                  "isAttacking" };
         List<float> lengthList = new List<float> { controller.attackCooldown,
                                                    controller.cliffDetectionInterval,
                                                    controller.attackLockTime,
                                                    controller.invulnerableOnHitTime,
                                                    controller.runAwayTime,
                                                    controller.projectileFireDelay,
-                                                   controller.deathDelay };
+                                                   controller.deathDelay,
+                                                   1f // Filler for approx how long attack lasts
+                                                   };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
 
@@ -60,6 +63,11 @@ public class MushroomCooldownHandler : MonoBehaviour, UsesCooldown
         if (key == "deathDelay")
         {
             Destroy(this.gameObject);
+        }
+        if (key == "isAttacking")
+        {
+            pathfindingScript.isAttacking = false;
+            pathfindingScript.CanMove = true;
         }
     }
 }

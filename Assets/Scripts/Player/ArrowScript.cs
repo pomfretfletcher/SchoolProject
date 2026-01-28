@@ -83,7 +83,14 @@ public class ArrowScript : MonoBehaviour, ProjectileScript, UsesCooldown
             HPHandler hpHandler = collisionParent.GetComponent<HPHandler>();
 
             // Deal damage through hp handler component
-            hpHandler.TakeDamage(playerController.currentRangedDamage);
+            if (playerController.currentRangedDamage > playerController.minRangedDamage)
+            {
+                hpHandler.TakeDamage(playerController.currentRangedDamage);
+            }
+            else
+            {
+                hpHandler.TakeDamage(playerController.minRangedDamage);
+            }
         }
         // Destroy self
         Destroy(this.gameObject);

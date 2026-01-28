@@ -43,11 +43,21 @@ public class PlayerController : MonoBehaviour, UniversalController
     public float invulnerableOnHitTime;
     public float deathDelay;
 
+    [Header("IGNORE")]
+    public float prePickupCurrentSpeed;
+    public float prePickupCurrentMeleeDamage;
+    public float prePickupCurrentRangedDamage;
+
     private void Start()
     {
         // Sets current values of variables to default values
         currentMeleeDamage = defaultMeleeDamage;
         currentRangedDamage = defaultRangedDamage;
         currentHealth = fullHealth;
+
+        // Sets pre pickup values to the running values
+        prePickupCurrentSpeed = currentSpeed;
+        prePickupCurrentMeleeDamage = currentMeleeDamage;
+        prePickupCurrentRangedDamage = currentRangedDamage;
     }
 }

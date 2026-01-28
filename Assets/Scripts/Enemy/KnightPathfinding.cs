@@ -32,6 +32,7 @@ public class KnightPathfinding : MonoBehaviour, LogicScript
     public bool CurrentlyTrackingPlayer = false;
     public bool TrackingButNotMove = false;
     public bool TrackingOffCliff = false;
+    public bool isAttacking = false;
 
     private void Awake()
     {
@@ -176,6 +177,9 @@ public class KnightPathfinding : MonoBehaviour, LogicScript
 
     public void LookingDirection()
     {
+        // If enemy can't move, don't change their orientation
+        if (!CanMove) { return; }
+
         if (moveDirection == 1 && lookDirection != 1)
         {
             // Changes look direction to 1 (right)
