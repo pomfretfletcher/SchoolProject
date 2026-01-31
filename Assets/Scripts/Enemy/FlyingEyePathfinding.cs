@@ -21,14 +21,17 @@ public class FlyingEyePathfinding : MonoBehaviour, LogicScript
 
     // States
     public bool IsMoving { get { return isMoving; } set { isMoving = value; animator.SetBool("isMoving", value); } }
+    public bool IsSufferingKnockback { get { return isSufferingKnockback; } set { isSufferingKnockback = value; } }
     [Header("States")]
     [SerializeField]
-    private bool isMoving = false;
+    private bool isMoving = false; 
+    public bool isAttacking = false;
+    [SerializeField]
+    public bool isSufferingKnockback = false;
     public bool CanMove = true;
     public bool CanAttack = true;
     public bool CurrentlyTrackingPlayer = false;
     public bool TrackingButNotMove = false;
-    public bool isAttacking = false;
 
     private void Awake()
     {
@@ -155,11 +158,11 @@ public class FlyingEyePathfinding : MonoBehaviour, LogicScript
         if (lookDirection == 1 && transform.localScale.x < 0) { transform.localScale *= new Vector2(-1, 1); }
 
         // Limit enemy movement to maxspeed
-        if (controller.currentSpeed <= controller.maxSpeed)
+        if (controller.currentSpeed <= controller.maxSpeed && !isSufferingKnockback)
         {
             rigidbody.linearVelocity = new Vector2(controller.currentSpeed * moveDirection, yVelocity);
         }
-        else if (controller.currentSpeed > controller.maxSpeed)
+        else if (controller.currentSpeed > controller.maxSpeed && !isSufferingKnockback)
         {
             rigidbody.linearVelocity = new Vector2(controller.maxSpeed * moveDirection, yVelocity);
         }

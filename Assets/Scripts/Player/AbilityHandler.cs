@@ -120,7 +120,7 @@ public class AbilityHandler : MonoBehaviour, UsesCooldown
             }
             abilityToPickup = results[0].transform.gameObject;
         }
-        Debug.Log(abilityThree);
+
         // If no ability, return
         if (abilitiesInRange == 0)
         {

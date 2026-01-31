@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 7702788030335220566}
   - component: {fileID: 741789821530461193}
   - component: {fileID: 6815267096513182111}
+  - component: {fileID: 6680298446825139495}
   m_Layer: 7
   m_Name: Mushroom Enemy
   m_TagString: Enemy
@@ -387,6 +388,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e8a32987c457244aa482c53d42d0b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visibleLists: []
   cooldownKeys: []
 --- !u!114 &7702788030335220566
 MonoBehaviour:
@@ -407,6 +409,7 @@ MonoBehaviour:
   CanAttack: 1
   CurrentlyTrackingPlayer: 0
   RunAwayTracking: 0
+  isAttacking: 0
 --- !u!114 &741789821530461193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -430,5 +433,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b3fdbd42f75da740b8582b861935212, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6680298446825139495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3883379676204530457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c370a9526a93d4d8391155aed0051c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

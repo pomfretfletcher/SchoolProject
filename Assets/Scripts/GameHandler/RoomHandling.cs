@@ -121,7 +121,7 @@ public class RoomHandling : MonoBehaviour
         GameObject setupRoom = Instantiate(newRoom, new Vector3(currentXPosInScene, currentYPosInScene, 0), Quaternion.identity);
         RoomCreation setupRoomCreator = setupRoom.GetComponent<RoomCreation>();
 
-        // fillerrrrrrrrrrrrrrrrrr
+        // The values for null and all the numbers are currently filler, as difficulty scale etc has not been added
         setupRoomCreator.SetupRoom(enterDirection, 1, null, 2, null, 2, null, 1, null, 1);
 
         // Places the setup room in the alloted position

@@ -446,6 +446,7 @@ GameObject:
   - component: {fileID: 8034154710092257072}
   - component: {fileID: 3823578742334124804}
   - component: {fileID: 3787066025608638666}
+  - component: {fileID: 8007246859669415391}
   m_Layer: 7
   m_Name: Goblin Enemy
   m_TagString: Enemy
@@ -523,6 +524,7 @@ MonoBehaviour:
   TrackingButNotMove: 0
   TrackingOffCliff: 0
   RunAwayTracking: 0
+  isAttacking: 0
 --- !u!114 &4959164720699755610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -723,6 +725,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e8a32987c457244aa482c53d42d0b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visibleLists: []
   cooldownKeys: []
 --- !u!114 &3787066025608638666
 MonoBehaviour:
@@ -734,6 +737,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb16eed54dccd0541bf051e2c7805755, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8007246859669415391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7069512919114677435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c370a9526a93d4d8391155aed0051c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8708555638576532090

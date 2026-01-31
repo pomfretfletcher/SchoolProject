@@ -26,12 +26,13 @@ public class AttackZone : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Decide what knockback is applied
-        Vector2 deliveredKnockback = transform.parent.localScale.x > 0 ? knockback : new Vector2(-knockback.x, knockback.y);
+        Vector2 deliveredKnockback = transform.parent.rotation.x > 0 ? knockback : new Vector2(-knockback.x, knockback.y);
 
         // Grab the object that is colliding with
         collisionParent = collision.transform.root.gameObject;
         collisionController = collisionParent.GetComponent<UniversalController>();
         HPHandler hpHandler = collisionParent.GetComponent<HPHandler>();
+        KnockbackLogic knockbackHandler = collisionParent.GetComponent<KnockbackLogic>();
 
         // If of opposing tags, deal damage to the opponent collider
         if (collisionParent.gameObject.tag == "Player" && parent.gameObject.tag == "Enemy")
@@ -39,6 +40,10 @@ public class AttackZone : MonoBehaviour
             if (!collisionController.IsInvulnerable)
             {
                 hpHandler.TakeDamage(controller.MeleeDamageAmount + damageIncrease);
+                if (deliveredKnockback.x != 0)
+                {
+                    knockbackHandler.ExperienceKnockback(deliveredKnockback);
+                }
             }
         }
 
@@ -51,10 +56,18 @@ public class AttackZone : MonoBehaviour
                 if (controller.MeleeDamageAmount + damageIncrease > playerController.minMeleeDamage)
                 {
                     hpHandler.TakeDamage(controller.MeleeDamageAmount + damageIncrease);
+                    if (deliveredKnockback.x != 0)
+                    {
+                        knockbackHandler.ExperienceKnockback(deliveredKnockback);
+                    }
                 }
                 else
                 {
                     hpHandler.TakeDamage(playerController.minMeleeDamage);
+                    if (deliveredKnockback.x != 0)
+                    {
+                        knockbackHandler.ExperienceKnockback(deliveredKnockback);
+                    }
                 }
             }
         }

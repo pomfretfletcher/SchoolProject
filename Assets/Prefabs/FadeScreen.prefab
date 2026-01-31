@@ -120,6 +120,7 @@ MonoBehaviour:
   colorScreenImage: {fileID: 6600719357483620673}
   timeOnScreen: 0.5
   timeFading: 0.6
+  fadeToColor: white
 --- !u!114 &2910060099606118974
 MonoBehaviour:
   m_ObjectHideFlags: 0

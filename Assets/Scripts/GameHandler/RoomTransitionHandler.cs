@@ -2,18 +2,16 @@ using UnityEngine;
 
 public class RoomTransitionHandler : MonoBehaviour
 {
+    // Script + Component Links
     FadeScreenScript screenScript;
-    public GameObject fadeScreen;
     GameObject player;
 
-    private void Awake()
-    {
-        // Grabs all linked scripts + components
-        player = GameObject.Find("Player");
-    }
+    // Inspector assigned screen that is created when entering a new room
+    public GameObject fadeScreen;
 
     public void BeginFade(string transitionType)
-    {
+    {   
+        player = GameObject.Find("Player");
         if (transitionType == "room")
         {
             // Spawn the screen that will fade the player in when game begins

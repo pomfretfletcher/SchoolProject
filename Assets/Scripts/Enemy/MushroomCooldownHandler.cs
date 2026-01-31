@@ -28,7 +28,9 @@ public class MushroomCooldownHandler : MonoBehaviour, UsesCooldown
                                                   "runAwayTime",
                                                   "projectileFireDelay",
                                                   "deathDelay",
-                                                  "isAttacking" };
+                                                  "isAttacking",
+                                                  "sufferingKnockback"
+                                                   };
         List<float> lengthList = new List<float> { controller.attackCooldown,
                                                    controller.cliffDetectionInterval,
                                                    controller.attackLockTime,
@@ -36,7 +38,8 @@ public class MushroomCooldownHandler : MonoBehaviour, UsesCooldown
                                                    controller.runAwayTime,
                                                    controller.projectileFireDelay,
                                                    controller.deathDelay,
-                                                   1f // Filler for approx how long attack lasts
+                                                   1f, // Filler for approx how long attack lasts
+                                                   1.5f // Filler for how long affected by knockback
                                                    };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
@@ -68,6 +71,10 @@ public class MushroomCooldownHandler : MonoBehaviour, UsesCooldown
         {
             pathfindingScript.isAttacking = false;
             pathfindingScript.CanMove = true;
+        }
+        if (key == "sufferingKnockback")
+        {
+            pathfindingScript.IsSufferingKnockback = false;
         }
     }
 }

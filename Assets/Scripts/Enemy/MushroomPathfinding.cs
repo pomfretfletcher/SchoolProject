@@ -25,6 +25,7 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
 
     // States
     public bool IsMoving { get { return isMoving; } set { isMoving = value; animator.SetBool("isMoving", value); } }
+    public bool IsSufferingKnockback { get { return isSufferingKnockback; } set { isSufferingKnockback = value; } }
     [Header("States")]
     [SerializeField]
     private bool isMoving = false;
@@ -33,6 +34,8 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
     public bool CurrentlyTrackingPlayer = false;
     public bool RunAwayTracking = false;
     public bool isAttacking = false;
+    [SerializeField]
+    private bool isSufferingKnockback = false;
 
     private void Awake()
     {
@@ -87,7 +90,7 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
                 moveDirection = -1 * (player.transform.position.x > selfCollider.transform.position.x ? 1 : -1);
                 lookDirection = moveDirection;
             }
-            else 
+            else
             {
                 moveDirection = 0;
                 lookDirection = player.transform.position.x > selfCollider.transform.position.x ? 1 : -1;
@@ -133,11 +136,11 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
         if (lookDirection == 1 && transform.localScale.x < 0) { transform.localScale *= new Vector2(-1, 1); }
 
         // Limit enemy movement to maxspeed
-        if (controller.currentSpeed <= controller.maxSpeed)
+        if (controller.currentSpeed <= controller.maxSpeed && !isSufferingKnockback)
         {
             rigidbody.linearVelocity = new Vector2(controller.currentSpeed * moveDirection, yVelocity);
         }
-        else if (controller.currentSpeed > controller.maxSpeed)
+        else if (controller.currentSpeed > controller.maxSpeed && !isSufferingKnockback)
         {
             rigidbody.linearVelocity = new Vector2(controller.maxSpeed * moveDirection, yVelocity);
         }

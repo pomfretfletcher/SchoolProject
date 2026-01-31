@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Cinemachine;
 
 public class GameSetup : MonoBehaviour
 {
@@ -7,17 +8,36 @@ public class GameSetup : MonoBehaviour
     RoomHandling roomHandling;
     VisualAndSoundEffectHandling vsfxHandler;
 
+    public CinemachineCamera uiCamera;
+
     // Room player will start game in - assigned in inspector
     public GameObject startingRoom;
 
     // Music that will play in the background of the game - assigned in inspector
     public AudioClip gameMusic;
 
-    private void Start()
+    public GameObject player;
+
+    public GameObject healthBar;
+
+    public void SetupGame()
     {
         gameData = GetComponent<GameData>();
         roomHandling = GetComponent<RoomHandling>();
         vsfxHandler = GetComponent<VisualAndSoundEffectHandling>();
+
+        GameObject playerInstance = Instantiate(player, Vector3.zero, Quaternion.identity);
+        playerInstance.name = "Player";
+
+        uiCamera.Follow = playerInstance.transform;
+
+        GameObject healthBarInstance = Instantiate(healthBar, Vector3.zero, Quaternion.identity);
+        healthBarInstance.transform.parent = uiCamera.transform;
+        healthBarInstance.transform.position = new Vector3(-5.315f, 4.285f, 10f);
+        healthBarInstance.name = "HealthBar";
+
+        GameObject startScreen = GameObject.Find("StartScreen");
+        Destroy(startScreen);
 
         SetupRoomStructure();
         SetupStartingRoom();

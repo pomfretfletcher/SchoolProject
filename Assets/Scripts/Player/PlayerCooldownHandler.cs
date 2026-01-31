@@ -35,7 +35,8 @@ public class PlayerCooldownHandler : MonoBehaviour, UsesCooldown
                                                   "abilityTwoCooldown",
                                                   "abilityThreeCooldown",
                                                   "isMeleeAttacking",
-                                                  "isRangedAttacking"
+                                                  "isRangedAttacking",
+                                                  "sufferingKnockback"
                                                   };
         List<float> lengthList = new List<float> { controller.dodgeCooldown,
                                                    controller.dashLockTime,
@@ -49,7 +50,8 @@ public class PlayerCooldownHandler : MonoBehaviour, UsesCooldown
                                                    0,   // Filler for ability cooldowns
                                                    0,   // Filler for ability cooldowns
                                                    1,   // Filler for how long melee attack is going on
-                                                   1.2f // Filler for how long ranged attack is going on
+                                                   1.2f,// Filler for how long ranged attack is going on
+                                                   1.5f // Filler for how long affected by knockback
                                                    };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
@@ -80,7 +82,10 @@ public class PlayerCooldownHandler : MonoBehaviour, UsesCooldown
         if (key == "deathDelay")
         {
             // Kill player
-        }
+            inputHandler.CanMove = false;
+            inputHandler.CanAttack = false;
+            inputHandler.CanUseAbilities = false;
+}
         if (key == "abilityOneCooldown")
         {
             // Used for setting ability sprite to full brightness once timer finished
@@ -107,6 +112,10 @@ public class PlayerCooldownHandler : MonoBehaviour, UsesCooldown
             // Used for preventing melee or ranged attacking while in the other
             inputHandler.isRangedAttacking = false;
             inputHandler.CanMove = true;
+        }
+        if (key == "sufferingKnockback")
+        {
+            inputHandler.IsSufferingKnockback = false;
         }
     }
 }

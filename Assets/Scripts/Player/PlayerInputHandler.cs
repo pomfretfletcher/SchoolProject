@@ -35,6 +35,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
     // States
     public bool IsMoving { get { return isMoving; } set { isMoving = value; animator.SetBool("isMoving", value); } }
     public bool IsDashing { get { return isDashing; } set { isDashing = value; animator.SetBool("isDashing", value); } }
+    public bool IsSufferingKnockback { get { return isSufferingKnockback; } set { isSufferingKnockback = value; } }
     [Header("States")]
     [SerializeField]
     private bool isMoving = false;
@@ -45,6 +46,8 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
     public bool CanUseAbilities = true;
     public bool isMeleeAttacking = false;
     public bool isRangedAttacking = false;
+    [SerializeField]
+    private bool isSufferingKnockback = false;
     
     private void Awake()
     {
@@ -85,18 +88,18 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
             xVelocity = 0;
         }
 
+        // If can't move, x velocity is set to zero, y velocity remains
         if (!CanMove)
         {
             xVelocity = 0;
-            yVelocity = rigidbody.linearVelocityY;
         }
 
         // Updates the velocity of the player while limiting it to the player's max speed
-        if (xVelocity <= controller.maxSpeed)
+        if (xVelocity <= controller.maxSpeed && !isSufferingKnockback)
         {
             rigidbody.linearVelocity = new Vector2(xVelocity, yVelocity);
         }
-        if (xVelocity > controller.maxSpeed)
+        if (xVelocity > controller.maxSpeed && !isSufferingKnockback)
         {
             rigidbody.linearVelocity = new Vector2(controller.maxSpeed, yVelocity);
         }

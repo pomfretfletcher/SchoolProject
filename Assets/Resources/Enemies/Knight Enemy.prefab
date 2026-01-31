@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 3727741529880963275}
   - component: {fileID: 5718356393530698385}
   - component: {fileID: 5829503536707417267}
+  - component: {fileID: 5366326295034199479}
   m_Layer: 7
   m_Name: Knight Enemy
   m_TagString: Enemy
@@ -396,6 +397,7 @@ MonoBehaviour:
   CurrentlyTrackingPlayer: 0
   TrackingButNotMove: 0
   TrackingOffCliff: 0
+  isAttacking: 0
 --- !u!114 &5718356393530698385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -408,6 +410,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e8a32987c457244aa482c53d42d0b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visibleLists: []
   cooldownKeys: []
 --- !u!114 &5829503536707417267
 MonoBehaviour:
@@ -419,6 +422,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a7513dbba8c173d4da8954823aa90067, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5366326295034199479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426549749425999144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c370a9526a93d4d8391155aed0051c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2890784301641813307

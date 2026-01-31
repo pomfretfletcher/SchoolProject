@@ -15,14 +15,14 @@ public class TeleportHandler : MonoBehaviour, UsesCooldown
     private void Awake()
     {
         // Grabs all linked scripts + components
-        player = GameObject.Find("Player");
-        playerInputHandler = player.GetComponent<PlayerInputHandler>();
         cooldownHandler = GetComponent<CooldownTimer>();
         transitionHandler = GetComponent<RoomTransitionHandler>();
     }
 
     public void OnPlayerTeleport(Vector3 playerEndPosition)
     {
+        player = GameObject.Find("Player");
+        playerInputHandler = player.GetComponent<PlayerInputHandler>();
         // Prevents most forms of player input - all important ones
         playerInputHandler.CanMove = false;
         playerInputHandler.CanAttack = false;

@@ -45,6 +45,10 @@ public class RoomLogic : MonoBehaviour
         // Create player spawn variable, this will be immediately overwritten but it needs a value to be created with
         Transform playerSpawn = player.transform;
 
+        // Reset player velocity to make them not be moving when come into new room
+        Rigidbody2D rigidbody = player.GetComponent<Rigidbody2D>();
+        rigidbody.velocity = Vector2.zero;
+
         // Grab needed data
         nextRoomData = nextRoom.GetComponent<RoomData>();
 
@@ -139,7 +143,42 @@ public class RoomLogic : MonoBehaviour
                     // If empty, do a one exit room
                     if (prefabs.Count == 0)
                     {
-                        Debug.Log("No Possible rooms.");
+                        // Load all prefabs in the folder room prefabs
+                        List<GameObject> deadendPrefabs = new List<GameObject>(Resources.LoadAll<GameObject>("DeadEnd Rooms"));
+                        bool correctDeadEnd = false;
+
+                        while (correctDeadEnd == false)
+                        {
+                            // Pick one of the rooms in the folder at random
+                            GameObject chosenDeadEnd = deadendPrefabs[Random.Range(0, deadendPrefabs.Count)];
+                            RoomData chosenDeadEndData = chosenDeadEnd.GetComponent<RoomData>();
+
+                            // Checks if the room is valid to move into from the current room
+                            if (direction == "left") { connectionValid = chosenDeadEndData.hasRightEntrance; }
+                            else if (direction == "right") { connectionValid = chosenDeadEndData.hasLeftEntrance; }
+                            else if (direction == "top") { connectionValid = chosenDeadEndData.hasBottomEntrance; }
+                            else if (direction == "bottom") { connectionValid = chosenDeadEndData.hasTopEntrance; }
+
+                            if (connectionValid)
+                            {
+                                correctDeadEnd = true;
+
+                                // Moves the position in the scene that the room the player is in is
+                                if (direction == "left") { roomHandling.currentXPosInScene -= 50; }
+                                else if (direction == "right") { roomHandling.currentXPosInScene += 50; }
+                                else if (direction == "top") { roomHandling.currentYPosInScene += 50; }
+                                else if (direction == "bottom") { roomHandling.currentYPosInScene -= 50; }
+
+                                // Creates the chosen room
+                                roomHandling.CreateRoom(chosenDeadEnd, nextRoomPositionX, nextRoomPositionY, direction);
+                                nextRoom = gameData.roomStructure[nextRoomPositionX].objects[nextRoomPositionY];
+                                EnterNewRoom(direction, nextRoom);
+                            }
+                            else
+                            {
+                                prefabs.Remove(chosenDeadEnd);
+                            }
+                        }
                     }
                 }
             }

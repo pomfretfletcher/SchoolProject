@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 5628511559015132050}
   - component: {fileID: 1158523842353867727}
   - component: {fileID: 5334713463396424969}
+  - component: {fileID: 1405176276927354284}
   m_Layer: 7
   m_Name: FlyingEye Enemy
   m_TagString: Enemy
@@ -274,6 +275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e8a32987c457244aa482c53d42d0b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visibleLists: []
   cooldownKeys: []
 --- !u!114 &1158523842353867727
 MonoBehaviour:
@@ -297,6 +299,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e6ed07d4d5062945bc81314648f71a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isMoving: 0
+  CanMove: 1
+  CanAttack: 1
+  CurrentlyTrackingPlayer: 0
+  TrackingButNotMove: 0
+  isAttacking: 0
+--- !u!114 &1405176276927354284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2637855867887471812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c370a9526a93d4d8391155aed0051c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3278876777496251782
