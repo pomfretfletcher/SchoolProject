@@ -75,7 +75,7 @@ public class BallScript : MonoBehaviour, ProjectileScript, UsesCooldown
         // Calculate knockback
         Vector2 deliveredKnockback = transform.localScale.x > 0 ? knockback : new Vector2(-knockback.x, knockback.y);
 
-        GameObject collisionParent = collision.transform.root.gameObject;
+        GameObject collisionParent = collision.transform.gameObject;
 
         // If player
         if (collisionParent.gameObject.tag == "Player")

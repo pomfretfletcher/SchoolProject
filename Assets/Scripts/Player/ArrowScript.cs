@@ -74,7 +74,7 @@ public class ArrowScript : MonoBehaviour, ProjectileScript, UsesCooldown
         Vector2 deliveredKnockback = transform.localScale.x > 0 ? knockback : new Vector2(-knockback.x, knockback.y);
 
         // Grabs parent object of the collision to check tag
-        GameObject collisionParent = collision.transform.root.gameObject;
+        GameObject collisionParent = collision.transform.gameObject;
 
         // If enemy
         if (collisionParent.gameObject.tag == "Enemy")

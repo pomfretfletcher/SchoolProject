@@ -6,6 +6,8 @@ public class GameData : MonoBehaviour
     // Where rooms are stored and organized
     public List<GameObjectList> roomStructure = new List<GameObjectList>();
 
+    public GameObject currentRoom;
+
     // Customizable Values
     public float universalSoundVolume;
     public float universalMusicVolume;

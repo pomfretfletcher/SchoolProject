@@ -22,6 +22,9 @@ public class RoomCreation : MonoBehaviour
         roomData = GetComponent<RoomData>();
         roomLogicScript = GetComponent<RoomLogic>();
 
+        GameObject roomsFolder = GameObject.Find("RunParts/Rooms");
+        this.gameObject.transform.parent = roomsFolder.transform;
+
         if (roomData.isStartingRoom)
         {
             // Since starting room is special as it has no pickups/enemies, we just call a specific function for entering it as it only has one node
@@ -57,9 +60,10 @@ public class RoomCreation : MonoBehaviour
                     GameObject[] prefabs = Resources.LoadAll<GameObject>("Enemies");
                     // Pick one at random
                     GameObject chosenEnemy = prefabs[Random.Range(0, prefabs.Length)];
-                    Instantiate(chosenEnemy, currentNode.transform.position, Quaternion.identity);
-                    EnemyController enemyController = chosenEnemy.GetComponent<EnemyController>();
+                    GameObject createdEnemy = Instantiate(chosenEnemy, currentNode.transform.position, Quaternion.identity);
+                    EnemyController enemyController = createdEnemy.GetComponent<EnemyController>();
                     enemyController.DifficultyScale(difficultyScale);
+                    createdEnemy.transform.parent = this.gameObject.transform;
                 }
                 else
                 {
@@ -71,9 +75,10 @@ public class RoomCreation : MonoBehaviour
                         if (prefab.name == specificEnemyType)
                             chosenEnemy = prefab;
                     }
-                    Instantiate(chosenEnemy, currentNode.transform.position, Quaternion.identity);
-                    EnemyController enemyController = chosenEnemy.GetComponent<EnemyController>();
+                    GameObject createdEnemy = Instantiate(chosenEnemy, currentNode.transform.position, Quaternion.identity);
+                    EnemyController enemyController = createdEnemy.GetComponent<EnemyController>();
                     enemyController.DifficultyScale(difficultyScale);
+                    createdEnemy.transform.parent = this.gameObject.transform;
                     createdSpecificEnemy = true;
                 }
 
@@ -100,7 +105,8 @@ public class RoomCreation : MonoBehaviour
                     GameObject[] prefabs = Resources.LoadAll<GameObject>("Pickups");
                     // Pick one at random
                     GameObject chosenPickup = prefabs[Random.Range(0, prefabs.Length)];
-                    Instantiate(chosenPickup, currentNode.transform.position, Quaternion.identity);
+                    GameObject createdPickup = Instantiate(chosenPickup, currentNode.transform.position, Quaternion.identity);
+                    createdPickup.transform.parent = this.gameObject.transform;
                 }
                 else
                 {
@@ -111,7 +117,8 @@ public class RoomCreation : MonoBehaviour
                     {
                         if (prefab.name == specificPickupType) { chosenPickup = prefab; }
                     }
-                    Instantiate(chosenPickup, currentNode.transform.position, Quaternion.identity);
+                    GameObject createdPickup = Instantiate(chosenPickup, currentNode.transform.position, Quaternion.identity);
+                    createdPickup.transform.parent = this.gameObject.transform;
                     createdSpecificPickup = true;
                 }
 
@@ -138,9 +145,10 @@ public class RoomCreation : MonoBehaviour
                     GameObject[] prefabs = Resources.LoadAll<GameObject>("Abilities");
                     // Pick one at random
                     GameObject chosenAbility = prefabs[Random.Range(0, prefabs.Length)];
-                    GameObject newAbility = Instantiate(chosenAbility, currentNode.transform.position, Quaternion.identity);
-                    AbilityScript newAbilityScript = newAbility.GetComponent<AbilityScript>();
-                    newAbilityScript.SetToConsumableMode(currentNode.transform);
+                    GameObject createdAbility = Instantiate(chosenAbility, currentNode.transform.position, Quaternion.identity);
+                    AbilityScript createdAbilityScript = createdAbility.GetComponent<AbilityScript>();
+                    createdAbilityScript.SetToConsumableMode(currentNode.transform);
+                    createdAbility.transform.parent = this.gameObject.transform;
                 }
                 else
                 {
@@ -152,9 +160,10 @@ public class RoomCreation : MonoBehaviour
                         if (prefab.name == specificAbilityType)
                             chosenAbility = prefab;
                     }
-                    GameObject newAbility = Instantiate(chosenAbility, currentNode.transform.position, Quaternion.identity);
-                    AbilityScript newAbilityScript = newAbility.GetComponent<AbilityScript>();
-                    newAbilityScript.SetToConsumableMode(currentNode.transform);
+                    GameObject createdAbility = Instantiate(chosenAbility, currentNode.transform.position, Quaternion.identity);
+                    AbilityScript createdAbilityScript = createdAbility.GetComponent<AbilityScript>();
+                    createdAbilityScript.SetToConsumableMode(currentNode.transform);
+                    createdAbility.transform.parent = this.gameObject.transform;
                     createdSpecificAbility = true;
                 }
 
@@ -181,7 +190,8 @@ public class RoomCreation : MonoBehaviour
                     GameObject[] prefabs = Resources.LoadAll<GameObject>("Powerups");
                     // Pick one at random
                     GameObject chosenPowerup = prefabs[Random.Range(0, prefabs.Length)];
-                    Instantiate(chosenPowerup, currentNode.transform.position, Quaternion.identity);
+                    GameObject createdPowerup = Instantiate(chosenPowerup, currentNode.transform.position, Quaternion.identity);
+                    createdPowerup.transform.parent = this.gameObject.transform;
                 }
                 else
                 {
@@ -193,7 +203,8 @@ public class RoomCreation : MonoBehaviour
                         if (prefab.name == specificPowerupType)
                             chosenPowerup = prefab;
                     }
-                    Instantiate(chosenPowerup, currentNode.transform.position, Quaternion.identity);
+                    GameObject createdPowerup = Instantiate(chosenPowerup, currentNode.transform.position, Quaternion.identity);
+                    createdPowerup.transform.parent = this.gameObject.transform;
                     createdSpecificPowerup = true;
                 }
 

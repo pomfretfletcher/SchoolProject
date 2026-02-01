@@ -177,7 +177,6 @@ public class AbilityHandler : MonoBehaviour, UsesCooldown
         {
             AbilityScript swappedAbility = abilityOne;
             swappedAbility.SetToConsumableMode(abilityToPickup.transform);
-            swappedAbility.transform.SetParent(null, true);
             abilityOne = abilityToPickup.GetComponent<AbilityScript>();
             abilityOne.SetToIconMode(1);
             cooldownHandler.timerStatusDict["swapInterval"] = 1;
@@ -216,7 +215,6 @@ public class AbilityHandler : MonoBehaviour, UsesCooldown
         {
             AbilityScript swappedAbility = abilityTwo;
             swappedAbility.SetToConsumableMode(abilityToPickup.transform);
-            swappedAbility.transform.SetParent(null, true);
             abilityTwo = abilityToPickup.GetComponent<AbilityScript>();
             abilityTwo.SetToIconMode(2);
             cooldownHandler.timerStatusDict["swapInterval"] = 1;
@@ -255,7 +253,6 @@ public class AbilityHandler : MonoBehaviour, UsesCooldown
         {
             AbilityScript swappedAbility = abilityThree;
             swappedAbility.SetToConsumableMode(abilityToPickup.transform);
-            swappedAbility.transform.SetParent(null, true);
             abilityThree = abilityToPickup.GetComponent<AbilityScript>();
             abilityThree.SetToIconMode(3);
             cooldownHandler.timerStatusDict["swapInterval"] = 1;

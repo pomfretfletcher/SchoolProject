@@ -20,6 +20,10 @@ PrefabInstance:
       propertyPath: timeOnScreen
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 3240553318359406359, guid: 4b57dc85b01266342819ec58641134e4, type: 3}
+      propertyPath: gameoverScreen
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5044774730629859503, guid: 4b57dc85b01266342819ec58641134e4, type: 3}
       propertyPath: m_Name
       value: FadeAwayScreen Variant

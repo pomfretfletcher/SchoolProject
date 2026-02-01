@@ -59,7 +59,7 @@ public class FireBallScript : MonoBehaviour, UsesCooldown
     // Stores every collision within the collider
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        GameObject collisionParent = collision.transform.root.gameObject;
+        GameObject collisionParent = collision.transform.gameObject;
 
         // If player
         if (collisionParent.gameObject.tag == "Enemy")

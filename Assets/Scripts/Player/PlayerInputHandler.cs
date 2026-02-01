@@ -20,6 +20,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
     Collider2D selfCollider;
     CooldownTimer cooldownHandler;
     ProjectileLauncher projectileLauncher;
+    MenuNavigation menuNav;
 
     // Internal Logic Variables
     private int currentDashDirection = 1;
@@ -59,6 +60,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
         selfCollider = GetComponent<Collider2D>();
         cooldownHandler = GetComponent<CooldownTimer>();
         projectileLauncher = GetComponent<ProjectileLauncher>();
+        menuNav = GameObject.Find("GameHandler").GetComponent<MenuNavigation>();
     }
 
     private void FixedUpdate()
@@ -255,6 +257,11 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
             CanMove = false;
             isRangedAttacking = true;
         }
+    }
+
+    public void OpenPauseMenu(InputAction.CallbackContext context)
+    {
+        menuNav.OpenPauseScreen();
     }
 
     public void Deactivate()

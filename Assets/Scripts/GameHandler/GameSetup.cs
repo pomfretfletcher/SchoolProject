@@ -19,26 +19,33 @@ public class GameSetup : MonoBehaviour
     public GameObject player;
 
     public GameObject healthBar;
+    public float healthBarXOffset;
+    public float healthBarYOffset;
 
     public void SetupGame()
     {
+        // Grabs all linked scripts + components
         gameData = GetComponent<GameData>();
         roomHandling = GetComponent<RoomHandling>();
         vsfxHandler = GetComponent<VisualAndSoundEffectHandling>();
 
+        // Creates an instance of the player and ensures it is named correctly
         GameObject playerInstance = Instantiate(player, Vector3.zero, Quaternion.identity);
         playerInstance.name = "Player";
 
+        // Sets the cinemachine camera to follow the player
         uiCamera.Follow = playerInstance.transform;
 
+        // Creates an instance of the health bar, sets it as a child to the ui and moves it to the correct position on the screen and ensures it is named correctly
         GameObject healthBarInstance = Instantiate(healthBar, Vector3.zero, Quaternion.identity);
         healthBarInstance.transform.parent = uiCamera.transform;
-        healthBarInstance.transform.position = new Vector3(-5.315f, 4.285f, 10f);
+        healthBarInstance.transform.position = new Vector3(uiCamera.transform.position.x + healthBarXOffset, uiCamera.transform.position.y + healthBarYOffset, 10f);
         healthBarInstance.name = "HealthBar";
 
-        GameObject startScreen = GameObject.Find("StartScreen");
-        Destroy(startScreen);
+        GameObject runPartsFolder = GameObject.Find("RunParts");
+        playerInstance.transform.parent = runPartsFolder.transform;
 
+        // Sets up run
         SetupRoomStructure();
         SetupStartingRoom();
 

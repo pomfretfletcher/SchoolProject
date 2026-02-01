@@ -26,10 +26,10 @@ public class AttackZone : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Decide what knockback is applied
-        Vector2 deliveredKnockback = transform.parent.rotation.x > 0 ? knockback : new Vector2(-knockback.x, knockback.y);
+        Vector2 deliveredKnockback = transform.parent.localScale.x > 0 ? knockback : new Vector2(-knockback.x, knockback.y);
 
         // Grab the object that is colliding with
-        collisionParent = collision.transform.root.gameObject;
+        collisionParent = collision.transform.gameObject;
         collisionController = collisionParent.GetComponent<UniversalController>();
         HPHandler hpHandler = collisionParent.GetComponent<HPHandler>();
         KnockbackLogic knockbackHandler = collisionParent.GetComponent<KnockbackLogic>();

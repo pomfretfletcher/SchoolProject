@@ -38,6 +38,8 @@ public class RoomLogic : MonoBehaviour
         thisRoomData.playerIsInRoom = true;
 
         transitionHandler.BeginFade("startroom");
+
+        gameData.currentRoom = this.gameObject;
     }
 
     public void EnterNewRoom(string roomEnterDirection, GameObject nextRoom)
@@ -47,7 +49,7 @@ public class RoomLogic : MonoBehaviour
 
         // Reset player velocity to make them not be moving when come into new room
         Rigidbody2D rigidbody = player.GetComponent<Rigidbody2D>();
-        rigidbody.velocity = Vector2.zero;
+        rigidbody.linearVelocity = Vector2.zero;
 
         // Grab needed data
         nextRoomData = nextRoom.GetComponent<RoomData>();
@@ -61,6 +63,8 @@ public class RoomLogic : MonoBehaviour
         else if (roomEnterDirection == "right") { playerSpawn = nextRoomData.leftEntrancePlayerSpawnPoint; }
         else if (roomEnterDirection == "top") { playerSpawn = nextRoomData.bottomEntrancePlayerSpawnPoint; }
         else if (roomEnterDirection == "bottom") { playerSpawn = nextRoomData.topEntrancePlayerSpawnPoint; }
+
+        gameData.currentRoom = this.gameObject;
 
         // Teleport the player to the decided upon position
         teleHandler.OnPlayerTeleport(playerSpawn.position);

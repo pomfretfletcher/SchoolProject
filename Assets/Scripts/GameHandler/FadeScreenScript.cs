@@ -6,6 +6,8 @@ public class FadeScreenScript : MonoBehaviour, UsesCooldown
 {
     // Script + Component Links
     CooldownTimer cooldownHandler;
+    MenuNavigation menuNav;
+    GameEndHandler gameEndHandler;
     
     // Customizable Values
     public float timeOnScreen;
@@ -18,11 +20,14 @@ public class FadeScreenScript : MonoBehaviour, UsesCooldown
 
     // Internal logic variables
     private float staticScreenTime = 0.2f;
+    private bool gameoverMode = false;
 
     private void Awake()
     {
         // Grabs all linked scripts + components
         cooldownHandler = GetComponent<CooldownTimer>();
+        menuNav = GameObject.Find("GameHandler").GetComponent<MenuNavigation>();
+        gameEndHandler = GameObject.Find("GameHandler").GetComponent<GameEndHandler>();
     }
 
     private void Start()
@@ -65,6 +70,14 @@ public class FadeScreenScript : MonoBehaviour, UsesCooldown
         }
     }
 
+    public void SetMode(string mode)
+    { 
+        if (mode == "Gameover")
+        {
+            gameoverMode = true;
+        }
+    }
+
     public void CooldownEndProcess(string key)
     {
         // Fade to white is for room transitions, if we're fading to black, we don't want to remove the screen
@@ -75,6 +88,13 @@ public class FadeScreenScript : MonoBehaviour, UsesCooldown
         else if (key == "staticScreenTime")
         {
             cooldownHandler.timerStatusDict["timeOnScreen"] = 1;
+        }
+        else if (key == "timeOnScreen" && gameoverMode == true)
+        {
+            // Activate the game over screen
+            menuNav.ActivateGameOverScreen();
+            gameEndHandler.DeleteRunParts();
+            Destroy(this.gameObject);
         }
     }
 }

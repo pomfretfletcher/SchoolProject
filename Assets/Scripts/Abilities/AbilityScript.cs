@@ -12,6 +12,7 @@ public class AbilityScript : MonoBehaviour
     SpriteRenderer iconRenderer;
     SpriteRenderer iconFrameRenderer;
     SpriteRenderer iconBackgroundRenderer;
+    GameData gameData;
     GameObject ui;
     Transform slot1;
     Transform slot2;
@@ -31,6 +32,7 @@ public class AbilityScript : MonoBehaviour
         collider = GetComponent<Collider2D>();
         greyOutLogic = GetComponent<AbilityGreyOut>();
         bobLogic = GetComponent<ConsumableBob>();
+        gameData = GameObject.Find("GameHandler").GetComponent<GameData>();
         iconFrame = transform.Find("AbilityFrame");
         iconBackground = transform.Find("AbilityFrameBackground");
         iconRenderer = GetComponent<SpriteRenderer>();
@@ -95,6 +97,7 @@ public class AbilityScript : MonoBehaviour
         iconFrameRenderer.sortingLayerName = "Consumables";
         iconBackgroundRenderer.sortingLayerName = "Consumables";
         transform.position = consumableLocation.position;
+        this.gameObject.transform.SetParent(gameData.currentRoom.transform, true);
         // collider activate
         // bob activate
         // greyout dectivate
