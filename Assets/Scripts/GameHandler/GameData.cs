@@ -12,11 +12,19 @@ public class GameData : MonoBehaviour
     public float universalSoundVolume;
     public float universalMusicVolume;
     public float universalVisualEffectOpacity;
-}
 
-// A custom class designed to allow viewing of 2D arrays in the inspector
-[System.Serializable]
-public class GameObjectList
-{
-    public List<GameObject> objects = new List<GameObject>();
+    // Run stats
+    public float playerKillCount;
+    public float runTime;
+
+    private void FixedUpdate()
+    {
+        runTime += Time.deltaTime;
+    }
+
+    public void FlushRunStats()
+    {
+        playerKillCount = 0f;
+        runTime = 0f;
+    }
 }

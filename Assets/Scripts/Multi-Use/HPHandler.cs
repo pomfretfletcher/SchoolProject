@@ -13,9 +13,20 @@ public class HPHandler : MonoBehaviour, UsesCooldown
     VisualAndSoundEffectHandling vsfxHandler;
     GameEndHandler gameEndHandler;
     SpriteRenderer renderer;
+    Transform onHitFlashSprite;
+    SpriteRenderer onHitFlashSpriteRenderer;
+    GameData gameData;
+    Color baseColor;
 
     // Sound played when entity hit - assigned in inspector
     public AudioClip hitSound;
+
+    public float whiteFlashInterval = 0.2f;
+    public float isFlashingLength = 0.5f;
+    public float flashTime = 0.02f;
+    public float drainDamageInterval = 1f;
+
+    private float currentDrainAmount;
 
     private void Awake()
     {
@@ -27,16 +38,29 @@ public class HPHandler : MonoBehaviour, UsesCooldown
         vsfxHandler = GameObject.Find("GameHandler").GetComponent<VisualAndSoundEffectHandling>();
         gameEndHandler = GameObject.Find("GameHandler").GetComponent<GameEndHandler>();
         renderer = GetComponent<SpriteRenderer>();
+        onHitFlashSprite = this.gameObject.transform.Find("OnHitFlashSprite");
+        onHitFlashSpriteRenderer = onHitFlashSprite.GetComponent<SpriteRenderer>();
+        gameData = GameObject.Find("GameHandler").GetComponent<GameData>();
+
+        baseColor = new Color(255, 255, 255);
+        baseColor.a = 0f;
+        onHitFlashSpriteRenderer.color = baseColor;
     }
 
     private void Start()
     {
         // Gives cooldown handler necessary values to setup timers
         List<string> keyList = new List<string> { "flashInterval",
-                                                  "isFlashing"
+                                                  "isFlashing",
+                                                  "flashLength",
+                                                  "drainDamageInterval",
+                                                  "drainTimeLeft"
                                                   };
-        List<float> lengthList = new List<float> { 0.2f,
-                                                   1f
+        List<float> lengthList = new List<float> { whiteFlashInterval,
+                                                   isFlashingLength,
+                                                   flashTime,
+                                                   drainDamageInterval,
+                                                   0f // Filler, this will be changed for each drain amount
                                                    };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
@@ -73,11 +97,16 @@ public class HPHandler : MonoBehaviour, UsesCooldown
             // Handle the death logic based on entity type
             if (gameObject.tag == "Enemy")
             {
+                // Add to player's kill count
+                gameData.playerKillCount++;
+
+                // Start delay to death animation, and tell logic script to deactivate its processes
                 cooldownHandler.timerStatusDict["deathDelay"] = 1;
                 logicScript.Deactivate();
             }
             else if (gameObject.tag == "Player")
             {
+                // Start delay to death animation and beging ending the game
                 cooldownHandler.timerStatusDict["deathDelay"] = 1;
                 gameEndHandler.EndGame();
             }
@@ -101,8 +130,19 @@ public class HPHandler : MonoBehaviour, UsesCooldown
         controller.CurrentHealth = controller.FullHealth;
     }
 
-    public void StartDrain(int drainDamageAmount, int drainTimeLeft) { }
-    public void ChangeDrainAmount(int newDrainDamageAmount, int newDrainTimeLeft) { }
+    public void StartDrain(float drainDamageAmount, float drainTimeLeft) 
+    {
+        // Can only start if drain is not already occuring
+        if (cooldownHandler.timerStatusDict["drainTimeLeft"] != 1)
+        {
+            currentDrainAmount = drainDamageAmount;
+            cooldownHandler.cooldownDict["drainTimeLeft"] = drainTimeLeft;
+            cooldownHandler.timerStatusDict["drainTimeLeft"] = 1;
+            cooldownHandler.timerStatusDict["drainDamageInterval"] = 1;
+        }
+    }
+
+    public void ChangeDrainAmount(float newDrainDamageAmount, float newDrainTimeLeft) { }
     public void EndDrain() { }
 
     // Allows specific processes to be coded in to happen once a cooldown ends
@@ -112,9 +152,54 @@ public class HPHandler : MonoBehaviour, UsesCooldown
         {
             if (cooldownHandler.timerStatusDict["isFlashing"] == 1)
             {
-                vsfxHandler.PlayVisualEffect("whiteflash", 0.5f, renderer);
+                vsfxHandler.PlayVisualEffect("whiteflash", 0.75f, onHitFlashSpriteRenderer);
 
+                cooldownHandler.timerStatusDict["flashLength"] = 1;
                 cooldownHandler.timerStatusDict["flashInterval"] = 1;
+            }
+        }
+        if (key == "flashLength")
+        {
+            // Reset renderer color, make entity regular sprite
+            onHitFlashSpriteRenderer.color = baseColor;
+        }
+        if (key == "drainDamageInterval")
+        {
+            if (cooldownHandler.timerStatusDict["drainTimeLeft"] == 1)
+            {
+                // Store previous health
+                float lastHealth = controller.CurrentHealth;
+
+                // Take tick damage
+                controller.CurrentHealth = controller.CurrentHealth - currentDrainAmount;
+
+                // If just become dead
+                if (controller.CurrentHealth <= 0 && lastHealth > 0)
+                {
+                    // Tell animator entity is in death state
+                    animator.SetTrigger("dead");
+                    animator.SetBool("inDeathState", true);
+
+                    // Handle the death logic based on entity type
+                    if (gameObject.tag == "Enemy")
+                    {
+                        // Add to player's kill count
+                        gameData.playerKillCount++;
+
+                        // Start delay to death animation, and tell logic script to deactivate its processes
+                        cooldownHandler.timerStatusDict["deathDelay"] = 1;
+                        logicScript.Deactivate();
+                    }
+                    else if (gameObject.tag == "Player")
+                    {
+                        // Start delay to death animation and beging ending the game
+                        cooldownHandler.timerStatusDict["deathDelay"] = 1;
+                        gameEndHandler.EndGame();
+                    }
+                }
+
+                // Cause another interval for drain
+                cooldownHandler.timerStatusDict["drainDamageInterval"] = 1;
             }
         }
     }

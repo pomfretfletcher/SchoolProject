@@ -55,14 +55,22 @@ public class AbilityScript : MonoBehaviour
 
     public void SetToIconMode(int slot)
     {
+        inIconMode = true;
+        inConsumableMode = false;
+
+        // Un-interactable in scene
         collider.enabled = false;
         greyOutLogic.enabled = true;
-        inConsumableMode = false;
-        inIconMode = true;
+
+        // Turn off consumable features
         bobLogic.enabled = false;
+
+        // Set render layer to icon layer (above scene and player)
         iconRenderer.sortingLayerName = "AbilityIcon";
         iconFrameRenderer.sortingLayerName = "AbilityIcon";
         iconBackgroundRenderer.sortingLayerName = "AbilityIcon";
+
+        // Assign to proper slot and put in ui location
         if (slot == 1)
         {
             transform.parent = slot1.transform;
@@ -78,31 +86,29 @@ public class AbilityScript : MonoBehaviour
             transform.parent = slot3.transform;
             transform.position = slot3.position;
         }
-        // collider deactivate
-        // bob deactivate
-        // greyout activate
-        // specific script activate
-        // place in players slots
-        // move to position in ui
     }
 
     public void SetToConsumableMode(Transform consumableLocation)
-    {
-        collider.enabled = true;
-        greyOutLogic.enabled = false;
+    {   
         inConsumableMode = true;
         inIconMode = false;
+
+        // Interactable in scene
+        collider.enabled = true;
+        greyOutLogic.enabled = false;
+
+        // Consumable features turned on
         bobLogic.enabled = true;
+
+        // Set render layer to consumables (in scene and below player)
         iconRenderer.sortingLayerName = "Consumables";
         iconFrameRenderer.sortingLayerName = "Consumables";
         iconBackgroundRenderer.sortingLayerName = "Consumables";
+
+        // Place in designated location (node for new abilities, previous abilities location if swapped)
         transform.position = consumableLocation.position;
+
+        // Sets to correct room parent
         this.gameObject.transform.SetParent(gameData.currentRoom.transform, true);
-        // collider activate
-        // bob activate
-        // greyout dectivate
-        // speciifc script deactivate
-        // remove from player slots if in slots
-        // move to either the place swapped ability was at or ability spawn point
     }
 }

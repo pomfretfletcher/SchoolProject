@@ -1,29 +1,17 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class VisualAndSoundEffectHandling : MonoBehaviour, UsesCooldown
+public class VisualAndSoundEffectHandling : MonoBehaviour
 {
     // Script + Component Links
     GameData gameData;
-    CooldownTimer cooldownHandler;
     public AudioSource audioSource;
     public AudioSource musicSource;
-
-    private List<SpriteRenderer> whiteFlashRenderers = new List<SpriteRenderer>();
 
     private void Awake()
     {
         // Grabs all linked scripts + components
         gameData = GetComponent<GameData>();
-        cooldownHandler = GetComponent<CooldownTimer>();
-    }
-
-    private void Start()
-    {
-        // Gives cooldown handler necessary values to setup timers
-        List<string> keyList = new List<string> { "whiteFlashLength" };
-        List<float> lengthList = new List<float> { 0.1f };
-        cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
 
     public void PlaySound(AudioClip soundEffect, float soundVolume = 1f)
@@ -51,24 +39,12 @@ public class VisualAndSoundEffectHandling : MonoBehaviour, UsesCooldown
     {
         if (effect == "whiteflash")
         {
-            cooldownHandler.timerStatusDict["whiteFlashLength"] = 1;
-            Color col = new Color(0, 0, 0);
-            col.a = effectOpacity * (gameData.universalVisualEffectOpacity / 100);
-            renderer.color = col;
-        }
-    }
-
-    // Allows specific processes to be coded in to happen once a cooldown ends
-    public void CooldownEndProcess(string key)
-    {
-        if (key == "whiteFlashLength")
-        {
-            // Reset player color
-            SpriteRenderer renderer = whiteFlashRenderers[0];
-            Color col = renderer.color;
-            col.a = 0;
-            renderer.color = col;
-            /////////////////////////////////////////////////////////////////////////////////////////////// this + playvisualeffect doesnt work as alot of flashes may happen at once, add another script to each flashable object? or put it in hp handler, have the timer be set in there, as well as the reset, but activation here
+            if (gameData.universalVisualEffectOpacity > 0)
+            {
+                Color col = new Color(255, 255, 255);
+                col.a = effectOpacity * (gameData.universalVisualEffectOpacity / 100);
+                renderer.color = col;
+            }
         }
     }
 }

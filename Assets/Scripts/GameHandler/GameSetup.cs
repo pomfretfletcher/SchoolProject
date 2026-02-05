@@ -8,6 +8,7 @@ public class GameSetup : MonoBehaviour
     RoomHandling roomHandling;
     VisualAndSoundEffectHandling vsfxHandler;
 
+    // Camera that follows the player - assigned in inspector
     public CinemachineCamera uiCamera;
 
     // Room player will start game in - assigned in inspector
@@ -16,8 +17,10 @@ public class GameSetup : MonoBehaviour
     // Music that will play in the background of the game - assigned in inspector
     public AudioClip gameMusic;
 
+    // Player prefab - assigned in inspector
     public GameObject player;
 
+    // Health bar - object assign in inspector, customizable values
     public GameObject healthBar;
     public float healthBarXOffset;
     public float healthBarYOffset;
@@ -42,6 +45,7 @@ public class GameSetup : MonoBehaviour
         healthBarInstance.transform.position = new Vector3(uiCamera.transform.position.x + healthBarXOffset, uiCamera.transform.position.y + healthBarYOffset, 10f);
         healthBarInstance.name = "HealthBar";
 
+        // Place player in run parts folder
         GameObject runPartsFolder = GameObject.Find("RunParts");
         playerInstance.transform.parent = runPartsFolder.transform;
 
@@ -51,6 +55,9 @@ public class GameSetup : MonoBehaviour
 
         // Start Music
         vsfxHandler.PlayMusic(gameMusic, 1f);
+
+        // Set clock time to running as normal
+        Time.timeScale = 1f;
     }
 
     public void SetupRoomStructure()
@@ -70,6 +77,7 @@ public class GameSetup : MonoBehaviour
 
     public void SetupStartingRoom()
     {
+        // Create start room based on prefab
         GameObject setupRoom = Instantiate(startingRoom, Vector3.zero, Quaternion.identity);
         RoomCreation setupRoomCreator = setupRoom.GetComponent<RoomCreation>();
         setupRoomCreator.SetupRoom("filler", 0, null, 0, null, 0, null, 0, null, 0);

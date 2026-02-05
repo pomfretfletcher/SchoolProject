@@ -8,6 +8,7 @@ public class AttackZone : MonoBehaviour
     // Script + Component Links
     GameObject parent;
     GameObject collisionParent;
+    LogicScript parentLogicScript;
     Collider2D attackHitbox;
     UniversalController controller;
     UniversalController collisionController;
@@ -20,13 +21,14 @@ public class AttackZone : MonoBehaviour
     {
         // Grabs all linked scripts + components
         parent = transform.root.gameObject;
+        parentLogicScript = parent.GetComponent<LogicScript>();
         controller = parent.GetComponent<UniversalController>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // Decide what knockback is applied
-        Vector2 deliveredKnockback = transform.parent.localScale.x > 0 ? knockback : new Vector2(-knockback.x, knockback.y);
+        Vector2 deliveredKnockback = parentLogicScript.LookDirection > 0 ? knockback : new Vector2(-knockback.x, knockback.y);
 
         // Grab the object that is colliding with
         collisionParent = collision.transform.gameObject;

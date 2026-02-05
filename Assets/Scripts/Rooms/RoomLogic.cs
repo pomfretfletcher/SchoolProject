@@ -47,9 +47,8 @@ public class RoomLogic : MonoBehaviour
         // Create player spawn variable, this will be immediately overwritten but it needs a value to be created with
         Transform playerSpawn = player.transform;
 
-        // Reset player velocity to make them not be moving when come into new room
-        Rigidbody2D rigidbody = player.GetComponent<Rigidbody2D>();
-        rigidbody.linearVelocity = Vector2.zero;
+        PlayerInputHandler inputHandler = player.GetComponent<PlayerInputHandler>();
+        inputHandler.movingThroughRooms = true;
 
         // Grab needed data
         nextRoomData = nextRoom.GetComponent<RoomData>();
@@ -64,7 +63,7 @@ public class RoomLogic : MonoBehaviour
         else if (roomEnterDirection == "top") { playerSpawn = nextRoomData.bottomEntrancePlayerSpawnPoint; }
         else if (roomEnterDirection == "bottom") { playerSpawn = nextRoomData.topEntrancePlayerSpawnPoint; }
 
-        gameData.currentRoom = this.gameObject;
+        gameData.currentRoom = nextRoom.gameObject;
 
         // Teleport the player to the decided upon position
         teleHandler.OnPlayerTeleport(playerSpawn.position);

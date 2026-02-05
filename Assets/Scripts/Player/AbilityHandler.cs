@@ -205,12 +205,13 @@ public class AbilityHandler : MonoBehaviour, UsesCooldown
             return;
         }
 
-        //
+        // Prevent swapping if any ability slot is empty
         if (abilityOne == null || abilityTwo == null || abilityThree == null)
         {
             return;
         }
 
+        // Can only swap every few seconds - prevent holding p causing issues with repeated swapping
         else if (cooldownHandler.timerStatusDict["swapInterval"] == 0)
         {
             AbilityScript swappedAbility = abilityTwo;

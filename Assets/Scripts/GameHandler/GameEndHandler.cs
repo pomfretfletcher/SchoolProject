@@ -4,15 +4,17 @@ using System.Collections.Generic;
 public class GameEndHandler : MonoBehaviour
 {
     // Script + Component Links
-    FadeScreenScript fadeAwayScreenScript;
     GameObject player;
+    GameData gameData;
 
     // Inspector assigned screen that is created when the game begins to end
     public GameObject fadeAwayScreen;
 
     public void EndGame()
     {
+        // Grabs all linked scripts + components
         player = GameObject.Find("Player");
+        gameData = GetComponent<GameData>();
 
         // Begin screen fade to black
         // Spawn the screen that will fade to black before the end of game menu spawns

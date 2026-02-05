@@ -17,10 +17,9 @@ public class KnightPathfinding : MonoBehaviour, LogicScript
     // Internal Logic Variables
     private float distanceToPlayer;
     private float yVelocity;
-    [SerializeField]
+    public int LookDirection { get { return lookDirection; } set { lookDirection = value; } }
     private int lookDirection = 1;
-    [SerializeField]
-    private int moveDirection;
+    public int moveDirection;
 
     // States
     public bool IsMoving { get { return isMoving; } set { isMoving = value; animator.SetBool("isMoving", value); } }

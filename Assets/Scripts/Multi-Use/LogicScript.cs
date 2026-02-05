@@ -6,4 +6,5 @@ public interface LogicScript
     void Deactivate();
 
     bool IsSufferingKnockback { get; set; }
+    int LookDirection { get; set; }
 }

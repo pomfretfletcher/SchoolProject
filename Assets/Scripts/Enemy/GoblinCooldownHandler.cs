@@ -34,7 +34,7 @@ public class GoblinCooldownHandler : MonoBehaviour, UsesCooldown
                                                    controller.deathDelay,
                                                    controller.runAwayTime,
                                                    1f, // Filler for approx how long attack lasts
-                                                   1.5f // Filler for how long affected by knockback
+                                                   0.8f // Filler for how long affected by knockback
                                                     };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }

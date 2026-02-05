@@ -4,11 +4,13 @@ using UnityEngine.UI;
 
 public class MenuNavigation : MonoBehaviour
 {
+    // Script + Component Links
     GameSetup gameSetup;
     GameObject player;
     PlayerInputHandler playerInputHandler;
     GameData gameData;
     VisualAndSoundEffectHandling vsfxHandler;
+    GameEndHandler gameEndHandler;
 
     [Header("Screens/Menus")]
     public GameObject gameoverScreen;
@@ -27,9 +29,11 @@ public class MenuNavigation : MonoBehaviour
 
     private void Awake()
     {
+        // Grabs all linked scripts + components
         gameSetup = GetComponent<GameSetup>();
         gameData = GetComponent<GameData>();
         vsfxHandler = GetComponent<VisualAndSoundEffectHandling>();
+        gameEndHandler = GetComponent<GameEndHandler>();
 
         // Deactivate all menus but title screen
         titleScreen.SetActive(true);
@@ -38,6 +42,8 @@ public class MenuNavigation : MonoBehaviour
         pauseScreen.SetActive(false);
         audioSubSettings.SetActive(false);
         visualSubSettings.SetActive(false);
+
+        Time.timeScale = 0f;
     }
 
     // Called by TitleScreen [Start Run Button]
@@ -54,6 +60,8 @@ public class MenuNavigation : MonoBehaviour
         gameoverScreen.SetActive(false);
 
         // Flush all stats
+        gameData.playerKillCount = 0;
+        gameData.runTime = 0;
 
         // Restart run state
         gameSetup.SetupGame();
@@ -74,12 +82,14 @@ public class MenuNavigation : MonoBehaviour
         // Activate title screen
         titleScreen.SetActive(true);
 
-        // Flush all stats
+        // Flush run stats
+        gameData.FlushRunStats();
     }
 
     // Called by FadeScreenScript on game end
     public void ActivateGameOverScreen()
     {
+        Time.timeScale = 0f;
         gameoverScreen.SetActive(true);
     }
 
@@ -213,5 +223,18 @@ public class MenuNavigation : MonoBehaviour
         audioSubSettings.SetActive(false);
         visualSubSettings.SetActive(false);
         settingsScreen.SetActive(true);
+    }
+
+    public void ReturnToTitleFromPause()
+    {
+        // Get rid of run components
+        gameEndHandler.DeleteRunParts();
+        gameData.FlushRunStats();
+
+        // Deactivates the pause screen menu that triggered this method
+        pauseScreen.SetActive(false);
+
+        // Activate title screen
+        titleScreen.SetActive(true);
     }
 }

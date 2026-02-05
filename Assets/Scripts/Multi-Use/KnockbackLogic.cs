@@ -15,8 +15,6 @@ public class KnockbackLogic : MonoBehaviour
 
     public void ExperienceKnockback(Vector2 deliveredKnockback)
     {
-
-        Debug.Log(deliveredKnockback);
         // Reset current velocity
         rigidbody.linearVelocity = Vector2.zero;
         rigidbody.AddForce(deliveredKnockback, ForceMode2D.Impulse);

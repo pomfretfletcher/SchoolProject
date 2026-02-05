@@ -24,6 +24,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
 
     // Internal Logic Variables
     private int currentDashDirection = 1;
+    public int LookDirection { get { return lookDirection; } set { lookDirection = value; } }
     private int lookDirection = 1;
     private int attackCombo = 0;
     private float xVelocity;
@@ -49,7 +50,8 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
     public bool isRangedAttacking = false;
     [SerializeField]
     private bool isSufferingKnockback = false;
-    
+    public bool movingThroughRooms = false;
+
     private void Awake()
     {
         // Grabs all linked scripts + components
@@ -72,19 +74,19 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
         LookingDirection();
 
         // Left + Right Movement
-            // Only move in response to input if not dashing and you can move
+        // Only move in response to input if not dashing and you can move
         if (IsDashing && CanMove)
         {
             xVelocity = controller.dashImpulse * currentDashDirection;
             yVelocity = 0;
         }
-            // Regular movement based input
+        // Regular movement based input
         if (!IsDashing && CanMove)
         {
             xVelocity = controller.currentSpeed * moveInput.x;
             yVelocity = rigidbody.linearVelocityY;
         }
-            // Stops horizontal movement if on wall
+        // Stops horizontal movement if on wall
         if (touchingDirections.IsOnWall)
         {
             xVelocity = 0;
@@ -94,6 +96,10 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
         if (!CanMove)
         {
             xVelocity = 0;
+        }
+        if (movingThroughRooms)
+        {
+            yVelocity = 0;
         }
 
         // Updates the velocity of the player while limiting it to the player's max speed
@@ -131,7 +137,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
         }
     }
 
-    public void MovePlayer(InputAction.CallbackContext context) 
+    public void MovePlayer(InputAction.CallbackContext context)
     {
         // Changes context to the readable move input
         moveInput = context.ReadValue<Vector2>();
@@ -140,7 +146,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
         IsMoving = moveInput.x != 0;
     }
 
-    public void ExecutePlayerJump(InputAction.CallbackContext context) 
+    public void ExecutePlayerJump(InputAction.CallbackContext context)
     {
         // Checks if player is grounded before jumping and the jump is available
         if (touchingDirections.IsGrounded && CanMove)
@@ -155,7 +161,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
         }
     }
 
-    public void ExecutePlayerDodge(InputAction.CallbackContext context) 
+    public void ExecutePlayerDodge(InputAction.CallbackContext context)
     {
         // Checks if the player's dash is available
         if (cooldownHandler.timerStatusDict["dodgeCooldown"] == 0 && CanMove && !IsDashing)
@@ -183,7 +189,7 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
         }
     }
 
-    public void ExecutePlayerMeleeAttack(InputAction.CallbackContext context) 
+    public void ExecutePlayerMeleeAttack(InputAction.CallbackContext context)
     {
         // Tell animator to start melee attack animation and starts melee attack cooldown
         if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack && cooldownHandler.timerStatusDict["comboTime"] == 1 && !isRangedAttacking)

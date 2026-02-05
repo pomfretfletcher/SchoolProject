@@ -51,7 +51,7 @@ public class PlayerCooldownHandler : MonoBehaviour, UsesCooldown
                                                    0,   // Filler for ability cooldowns
                                                    1,   // Filler for how long melee attack is going on
                                                    1.2f,// Filler for how long ranged attack is going on
-                                                   1.5f // Filler for how long affected by knockback
+                                                   0.8f // Filler for how long affected by knockback
                                                    };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }

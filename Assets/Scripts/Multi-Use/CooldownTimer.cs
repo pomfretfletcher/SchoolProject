@@ -99,10 +99,3 @@ public class CooldownTimer : MonoBehaviour
         }
     }
 }
-
-// A custom class designed to allow viewing of 2D arrays in the inspector
-[System.Serializable]
-public class StringList
-{
-    public List<string> objects = new List<string>();
-}
