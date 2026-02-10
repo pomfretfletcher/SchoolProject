@@ -27,6 +27,8 @@ public class HPHandler : MonoBehaviour, UsesCooldown
     public float drainDamageInterval = 1f;
 
     private float currentDrainAmount;
+    private GameObject currentDrainEffect;
+    private string currentDrainType;
 
     private void Awake()
     {
@@ -130,19 +132,24 @@ public class HPHandler : MonoBehaviour, UsesCooldown
         controller.CurrentHealth = controller.FullHealth;
     }
 
-    public void StartDrain(float drainDamageAmount, float drainTimeLeft) 
+    public void StartDrain(float drainDamageAmount, float drainTimeLeft, GameObject drainEffect, string drainType) 
     {
         // Can only start if drain is not already occuring
         if (cooldownHandler.timerStatusDict["drainTimeLeft"] != 1)
         {
+            // Set logic variables based on new drain type - tells hp handler how to handle said effect
             currentDrainAmount = drainDamageAmount;
+            currentDrainEffect = drainEffect;
+            currentDrainType = drainType;
+
+            // Sets cooldown to appropiate new value and starts the ticking time
             cooldownHandler.cooldownDict["drainTimeLeft"] = drainTimeLeft;
             cooldownHandler.timerStatusDict["drainTimeLeft"] = 1;
             cooldownHandler.timerStatusDict["drainDamageInterval"] = 1;
         }
     }
 
-    public void ChangeDrainAmount(float newDrainDamageAmount, float newDrainTimeLeft) { }
+    public void ChangeDrainAmount(float newDrainDamageAmount, float newDrainTimeLeft, GameObject newDrainEffect) { }
     public void EndDrain() { }
 
     // Allows specific processes to be coded in to happen once a cooldown ends
@@ -173,6 +180,13 @@ public class HPHandler : MonoBehaviour, UsesCooldown
                 // Take tick damage
                 controller.CurrentHealth = controller.CurrentHealth - currentDrainAmount;
 
+                // If toxic effect, spawn effect
+                if (currentDrainType == "toxicEffect")
+                {
+                    GameObject spawnedEffect = Instantiate(currentDrainEffect, new Vector3(transform.position.x + Random.Range(-0.5f, 0.5f), transform.position.y + Random.Range(-0.5f, 0.5f), transform.position.z), Quaternion.Euler(0, 0, 0));
+                    vsfxHandler.PlayVisualEffect("toxicEffect", 1, spawnedEffect.GetComponent<SpriteRenderer>());
+                }
+
                 // If just become dead
                 if (controller.CurrentHealth <= 0 && lastHealth > 0)
                 {
@@ -201,6 +215,12 @@ public class HPHandler : MonoBehaviour, UsesCooldown
                 // Cause another interval for drain
                 cooldownHandler.timerStatusDict["drainDamageInterval"] = 1;
             }
+        }
+        if (key == "drainTimeLeft")
+        {
+            currentDrainAmount = 0f;
+            currentDrainEffect = null;
+            currentDrainType = null;
         }
     }
 }

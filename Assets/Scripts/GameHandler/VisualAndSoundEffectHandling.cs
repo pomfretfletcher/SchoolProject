@@ -46,5 +46,14 @@ public class VisualAndSoundEffectHandling : MonoBehaviour
                 renderer.color = col;
             }
         }
+        if (effect == "toxicEffect")
+        {
+            if (gameData.universalVisualEffectOpacity > 0)
+            {
+                Color col = renderer.color;
+                col.a = effectOpacity * (gameData.universalVisualEffectOpacity / 100);
+                renderer.color = col;
+            }
+        }
     }
 }

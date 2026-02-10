@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18d44546a1c565f46ad055c58bc8b958, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  toxicEffect: {fileID: 1626877189762511730, guid: e78ab64703310fc47813dd000732b855, type: 3}
   drainDamage: 5
   drainDuration: 6
 --- !u!1 &4955047685945266963

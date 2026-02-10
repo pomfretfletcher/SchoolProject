@@ -1,10 +1,11 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class ToxicDrain : MonoBehaviour, IsAbility
 {
     // Script + Component Links
     GameData gameData;
+
+    public GameObject toxicEffect;
 
     // Customizable Values
     public float drainDamage;
@@ -23,16 +24,13 @@ public class ToxicDrain : MonoBehaviour, IsAbility
 
     public void SpreadDrain()
     {
-        Debug.Log("SPREAD");
         GameObject room = gameData.currentRoom;
-        Debug.Log(room);
         foreach (Transform child in room.transform)
         {
             if (child.gameObject.tag == "Enemy")
             {
                 HPHandler enemyHPHandler = child.GetComponent<HPHandler>();
-                enemyHPHandler.StartDrain(drainDamage, drainDuration);
-                Debug.Log(child);
+                enemyHPHandler.StartDrain(drainDamage, drainDuration, toxicEffect, "toxicEffect");
             }
         }
     }
