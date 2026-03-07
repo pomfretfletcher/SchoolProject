@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09ca073bfc78f2447b0c242a5b86462c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedBoostPercentage: 0.5
+  speedBoostPercentage: 0.3
   speedBoostLength: 10
 --- !u!61 &634096483525232064
 BoxCollider2D:
@@ -164,6 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e8a32987c457244aa482c53d42d0b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visibleLists: []
   cooldownKeys: []
 --- !u!114 &861586520650521179
 MonoBehaviour:
@@ -179,6 +180,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   amplitude: 0.25
   frequency: 1.5
+  startPos: {x: 0, y: 0, z: 0}
 --- !u!114 &6949202366704149979
 MonoBehaviour:
   m_ObjectHideFlags: 0

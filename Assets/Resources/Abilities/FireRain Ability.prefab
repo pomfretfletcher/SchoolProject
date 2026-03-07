@@ -208,6 +208,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldown: 6
   timerProgression: 0
+  abilityName: Fire Rain
+  abilityDesc: Spawns multiple rows of fireballs that fall towards the ground.
   currentConsumablePosition: {fileID: 0}
 --- !u!114 &3534315121991549788
 MonoBehaviour:

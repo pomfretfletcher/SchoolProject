@@ -18,10 +18,6 @@ public class AbilityHandler : MonoBehaviour, UsesCooldown
     private ContactFilter2D abilityFilter;
     private Collider2D[] tempResults = new Collider2D[16];
 
-    public void AddAbilities(object newAbility) { }
-    public void ChangeAbilities(object newAbility, int slotToChange) { }
-    public void RemoveAbilities(int slotToRemove) { }
-
     private void Awake()
     {
         // Grabs all linked scripts + components
@@ -167,16 +163,12 @@ public class AbilityHandler : MonoBehaviour, UsesCooldown
             return;
         }
 
-        //
-        if (abilityOne == null || abilityTwo == null || abilityThree == null)
-        {
-            return;
-        }
-
         else if (cooldownHandler.timerStatusDict["swapInterval"] == 0)
         {
             AbilityScript swappedAbility = abilityOne;
-            swappedAbility.SetToConsumableMode(abilityToPickup.transform);
+            swappedAbility.SetToConsumableMode(abilityToPickup.transform.position, "swap");
+            swappedAbility.transform.SetParent(null, false);
+            swappedAbility.gameObject.transform.position = GameObject.Find("Player").transform.position;
             abilityOne = abilityToPickup.GetComponent<AbilityScript>();
             abilityOne.SetToIconMode(1);
             cooldownHandler.timerStatusDict["swapInterval"] = 1;
@@ -205,17 +197,13 @@ public class AbilityHandler : MonoBehaviour, UsesCooldown
             return;
         }
 
-        // Prevent swapping if any ability slot is empty
-        if (abilityOne == null || abilityTwo == null || abilityThree == null)
-        {
-            return;
-        }
-
         // Can only swap every few seconds - prevent holding p causing issues with repeated swapping
         else if (cooldownHandler.timerStatusDict["swapInterval"] == 0)
         {
             AbilityScript swappedAbility = abilityTwo;
-            swappedAbility.SetToConsumableMode(abilityToPickup.transform);
+            swappedAbility.SetToConsumableMode(abilityToPickup.transform.position, "swap");
+            swappedAbility.transform.SetParent(null, false);
+            swappedAbility.gameObject.transform.position = GameObject.Find("Player").transform.position;
             abilityTwo = abilityToPickup.GetComponent<AbilityScript>();
             abilityTwo.SetToIconMode(2);
             cooldownHandler.timerStatusDict["swapInterval"] = 1;
@@ -244,16 +232,12 @@ public class AbilityHandler : MonoBehaviour, UsesCooldown
             return;
         }
 
-        //
-        if (abilityOne == null || abilityTwo == null || abilityThree == null)
-        {
-            return;
-        }
-
         else if (cooldownHandler.timerStatusDict["swapInterval"] == 0)
         {
             AbilityScript swappedAbility = abilityThree;
-            swappedAbility.SetToConsumableMode(abilityToPickup.transform);
+            swappedAbility.SetToConsumableMode(abilityToPickup.transform.position, "swap");
+            swappedAbility.transform.SetParent(null, false);
+            swappedAbility.gameObject.transform.position = GameObject.Find("Player").transform.position;
             abilityThree = abilityToPickup.GetComponent<AbilityScript>();
             abilityThree.SetToIconMode(3);
             cooldownHandler.timerStatusDict["swapInterval"] = 1;

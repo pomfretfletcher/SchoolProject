@@ -24,7 +24,7 @@ public class MultiArrowFire : MonoBehaviour, IsAbility
 
     public void OnActivation() 
     { 
-        FireArrows(); 
+        FireArrows();
     }
     
     public void FireArrows()

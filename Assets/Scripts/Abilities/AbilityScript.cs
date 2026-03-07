@@ -18,12 +18,14 @@ public class AbilityScript : MonoBehaviour
     Transform slot2;
     Transform slot3;
 
+    // Customizable Values
     public float cooldown;
     public float timerProgression;
-    private bool inConsumableMode = false;
-    private bool inIconMode = true;
+    public string abilityName;
+    public string abilityDesc;
 
-    public Transform currentConsumablePosition;
+    // Internal logic variables
+    private bool inIconMode = true;
 
     private void Awake()
     {
@@ -50,13 +52,13 @@ public class AbilityScript : MonoBehaviour
         {
             // Runs the specific abilities function
             specificAbilityScript.OnActivation();
+            gameData.abilitiesUsed++;
         }
     }
 
     public void SetToIconMode(int slot)
     {
         inIconMode = true;
-        inConsumableMode = false;
 
         // Un-interactable in scene
         collider.enabled = false;
@@ -64,33 +66,49 @@ public class AbilityScript : MonoBehaviour
 
         // Turn off consumable features
         bobLogic.enabled = false;
+        collider.enabled = false;
 
         // Set render layer to icon layer (above scene and player)
         iconRenderer.sortingLayerName = "AbilityIcon";
         iconFrameRenderer.sortingLayerName = "AbilityIcon";
         iconBackgroundRenderer.sortingLayerName = "AbilityIcon";
 
+        // Remove from current parent (room)
+        transform.SetParent(null, true); // keep current world position
+
+        // Reset scale and rotation to UI values
+        transform.localScale = Vector3.one * 0.2f; // icon scale
+        transform.rotation = Quaternion.identity;
+
         // Assign to proper slot and put in ui location
         if (slot == 1)
         {
-            transform.parent = slot1.transform;
-            transform.position = slot1.position;
+            // Parent to the UI slot
+            transform.SetParent(slot1.transform, false);
+
+            // Snap to slot position
+            transform.localPosition = Vector3.zero;
         }
         else if (slot == 2)
         {
-            transform.parent = slot2.transform;
-            transform.position = slot2.position;
+            // Parent to the UI slot
+            transform.SetParent(slot2.transform, false);
+
+            // Snap to slot position
+            transform.localPosition = Vector3.zero;
         }
         else if (slot == 3)
         {
-            transform.parent = slot3.transform;
-            transform.position = slot3.position;
+            // Parent to the UI slot
+            transform.SetParent(slot3.transform, false);
+
+            // Snap to slot position
+            transform.localPosition = Vector3.zero;
         }
     }
 
-    public void SetToConsumableMode(Transform consumableLocation)
-    {   
-        inConsumableMode = true;
+    public void SetToConsumableMode(Vector3 consumableLocation, string context = "new")
+    {
         inIconMode = false;
 
         // Interactable in scene
@@ -99,16 +117,28 @@ public class AbilityScript : MonoBehaviour
 
         // Consumable features turned on
         bobLogic.enabled = true;
+        collider.enabled = true;
 
         // Set render layer to consumables (in scene and below player)
         iconRenderer.sortingLayerName = "Consumables";
         iconFrameRenderer.sortingLayerName = "Consumables";
         iconBackgroundRenderer.sortingLayerName = "Consumables";
 
-        // Place in designated location (node for new abilities, previous abilities location if swapped)
-        transform.position = consumableLocation.position;
+        transform.SetParent(null, true);
+
+        transform.localScale = new Vector3(1, 1, 1);
 
         // Sets to correct room parent
         this.gameObject.transform.SetParent(gameData.currentRoom.transform, true);
+
+        if (context == "swap")
+        {
+            transform.position = consumableLocation;
+            bobLogic.startPos = consumableLocation;
+        }
+        else
+        {
+            transform.position = consumableLocation;
+        }
     }
 }

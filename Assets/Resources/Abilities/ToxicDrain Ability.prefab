@@ -121,6 +121,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldown: 8
   timerProgression: 0
+  abilityName: Toxic Drain
+  abilityDesc: Cause all enemies in the room to slowly lose some health.
   currentConsumablePosition: {fileID: 0}
 --- !u!114 &682051949794725327
 MonoBehaviour:

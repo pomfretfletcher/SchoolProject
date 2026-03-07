@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class FireBallScript : MonoBehaviour, UsesCooldown
+public class FireBallScript : MonoBehaviour, UsesCooldown, ProjectileScript
 {
     // Script + Component Links
     FireRain callingScript;
@@ -16,6 +16,7 @@ public class FireBallScript : MonoBehaviour, UsesCooldown
     // Private variables/objects for filter
     private ContactFilter2D filter;
     private Collider2D[] results = new Collider2D[16];
+    private float damage;
 
     private void Awake()
     {
@@ -49,6 +50,11 @@ public class FireBallScript : MonoBehaviour, UsesCooldown
             Destroy(this.gameObject);
         }
     }
+
+    public void SetDamage(float givenDamage)
+    {
+        damage = givenDamage;
+    }
     
     public void CooldownEndProcess(string key)
     {
@@ -56,18 +62,26 @@ public class FireBallScript : MonoBehaviour, UsesCooldown
         Destroy(this.gameObject);
     }
 
+    // Used for enemy projectile scripts but needs to be here for the interface to work properly
+    public void AssignOwner(GameObject owner) { }
+
+    // Used for enemy projectile scripts but needs to be here for the interface to work properly
+    public void FlipDirection() { }
+
     // Stores every collision within the collider
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        GameObject collisionParent = collision.transform.gameObject;
+        Transform collisionParent = collision.transform;
 
         // If player
         if (collisionParent.gameObject.tag == "Enemy")
         {
+            Debug.Log("SEEN ENEMY");
+            Debug.Log(collisionParent);
             // Get hp handler component
             HPHandler hpHandler = collisionParent.GetComponent<HPHandler>();
             // Deal damage through hp handler component
-            hpHandler.TakeDamage(callingScript.damage);
+            hpHandler.TakeDamage(damage);
         }
         // Destroy self
         Destroy(this.gameObject);

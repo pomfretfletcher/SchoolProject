@@ -18,10 +18,8 @@ public class DamageupPowerup : MonoBehaviour, IsConsumable
     private void Awake()
     {
         // Grabs all linked scripts + components
-        controller = GameObject.Find("Player").GetComponent<PlayerController>();
-    }
+        controller = GameObject.Find("Player").GetComponent<PlayerController>();    }
 
-    // Called by pickup script when this pickup is collected
     public bool OnPickup()
     {
         // If a set value increase

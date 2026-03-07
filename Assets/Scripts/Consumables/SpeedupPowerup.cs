@@ -21,7 +21,6 @@ public class SpeedupPowerup : MonoBehaviour, IsConsumable
         controller = GameObject.Find("Player").GetComponent<PlayerController>();
     }
 
-    // Called by pickup script when this pickup is collected
     public bool OnPickup()
     {
         // If a set value increase

@@ -151,6 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   amplitude: 0.25
   frequency: 1.5
+  startPos: {x: 0, y: 0, z: 0}
 --- !u!114 &8355310290540800563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,4 +178,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageupAmount: 0
-  damageupPercent: 0.2
+  damageupPercent: 0.15

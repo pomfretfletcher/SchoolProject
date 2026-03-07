@@ -10,31 +10,39 @@ public class KnightPathfinding : MonoBehaviour, LogicScript
     Rigidbody2D rigidbody;
     Animator animator;
     TouchingDirections touchingDirections;
-    Collider2D selfCollider;
     DetectionZone cliffDetectionZone;
     CooldownTimer cooldownHandler;
+    UniversalEnemyFunctions universalEnemyFunctions;
 
     // Internal Logic Variables
     private float distanceToPlayer;
     private float yVelocity;
-    public int LookDirection { get { return lookDirection; } set { lookDirection = value; } }
-    private int lookDirection = 1;
-    public int moveDirection;
 
     // States
+    [Header("Movement States")]
+    [SerializeField] private bool isMoving = false;
     public bool IsMoving { get { return isMoving; } set { isMoving = value; animator.SetBool("isMoving", value); } }
+    [SerializeField] private bool canMove = true;
+    public bool CanMove { get { return canMove; } set { canMove = value; } }
+    [SerializeField] private bool isSufferingKnockback = false;
     public bool IsSufferingKnockback { get { return isSufferingKnockback; } set { isSufferingKnockback = value; } }
-    [Header("States")]
-    [SerializeField]
-    private bool isMoving = false;
-    public bool CanMove = true;
-    public bool CanAttack = true;
+
+    [Header("Directions")]
+    [SerializeField] private int lookDirection = 1;
+    public int LookDirection { get { return lookDirection; } set { lookDirection = value; } }
+    [SerializeField] private int moveDirection = 1;
+    public int MoveDirection { get { return moveDirection; } set { moveDirection = value; } }
+
+    [Header("Combat States")]
+    [SerializeField] private bool canAttack = true;
+    public bool CanAttack { get { return canAttack; } set { canAttack = value; } }
+
+    public bool isAttacking = false;
+
+    [Header("Tracking States")]
     public bool CurrentlyTrackingPlayer = false;
     public bool TrackingButNotMove = false;
     public bool TrackingOffCliff = false;
-    public bool isAttacking = false;
-    [SerializeField]
-    public bool isSufferingKnockback = false;
 
     private void Awake()
     {
@@ -43,24 +51,60 @@ public class KnightPathfinding : MonoBehaviour, LogicScript
         animator = GetComponent<Animator>();
         touchingDirections = GetComponent<TouchingDirections>();
         controller = GetComponent<EnemyController>();
-        selfCollider = GetComponent<Collider2D>();
         cooldownHandler = GetComponent<CooldownTimer>();
         player = GameObject.Find("Player");
         cliffDetectionZone = transform.Find("CliffDetectionZone").GetComponent<DetectionZone>();
+        universalEnemyFunctions = GetComponent<UniversalEnemyFunctions>();
     }
 
-    // Fixed Update is called every set interval (about every 0.02 seconds)
     private void FixedUpdate()
     {
         // Checks envionmental collisions
         touchingDirections.CheckCollisions();
 
         // Makes player look in correct direction
-        LookingDirection();
+        universalEnemyFunctions.LookingDirection();
 
-        // Choose how to make enemy move
-        CalcDistanceToPlayer();
+        if (controller.currentHealth > 0)
+        {
+            // Choose how to make enemy move
+            DecidePathfinding();
 
+            yVelocity = ProcessPathfinding();
+
+            // Apply decided upon velocity
+            universalEnemyFunctions.ApplyVelocity(yVelocity);
+
+            // Update ismoving variable and animator parameter based on current movement
+            universalEnemyFunctions.UpdateIsMoving();
+        }
+        else
+        {
+            rigidbody.linearVelocityX = 0;
+        }
+    }
+
+    public void OnCliffDetected()
+    {
+        // Flip enemy if a cliff is detected, but only every few seconds to avoid erratic and repeated flipping
+        if (!CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["cliffDetectionInterval"] == 0 && cliffDetectionZone.detectedColliders.Count == 0)
+        {
+            lookDirection = -1 * lookDirection;
+            moveDirection = lookDirection;
+            transform.localScale *= new Vector2(-1, 1);
+            cooldownHandler.timerStatusDict["cliffDetectionInterval"] = 1;
+        }
+        else if (CurrentlyTrackingPlayer)
+        {
+            TrackingOffCliff = true;
+        }
+    }
+
+    public void DecidePathfinding()
+    {
+        // Calculate the distance to the player with vector math
+        Vector2 offset = transform.position - player.transform.position;
+        distanceToPlayer = offset.magnitude;
 
         // If the player is within the enemy's tracking proximity
         if (distanceToPlayer <= controller.playerRequiredProximity)
@@ -68,42 +112,61 @@ public class KnightPathfinding : MonoBehaviour, LogicScript
             // If not curently tracking player, the enemy is now tracking the player
             CurrentlyTrackingPlayer = true;
         }
-        // If player leaves proximity, the enemy stops tracking them
+
+        // Once in a set x distance of the player, continue tracking them but stand still
+        if (Math.Abs(transform.position.x - player.transform.position.x) <= controller.trackButNotMoveProximity)
+        {
+            TrackingButNotMove = true;
+        }
         else
+        {
+            TrackingButNotMove = false;
+        }
+
+        // If player leaves proximity, the enemy stops tracking them
+        if (distanceToPlayer > controller.playerRequiredProximity)
         {
             CurrentlyTrackingPlayer = false;
             TrackingOffCliff = false;
             TrackingButNotMove = false;
+
             // If stop tracking player but still at cliff edge, flip direction
             if (cliffDetectionZone.detectedColliders.Count == 0 && touchingDirections.IsGrounded)
             {
-                lookDirection = -1 * lookDirection;
-                moveDirection = lookDirection;
-                transform.localScale *= new Vector2(-1, 1);
+                OnCliffDetected();
             }
         }
+
         // Turns off tracking off cliff if there is no longer a cliff detected, used when turning the enemy away from cliff
-        if (TrackingOffCliff && cliffDetectionZone.detectedColliders.Count > 0) 
+        if (TrackingOffCliff && cliffDetectionZone.detectedColliders.Count > 0)
         {
-            TrackingOffCliff = false; 
+            TrackingOffCliff = false;
         }
+
         // Keep enemy looking at player while in track but not move zone
         if (TrackingButNotMove && CanMove && ((transform.position.x - player.transform.position.x > 0 && lookDirection != -1) || (transform.position.x - player.transform.position.x < 0 && lookDirection != 1)))
         {
             lookDirection *= -1;
         }
+    }
+
+    public float ProcessPathfinding()
+    {
+        if (cooldownHandler.timerStatusDict["attackLockTime"] == 1) { moveDirection = 0; return rigidbody.linearVelocityY; }
+
+        if (!CanMove) { moveDirection = 0; return rigidbody.linearVelocityY; }
 
         // Tracking player movement decisions
-        if (CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["attackLockTime"] == 0)
+        if (CurrentlyTrackingPlayer && touchingDirections.IsGrounded)
         {
             // Stops enemy from moving if they are still tracking, but at cliff edge
-            if (cliffDetectionZone.detectedColliders.Count == 0)
+            if (TrackingOffCliff)
             {
                 moveDirection = 0;
                 yVelocity = 0;
             }
             // Stops enemy from moving if they are within a small proximity of the player
-            else if (TrackingButNotMove && touchingDirections.IsGrounded)
+            else if (TrackingButNotMove)
             {
                 moveDirection = 0;
                 yVelocity = 0;
@@ -122,121 +185,36 @@ public class KnightPathfinding : MonoBehaviour, LogicScript
             }
         }
 
-
         // Non tracking movement decisions
-        else if (cooldownHandler.timerStatusDict["attackLockTime"] == 0)
+        else
         {
+            // Flip direction at collision with wall
+            if (touchingDirections.IsGrounded && (touchingDirections.IsOnWall || touchingDirections.WallStop) && cooldownHandler.timerStatusDict["wallDetectionInterval"] == 0)
+            {
+                moveDirection = -1 * lookDirection;
+                yVelocity = 0;
+                cooldownHandler.timerStatusDict["wallDetectionInterval"] = 1;
+            }
             // Default walk cycle movement
-            if (touchingDirections.IsGrounded)
+            else if (touchingDirections.IsGrounded)
             {
                 moveDirection = lookDirection;
                 yVelocity = 0;
             }
-            // Flip direction at collision with wall
-            if (touchingDirections.IsGrounded && touchingDirections.IsOnWall)
-            {
-                moveDirection = -1 * lookDirection;
-                yVelocity = 0;
-            }
             // Not move if in air, allow gravity to affect
-            if (!touchingDirections.IsGrounded)
+            else if (!touchingDirections.IsGrounded)
             {
                 moveDirection = 0;
                 yVelocity = rigidbody.linearVelocityY;
             }
         }
 
-        // Ovveride previous decisions if can't move
-        if (!CanMove) 
-        {
-            moveDirection = 0;
-        }
-
-        // Keeps movement direction, look direction and localscale in parity
-        if (lookDirection == -1 && transform.localScale.x > 0) { transform.localScale *= new Vector2(-1, 1); }
-        if (lookDirection == 1 && transform.localScale.x < 0) { transform.localScale *= new Vector2(-1, 1); }
-
-        // Limit enemy movement to maxspeed
-        if (controller.currentSpeed <= controller.maxSpeed && !isSufferingKnockback)
-        {
-            rigidbody.linearVelocity = new Vector2(controller.currentSpeed * moveDirection, yVelocity);
-        }
-        else if (controller.currentSpeed > controller.maxSpeed && !isSufferingKnockback)
-        {
-            rigidbody.linearVelocity = new Vector2(controller.maxSpeed * moveDirection, yVelocity);
-        }
-
-        // Update ismoving variable and animator parameter based on current movement
-        if (moveDirection == 0)
-        {
-            IsMoving = false;
-        }
-        else
-        {
-            IsMoving = true;
-        }
+        return yVelocity;
     }
 
-    public void LookingDirection()
+    public void ExecuteEnemyAttack()
     {
-        // If enemy can't move, don't change their orientation
-        if (!CanMove) { return; }
-
-        if (moveDirection == 1 && lookDirection != 1)
-        {
-            // Changes look direction to 1 (right)
-            lookDirection = 1;
-            // Flips transform
-            transform.localScale *= new Vector2(-1, 1);
-        }
-        if (moveDirection == -1 && lookDirection != -1)
-        {
-            // Changes look direction to -1 (left)
-            lookDirection = -1;
-            // Flips transform
-            transform.localScale *= new Vector2(-1, 1);
-        }
-    }
-
-    // Detection Methods
-    public void OnCliffDetected()
-    {   
-        // Flip enemy if a cliff is detected, but only every few seconds to avoid erratic and repeated flipping
-        if (!CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["cliffDetectionInterval"] == 0 && cliffDetectionZone.detectedColliders.Count == 0)
-        {
-            lookDirection = -1 * lookDirection;
-            moveDirection = lookDirection;
-            transform.localScale *= new Vector2(-1, 1);
-            cooldownHandler.timerStatusDict["cliffDetectionInterval"] = 1;
-        }
-        else if (CurrentlyTrackingPlayer)
-        {
-            TrackingOffCliff = true;
-        }
-    }
-
-    public void CalcDistanceToPlayer() 
-    {
-        // Calculate the distance to the player with vector math
-        Vector2 offset = transform.position - player.transform.position;
-        distanceToPlayer = offset.magnitude;
-
-        // Once in a set x distance of the player, continue tracking them but stand still
-        if (Math.Abs(transform.position.x - player.transform.position.x) <= controller.trackButNotMoveProximity)
-        {
-            TrackingButNotMove = true;
-        }
-        else
-        {
-            TrackingButNotMove = false;
-        }
-    }
-
-    public void FindOptimalMovePath() { }
-
-    public void ExecuteEnemyAttack() 
-    {
-        if (cooldownHandler.timerStatusDict["attackCooldown"] == 0 && CanAttack)
+        if (cooldownHandler.timerStatusDict["attackCooldown"] == 0 && CanAttack && controller.CurrentHealth > 0)
         {
             // Start cooldowns, tell animator an attack has occured and lock movement temporarily
             cooldownHandler.timerStatusDict["attackCooldown"] = 1;
@@ -244,10 +222,5 @@ public class KnightPathfinding : MonoBehaviour, LogicScript
             animator.SetTrigger("attacked");
             CanMove = false;
         }
-    }
-
-    public void Deactivate()
-    {
-        this.enabled = false;
     }
 }

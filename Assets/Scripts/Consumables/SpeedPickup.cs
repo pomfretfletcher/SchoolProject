@@ -36,7 +36,6 @@ public class SpeedPickup : MonoBehaviour, IsConsumable, UsesCooldown
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
 
-    // Called by pickup script when this pickup is collected
     public bool OnPickup()
     {
         // Increase player speed

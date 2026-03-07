@@ -24,13 +24,15 @@ public class FlyingEyeCooldownHandler : MonoBehaviour, UsesCooldown
                                                   "invulnerableOnHitTime",
                                                   "deathDelay",
                                                   "isAttacking",
-                                                  "sufferingKnockback"};
+                                                  "sufferingKnockback",
+                                                  "trackIntervalTime"};
         List<float> lengthList = new List<float> { controller.attackCooldown,
                                                    controller.attackLockTime,
                                                    controller.invulnerableOnHitTime,
                                                    controller.deathDelay,
                                                    1f, // Filler for approx how long attack lasts
-                                                   0.8f // Filler for how long affected by knockback
+                                                   0.6f, // Filler for how long affected by knockback
+                                                   controller.trackIntervalTime
                                                    };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
@@ -53,7 +55,7 @@ public class FlyingEyeCooldownHandler : MonoBehaviour, UsesCooldown
         if (key == "isAttacking")
         {
             pathfindingScript.isAttacking = false;
-            pathfindingScript.CanMove = true;
+            cooldownHandler.timerStatusDict["trackIntervalTime"] = 1;
         }
         if (key == "sufferingKnockback")
         {

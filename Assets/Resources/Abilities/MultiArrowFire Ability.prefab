@@ -117,7 +117,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2636194977332354177}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -6.96, y: 2.4, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -125,7 +125,7 @@ Transform:
   - {fileID: 4890074235976209583}
   - {fileID: 6534837661570497701}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4577753341059093837
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -207,6 +207,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldown: 6
   timerProgression: 0
+  abilityName: Multi Arrow Fire
+  abilityDesc: Fire a tall column of arrows in the direction you're facing.
   currentConsumablePosition: {fileID: 0}
 --- !u!114 &2687844420433876035
 MonoBehaviour:

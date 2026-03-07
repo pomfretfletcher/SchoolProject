@@ -23,6 +23,7 @@ public class MushroomCooldownHandler : MonoBehaviour, UsesCooldown
         // Gives cooldown handler necessary values to setup timers
         List<string> keyList = new List<string> { "attackCooldown",
                                                   "cliffDetectionInterval",
+                                                  "wallDetectionInterval",
                                                   "attackLockTime",
                                                   "invulnerableOnHitTime",
                                                   "runAwayTime",
@@ -33,13 +34,14 @@ public class MushroomCooldownHandler : MonoBehaviour, UsesCooldown
                                                    };
         List<float> lengthList = new List<float> { controller.attackCooldown,
                                                    controller.cliffDetectionInterval,
+                                                   controller.wallDetectionInterval,
                                                    controller.attackLockTime,
                                                    controller.invulnerableOnHitTime,
                                                    controller.runAwayTime,
                                                    controller.projectileFireDelay,
                                                    controller.deathDelay,
                                                    1f, // Filler for approx how long attack lasts
-                                                   0.8f // Filler for how long affected by knockback
+                                                   0.6f // Filler for how long affected by knockback
                                                    };
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }

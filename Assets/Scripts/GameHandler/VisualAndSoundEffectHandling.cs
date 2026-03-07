@@ -45,14 +45,23 @@ public class VisualAndSoundEffectHandling : MonoBehaviour
                 col.a = effectOpacity * (gameData.universalVisualEffectOpacity / 100);
                 renderer.color = col;
             }
-        }
-        if (effect == "toxicEffect")
-        {
-            if (gameData.universalVisualEffectOpacity > 0)
+            else
             {
-                Color col = renderer.color;
-                col.a = effectOpacity * (gameData.universalVisualEffectOpacity / 100);
+                Color col = new Color(255, 255, 255);
+                col.a = effectOpacity * 0;
                 renderer.color = col;
+            }
+        }
+        if (effect == "toxicEffect" || effect == "bleedPickup")
+        {
+            Color col = renderer.color;
+            col.a = effectOpacity * (gameData.universalVisualEffectOpacity / 100);
+            renderer.color = col;
+
+            if (gameData.universalVisualEffectOpacity == 0)
+            {
+                EffectScript effectScript = renderer.transform.GetComponent<EffectScript>();
+                effectScript.HideEffect();
             }
         }
     }

@@ -27,21 +27,26 @@ public class EnemyController : MonoBehaviour, UniversalController
     public float projectileFireDelay;
     public float attackCooldown;
 
-    [Header("Waypoint and Cliff Detection Variables")]
+    [Header("Waypoint and Detection Variables")]
     public Transform nextWaypoint;
     public List<Transform> waypointList;
-    public int cliffDetectionInterval;
+    public int waypointIndex = 0;
+    public float cliffDetectionInterval;
+    public float wallDetectionInterval;
 
     [Header("Player Reference Variables")]
     public float playerRequiredProximity;
     public float trackButNotMoveProximity;
     public float runAwayTrackingProximity;
     public float runAwayTime;
+    public float trackIntervalTime;
 
     [Header("Misc Variables")]
     public bool isInvulnerable = false;
     public float invulnerableOnHitTime;
     public float deathDelay;
+    private float ownScale;
+    public bool isFlyingEnemy;
 
     private void Start()
     {
@@ -51,11 +56,32 @@ public class EnemyController : MonoBehaviour, UniversalController
 
     public void DifficultyScale(float scale)
     {
+        ownScale = scale;
         // Alter variables relative to the given difficulty scale
         meleeDamage *= scale;
         rangedDamage *= scale;
         currentSpeed *= scale;
         fullHealth *= scale;
         currentHealth *= scale;
+    }
+
+    public void AlterScale(float newScale)
+    {
+        meleeDamage *= newScale / ownScale;
+        rangedDamage *= newScale / ownScale;
+        currentSpeed *= newScale / ownScale;
+        fullHealth *= newScale / ownScale;
+        currentHealth *= newScale / ownScale;
+
+        ownScale = newScale;
+    }
+
+    public void SetWaypoints(Transform spawnNode)
+    {
+        waypointList.Add(spawnNode.Find("FlyingNodeOne"));
+        waypointList.Add(spawnNode.Find("FlyingNodeTwo"));
+        waypointList.Add(spawnNode.Find("FlyingNodeThree"));
+
+        nextWaypoint = waypointList[waypointIndex];
     }
 }

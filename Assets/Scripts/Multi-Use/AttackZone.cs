@@ -55,6 +55,7 @@ public class AttackZone : MonoBehaviour
             if (!collisionController.IsInvulnerable)
             {
                 PlayerController playerController = parent.GetComponent<PlayerController>();
+                PlayerInputHandler playerInputHandler = parent.GetComponent<PlayerInputHandler>();
                 if (controller.MeleeDamageAmount + damageIncrease > playerController.minMeleeDamage)
                 {
                     hpHandler.TakeDamage(controller.MeleeDamageAmount + damageIncrease);
@@ -69,6 +70,14 @@ public class AttackZone : MonoBehaviour
                     if (deliveredKnockback.x != 0)
                     {
                         knockbackHandler.ExperienceKnockback(deliveredKnockback);
+                    }
+                }
+
+                if (playerInputHandler.specialCombatEffectActive)
+                {
+                    if (playerInputHandler.currentSpecialCombatEffect == "bleedPickup")
+                    {
+                        hpHandler.StartDrain(playerInputHandler.currentEffectDamage, playerInputHandler.currentEffectLength, playerInputHandler.currentEffectPrefab, playerInputHandler.currentSpecialCombatEffect);
                     }
                 }
             }

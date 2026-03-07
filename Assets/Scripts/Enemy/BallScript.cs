@@ -47,7 +47,6 @@ public class BallScript : MonoBehaviour, ProjectileScript, UsesCooldown
         int count = selfCollider.Overlap(filter, results);
         if (count > 0)
         {
-            Debug.Log("destroying1");
             Destroy(this.gameObject);
         }
     }

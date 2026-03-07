@@ -33,7 +33,6 @@ public class PlayerController : MonoBehaviour, UniversalController
     public float dashLockTime;
 
     [Header("Attack Cooldowns and Delays")]
-    public float meleeAttackCooldown;
     public float comboTime;
     public float rangedAttackCooldown;
     public float projectileFireDelay;

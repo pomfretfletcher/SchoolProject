@@ -67,6 +67,10 @@ public class RoomLogic : MonoBehaviour
 
         // Teleport the player to the decided upon position
         teleHandler.OnPlayerTeleport(playerSpawn.position);
+
+        // Disable all the enemies in current room for performance
+        roomHandling.DisableEnemies(this.gameObject);
+        roomHandling.EnableEnemies(nextRoom.gameObject);
     }
 
     public void ChangeRoom(string direction)

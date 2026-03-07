@@ -15,8 +15,9 @@ public class FireRain : MonoBehaviour, IsAbility, UsesCooldown
     public float damage;
     public float timeBetweenLayers;
 
-    // Private internal logic variables
+    // Internal logic variables
     private int amountOfLayersDone = 0;
+    private float currentYValue;
 
     private void Awake()
     {
@@ -52,6 +53,7 @@ public class FireRain : MonoBehaviour, IsAbility, UsesCooldown
         RainFire();
         amountOfLayersDone++;
         cooldownHandler.timerStatusDict["timeBetweenLayers"] = 1;
+        currentYValue = player.transform.position.y;
     }
 
     public void RainFire()
@@ -61,7 +63,11 @@ public class FireRain : MonoBehaviour, IsAbility, UsesCooldown
         for (var i = 1; i <= ballCount; i++)
         {
             // Creates the firing projectile
-            GameObject firedProjectile = Instantiate(projectile, new Vector3(currentFirePosition, player.transform.position.y + 0.7f, player.transform.position.z), Quaternion.Euler(0, 0, 0));
+            GameObject firedProjectile = Instantiate(projectile, new Vector3(currentFirePosition, currentYValue + 0.7f, player.transform.position.z), Quaternion.Euler(0, 0, 0));
+
+            // Give the created fire ball its damage val
+            FireBallScript fireBallScript = firedProjectile.GetComponent<FireBallScript>();
+            fireBallScript.SetDamage(damage);
 
             // Seperates each arrow evenly across the fire range
             currentFirePosition -= (fireRange / (ballCount - 1));

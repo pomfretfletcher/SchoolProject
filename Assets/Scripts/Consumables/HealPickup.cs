@@ -5,7 +5,6 @@ public class HealPickup : MonoBehaviour, IsConsumable
     // Script + Component Links
     PlayerController controller;
     HPHandler hpHandler;
-
     // Interface Cast Variables
     public bool PickedUp { get => pickedUp; set => pickedUp = value; }
 
@@ -22,7 +21,6 @@ public class HealPickup : MonoBehaviour, IsConsumable
         hpHandler = GameObject.Find("Player").GetComponent<HPHandler>();
     }
 
-    // Called by pickup script when this pickup is collected
     public bool OnPickup()
     {
         // Only picked up if the player has health to gain

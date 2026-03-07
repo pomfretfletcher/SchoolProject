@@ -18,6 +18,7 @@ public class ConsumableBob : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // Calculate the offset the consumable will have and then applies it
         yOffset = Mathf.Sin(Time.time * frequency) * amplitude;
         transform.position = startPos + new Vector3(0, yOffset, 0);
     }

@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public interface IsConsumable
 {
     // Interface Access Methods

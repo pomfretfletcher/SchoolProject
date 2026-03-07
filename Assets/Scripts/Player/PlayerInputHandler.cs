@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Mono.Cecil.Cil;
-using NUnit.Framework;
-using NUnit.Framework.Internal;
-using Unity.Collections;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,40 +8,55 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
     Rigidbody2D rigidbody;
     Animator animator;
     TouchingDirections touchingDirections;
-    Collider2D selfCollider;
     CooldownTimer cooldownHandler;
-    ProjectileLauncher projectileLauncher;
     MenuNavigation menuNav;
 
     // Internal Logic Variables
     private int currentDashDirection = 1;
-    public int LookDirection { get { return lookDirection; } set { lookDirection = value; } }
-    private int lookDirection = 1;
     private int attackCombo = 0;
     private float xVelocity;
     private float yVelocity;
     private Vector2 moveInput;
 
-    // Internal/External Logic Variables
-    public bool invulnerableFromAnotherSource = false;
-
     // States
+    [Header("Movement States")]
+    [SerializeField] private bool isMoving = false;
     public bool IsMoving { get { return isMoving; } set { isMoving = value; animator.SetBool("isMoving", value); } }
+    [SerializeField] private bool isDashing = false;
     public bool IsDashing { get { return isDashing; } set { isDashing = value; animator.SetBool("isDashing", value); } }
+    [SerializeField] private bool canMove = true;
+    public bool CanMove { get { return canMove; } set { canMove = value; } }
+    [SerializeField] private bool isSufferingKnockback = false;
     public bool IsSufferingKnockback { get { return isSufferingKnockback; } set { isSufferingKnockback = value; } }
-    [Header("States")]
-    [SerializeField]
-    private bool isMoving = false;
-    [SerializeField]
-    private bool isDashing = false;
-    public bool CanMove = true;
-    public bool CanAttack = true;
-    public bool CanUseAbilities = true;
+
+    [Header("Directions")]
+    [SerializeField] private int lookDirection = 1;
+    public int LookDirection { get { return lookDirection; } set { lookDirection = value; } }
+    [SerializeField] private int moveDirection = 1;
+    public int MoveDirection { get { return moveDirection; } set { moveDirection = value; } }
+
+    [Header("Combat States")]
+    [SerializeField] private bool canAttack = true;
+    public bool CanAttack { get { return canAttack; } set { canAttack = value; } }
     public bool isMeleeAttacking = false;
+    private int meleeAttackDirection;
     public bool isRangedAttacking = false;
-    [SerializeField]
-    private bool isSufferingKnockback = false;
+
+    [Header("Ability States")]
+    public bool CanUseAbilities = true;
+
+    [Header("Combat Effects")]
+    public bool specialCombatEffectActive = false;
+    public string currentSpecialCombatEffect;
+    public float currentEffectDamage;
+    public GameObject currentEffectPrefab;
+    public float currentEffectLength;
+
+    [Header("Misc States")]
     public bool movingThroughRooms = false;
+    public bool invulnerableFromAnotherSource = false;
+    public bool inPauseMenu = false;
+    public bool inInventoryMenu = false;
 
     private void Awake()
     {
@@ -59,67 +65,33 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
         animator = GetComponent<Animator>();
         controller = GetComponent<PlayerController>();
         touchingDirections = GetComponent<TouchingDirections>();
-        selfCollider = GetComponent<Collider2D>();
         cooldownHandler = GetComponent<CooldownTimer>();
-        projectileLauncher = GetComponent<ProjectileLauncher>();
         menuNav = GameObject.Find("GameHandler").GetComponent<MenuNavigation>();
     }
 
     private void FixedUpdate()
     {
-        // Checks Collisions with Level
+        // Checks envionmental collisions
         touchingDirections.CheckCollisions();
 
         // Makes player look in correct direction
         LookingDirection();
 
-        // Left + Right Movement
-        // Only move in response to input if not dashing and you can move
-        if (IsDashing && CanMove)
-        {
-            xVelocity = controller.dashImpulse * currentDashDirection;
-            yVelocity = 0;
-        }
-        // Regular movement based input
-        if (!IsDashing && CanMove)
-        {
-            xVelocity = controller.currentSpeed * moveInput.x;
-            yVelocity = rigidbody.linearVelocityY;
-        }
-        // Stops horizontal movement if on wall
-        if (touchingDirections.IsOnWall)
-        {
-            xVelocity = 0;
-        }
+        Vector2 velocity = DecideInputLogic();
+        xVelocity = velocity.x; yVelocity = velocity.y;
 
-        // If can't move, x velocity is set to zero, y velocity remains
-        if (!CanMove)
-        {
-            xVelocity = 0;
-        }
-        if (movingThroughRooms)
-        {
-            yVelocity = 0;
-        }
+        // Apply decided upon velocity
+        ApplyVelocity();
 
-        // Updates the velocity of the player while limiting it to the player's max speed
-        if (xVelocity <= controller.maxSpeed && !isSufferingKnockback)
-        {
-            rigidbody.linearVelocity = new Vector2(xVelocity, yVelocity);
-        }
-        if (xVelocity > controller.maxSpeed && !isSufferingKnockback)
-        {
-            rigidbody.linearVelocity = new Vector2(controller.maxSpeed, yVelocity);
-        }
-
-        // Updates the animator's yVelocity value for air state animations
-        animator.SetFloat("yVelocity", rigidbody.linearVelocityY);
+        UpdateAnimatorParameters();
     }
 
     public void LookingDirection()
     {
         // If player can't move, don't change their orientation
         if (!CanMove) { return; }
+        // Can't change direction if melee attacking
+        if (isMeleeAttacking) { return; }
 
         if (moveInput.x > 0 && lookDirection != 1)
         {
@@ -141,9 +113,70 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
     {
         // Changes context to the readable move input
         moveInput = context.ReadValue<Vector2>();
+        moveDirection = (int)moveInput.x;
 
         // Sets IsMoving to true or false dependent on input being zero or not
         IsMoving = moveInput.x != 0;
+    }
+
+    public Vector2 DecideInputLogic()
+    {
+        if (!CanMove) { return new Vector2(0, rigidbody.linearVelocityY); }
+        if (movingThroughRooms) { return Vector2.zero; }
+
+        // Can move forward if attacking, but only if in air
+        if (isMeleeAttacking && !touchingDirections.IsGrounded)
+        {
+            xVelocity = meleeAttackDirection == moveInput.x ? moveInput.x * controller.currentSpeed : 0;
+            yVelocity = rigidbody.linearVelocityY;
+        }
+        else if (isMeleeAttacking && touchingDirections.IsGrounded)
+        {
+            xVelocity = 0;
+            yVelocity = 0;
+        }
+        // If dashing, keep velocity horizontally and stay in air
+        else if (IsDashing && CanMove)
+        {
+            xVelocity = controller.dashImpulse * currentDashDirection;
+            yVelocity = 0;
+        }
+        // Regular movement based input based on current speed
+        else if (!IsDashing && CanMove)
+        {
+            xVelocity = controller.currentSpeed * moveInput.x;
+            yVelocity = rigidbody.linearVelocityY;
+        }
+        // Stops horizontal movement if on wall
+        if (touchingDirections.IsOnWall)
+        {
+            xVelocity = 0;
+            yVelocity = rigidbody.linearVelocityY;
+        }
+
+        return new Vector2(xVelocity, yVelocity);
+    }
+
+    public void ApplyVelocity()
+    {
+        // Don't apply decided velocity if being knockbacked, continue with knockback velocity
+        if (isSufferingKnockback) { return; }
+
+        // Updates the velocity of the player while limiting it to the player's max speed
+        if (xVelocity <= controller.maxSpeed)
+        {
+            rigidbody.linearVelocity = new Vector2(xVelocity, yVelocity);
+        }
+        if (xVelocity > controller.maxSpeed)
+        {
+            rigidbody.linearVelocity = new Vector2(controller.maxSpeed, yVelocity);
+        }
+    }
+
+    public void UpdateAnimatorParameters()
+    {
+        // Updates the animator's yVelocity value for air state animations
+        animator.SetFloat("yVelocity", rigidbody.linearVelocityY);
     }
 
     public void ExecutePlayerJump(InputAction.CallbackContext context)
@@ -191,9 +224,12 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
 
     public void ExecutePlayerMeleeAttack(InputAction.CallbackContext context)
     {
+        if (!CanAttack || isRangedAttacking || isMeleeAttacking || cooldownHandler.timerStatusDict["comboEndAttackDelay"] == 1) { return; }
+        
         // Tell animator to start melee attack animation and starts melee attack cooldown
-        if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack && cooldownHandler.timerStatusDict["comboTime"] == 1 && !isRangedAttacking)
+        if (cooldownHandler.timerStatusDict["comboTime"] == 1 && touchingDirections.IsGrounded)
         {
+            // Combo attacks
             if (attackCombo == 1)
             {
                 // Starts timer
@@ -202,9 +238,9 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
                 // Resets combotime
                 cooldownHandler.timerDict["comboTime"] = 0;
                 animator.SetTrigger("comboAttack1");
+                // Iterates to next combo stage
                 attackCombo = 2;
                 isMeleeAttacking = true;
-                CanMove = false;
             }
             else if (attackCombo == 2)
             {
@@ -214,9 +250,9 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
                 // Resets combotime
                 cooldownHandler.timerDict["comboTime"] = 0;
                 animator.SetTrigger("comboAttack2");
+                // Iterates to next combo stage
                 attackCombo = 3;
                 isMeleeAttacking = true;
-                CanMove = false;
             }
             else
             {
@@ -224,37 +260,40 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
                 cooldownHandler.timerDict["comboTime"] = 0;
                 cooldownHandler.timerStatusDict["comboTime"] = 0;
                 attackCombo = 0;
+                cooldownHandler.timerStatusDict["comboEndAttackDelay"] = 1;
             }
         }
 
         // Regular melee attack
-        if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack && cooldownHandler.timerStatusDict["comboTime"] == 0 && !isRangedAttacking && touchingDirections.IsGrounded)
+        if (cooldownHandler.timerStatusDict["comboTime"] == 0 && touchingDirections.IsGrounded)
         {
             cooldownHandler.timerStatusDict["meleeAttackCooldown"] = 1;
             cooldownHandler.timerStatusDict["isMeleeAttacking"] = 1;
             cooldownHandler.timerStatusDict["comboTime"] = 1;
             animator.SetTrigger("meleeAttacked");
+            // Starts melee combo
             attackCombo = 1;
             isMeleeAttacking = true;
-            CanMove = false;
         }
 
         // Inair melee attack
-        if (cooldownHandler.timerStatusDict["meleeAttackCooldown"] == 0 && CanAttack && !isRangedAttacking && !touchingDirections.IsGrounded)
+        if (!touchingDirections.IsGrounded)
         {
             cooldownHandler.timerStatusDict["meleeAttackCooldown"] = 1;
             cooldownHandler.timerStatusDict["isMeleeAttacking"] = 1;
+            // Resets combo if needed
             attackCombo = 0;
             animator.SetTrigger("inAirMeleeAttacked");
             isMeleeAttacking = true;
-            CanMove = false;
+            // Allow player to move in the direction they're attacking, but not any other
+            meleeAttackDirection = lookDirection;
         }
     }
 
     public void ExecutePlayerRangedAttack(InputAction.CallbackContext context)
     {
         // Tell animator to start ranged attack animation and starts ranged attack cooldown
-        if (cooldownHandler.timerStatusDict["rangedAttackCooldown"] == 0 && CanAttack && !isMeleeAttacking && touchingDirections.IsGrounded)
+        if (touchingDirections.IsGrounded && !isRangedAttacking && !isMeleeAttacking)
         {
             cooldownHandler.timerStatusDict["rangedAttackCooldown"] = 1;
             cooldownHandler.timerStatusDict["isRangedAttacking"] = 1;
@@ -265,13 +304,26 @@ public class PlayerInputHandler : MonoBehaviour, LogicScript
         }
     }
 
-    public void OpenPauseMenu(InputAction.CallbackContext context)
+    public void OpenPauseMenu(InputAction.CallbackContext context) 
     {
-        menuNav.OpenPauseScreen();
+        if (menuNav.tutorialScreen.activeSelf == true) { return; }
+        if (!inInventoryMenu && !inPauseMenu) { menuNav.OpenPauseScreen(); }
+        else if (!inInventoryMenu && inPauseMenu) { menuNav.ClosePauseScreen(); }
     }
 
-    public void Deactivate()
+    public void OpenInventory(InputAction.CallbackContext context)
     {
-        this.enabled = false;
+        if (menuNav.tutorialScreen.activeSelf == true) { return; }
+        if (!inPauseMenu && inInventoryMenu) { menuNav.ContinueRunFromInventory(); }
+        else if (!inPauseMenu && !inInventoryMenu) { menuNav.OpenInventoryFromGame(); }
+    }
+
+    public void SetCombatEffect(string effectType, float damageAmount, GameObject effectPrefab, float effectLength)
+    {
+        currentSpecialCombatEffect = effectType;
+        specialCombatEffectActive = true;
+        currentEffectPrefab = effectPrefab;
+        currentEffectDamage = damageAmount;
+        currentEffectLength = effectLength;
     }
 }

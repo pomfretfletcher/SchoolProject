@@ -58,6 +58,8 @@ public class GameSetup : MonoBehaviour
 
         // Set clock time to running as normal
         Time.timeScale = 1f;
+
+        gameData.difficultyScale = gameData.baseDifficultyScale;
     }
 
     public void SetupRoomStructure()

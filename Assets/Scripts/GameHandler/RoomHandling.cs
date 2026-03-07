@@ -117,12 +117,15 @@ public class RoomHandling : MonoBehaviour
     // Create a room based off a given new room prefab within an index
     public void CreateRoom(GameObject newRoom, int newRoomRowIndex, int newRoomColIndex, string enterDirection)
     {
+        // Increase the run's overall difficulty scale per new room created
+        gameData.IncreaseDifficultyScale();
+
         // Creates the new room based on the prefab and it gives it the variables required to setup its enemies and pickups etc
         GameObject setupRoom = Instantiate(newRoom, new Vector3(currentXPosInScene, currentYPosInScene, 0), Quaternion.identity);
         RoomCreation setupRoomCreator = setupRoom.GetComponent<RoomCreation>();
 
         // The values for null and all the numbers are currently filler, as difficulty scale etc has not been added
-        setupRoomCreator.SetupRoom(enterDirection, 1, null, 2, null, 2, null, 1, null, 1);
+        setupRoomCreator.SetupRoom(enterDirection, gameData.difficultyScale, null, 2, null, 2, null, 1, null, 1);
 
         // Places the setup room in the alloted position
         PlaceRoomInStructure(newRoomRowIndex, newRoomColIndex, setupRoom);
@@ -140,5 +143,29 @@ public class RoomHandling : MonoBehaviour
         if (fetchedRoom == null) { return null; }
         RoomData fetchedRoomData = fetchedRoom.GetComponent<RoomData>();
         return fetchedRoomData;
+    }
+
+    public void DisableEnemies(GameObject room)
+    {
+        // Disable all enemies in the specified rooms
+        foreach (Transform child in room.transform)
+        {
+            if (child.gameObject.tag == "Enemy")
+            {
+                child.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    public void EnableEnemies(GameObject room)
+    {
+        // Enable all enemies in the specified rooms
+        foreach (Transform child in room.transform)
+        {
+            if (child.gameObject.tag == "Enemy")
+            {
+                child.gameObject.SetActive(true);
+            }
+        }
     }
 }

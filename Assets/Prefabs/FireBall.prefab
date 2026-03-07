@@ -168,7 +168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 6
-  travelTime: 8
+  travelTime: 4
 --- !u!114 &-4356356156910084698
 MonoBehaviour:
   m_ObjectHideFlags: 0

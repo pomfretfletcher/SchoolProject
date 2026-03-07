@@ -13,28 +13,36 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
     Collider2D selfCollider;
     DetectionZone cliffDetectionZone;
     CooldownTimer cooldownHandler;
-    ProjectileLauncher projectileLauncher;
+    UniversalEnemyFunctions universalEnemyFunctions;
 
     // Internal Logic Variables
     private float distanceToPlayer;
     private float yVelocity;
-    public int LookDirection { get { return lookDirection; } set { lookDirection = value; } }
-    private int lookDirection = 1;
-    public int moveDirection;
-
+    
     // States
+    [Header("Movement States")]
+    [SerializeField] private bool isMoving = false; 
     public bool IsMoving { get { return isMoving; } set { isMoving = value; animator.SetBool("isMoving", value); } }
+    [SerializeField] private bool canMove = true; 
+    public bool CanMove { get { return canMove; } set { canMove = value; } }
+    [SerializeField] private bool isSufferingKnockback = false;
     public bool IsSufferingKnockback { get { return isSufferingKnockback; } set { isSufferingKnockback = value; } }
-    [Header("States")]
-    [SerializeField]
-    private bool isMoving = false;
-    public bool CanMove = true;
-    public bool CanAttack = true;
+
+    [Header("Directions")]
+    [SerializeField] private int lookDirection = 1;
+    public int LookDirection { get { return lookDirection; } set { lookDirection = value; } }
+    [SerializeField] private int moveDirection = 1;
+    public int MoveDirection { get { return moveDirection; } set { moveDirection = value; } }
+    
+    [Header("Combat States")]
+    [SerializeField] private bool canAttack = true;
+    public bool CanAttack { get { return canAttack; } set { canAttack = value; } }
+    
+    public bool isAttacking = false;
+
+    [Header("Tracking States")]
     public bool CurrentlyTrackingPlayer = false;
     public bool RunAwayTracking = false;
-    public bool isAttacking = false;
-    [SerializeField]
-    private bool isSufferingKnockback = false;
 
     private void Awake()
     {
@@ -47,44 +55,96 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
         cooldownHandler = GetComponent<CooldownTimer>();
         player = GameObject.Find("Player");
         cliffDetectionZone = transform.Find("CliffDetectionZone").GetComponent<DetectionZone>();
-        projectileLauncher = GetComponent<ProjectileLauncher>();
+        universalEnemyFunctions = GetComponent<UniversalEnemyFunctions>();
     }
 
-    // Fixed Update is called every set interval (about every 0.02 seconds)
     private void FixedUpdate()
     {
         // Checks envionmental collisions
         touchingDirections.CheckCollisions();
 
         // Makes player look in correct direction
-        LookingDirection();
+        universalEnemyFunctions.LookingDirection();
 
-        // Choose how to make enemy move
-        CalcDistanceToPlayer();
-
-        // If the player is within the enemy's tracking proximity and at a higher y value, stops tracking through walls as much
-        if (distanceToPlayer <= controller.playerRequiredProximity && player.transform.position.y > selfCollider.transform.position.y)
+        if (controller.currentHealth > 0)
         {
-            // If not curently tracking player, the mushroom is now tracking the player, they will stand stil and begin to fire projectiles
-            CurrentlyTrackingPlayer = true;
+            // Choose how to make enemy move
+            DecidePathfinding();
+
+            yVelocity = ProcessPathfinding();
+
+            // Apply decided upon velocity
+            universalEnemyFunctions.ApplyVelocity(yVelocity);
+
+            // Update ismoving variable and animator parameter based on current movement
+            universalEnemyFunctions.UpdateIsMoving();
         }
-        // If player leaves proximity, the enemy stops tracking them
         else
         {
-            // Flip away from player if previously tracking them
-            if (CurrentlyTrackingPlayer)
-            {
-                lookDirection *= -1;
-                moveDirection = lookDirection;
-            }
-            CurrentlyTrackingPlayer = false;
+            rigidbody.linearVelocityX = 0;
+        }
+    }
+
+    public void OnCliffDetected()
+    {
+        // Flip enemy if a cliff is detected, but only every few seconds to avoid erratic and repeated flipping
+        if (!CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["cliffDetectionInterval"] == 0 && cliffDetectionZone.detectedColliders.Count == 0)
+        {
+            lookDirection = -1 * lookDirection;
+            moveDirection = lookDirection;
+            transform.localScale *= new Vector2(-1, 1);
+            cooldownHandler.timerStatusDict["cliffDetectionInterval"] = 1;
+        }
+    }
+
+    public void DecidePathfinding()
+    {
+        // Calculate the distance to the player with vector math
+        Vector2 offset = transform.position - player.transform.position;
+        distanceToPlayer = offset.magnitude;
+
+        // If the player is within the enemy's tracking proximity
+        if (distanceToPlayer <= controller.playerRequiredProximity)
+        {
+            // If not curently tracking player, the enemy is now tracking the player
+            CurrentlyTrackingPlayer = true;
+        }
+
+        // Once in a set x distance of the player, continue tracking them but stand still
+        if (Math.Abs(transform.position.x - player.transform.position.x) <= controller.runAwayTrackingProximity && RunAwayTracking == false)
+        {
+            RunAwayTracking = true;
+            cooldownHandler.timerStatusDict["runAwayTime"] = 1;
+        }
+        else if (cooldownHandler.timerStatusDict["runAwayTime"] == 0)
+        {
             RunAwayTracking = false;
         }
 
-        // Tracking player movement decisions
-        if (CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cooldownHandler.timerStatusDict["attackLockTime"] == 0)
+        // If player leaves proximity, the enemy stops tracking them
+        if (distanceToPlayer > controller.playerRequiredProximity)
         {
-            if (RunAwayTracking)
+            CurrentlyTrackingPlayer = false;
+            RunAwayTracking = false;
+        }
+    }
+
+    public float ProcessPathfinding() 
+    {
+        if (cooldownHandler.timerStatusDict["attackLockTime"] == 1) { moveDirection = 0; return rigidbody.linearVelocityY; }
+
+        if (!CanMove) { moveDirection = 0; return rigidbody.linearVelocityY; }
+
+        // Tracking player movement decisions
+        if (CurrentlyTrackingPlayer && touchingDirections.IsGrounded)
+        {
+            // Prevents running into a wall repeteably while tracking player
+            if (RunAwayTracking && (touchingDirections.IsOnWall || touchingDirections.WallStop))
+            {
+                moveDirection = 0;
+                yVelocity = 0;
+            }
+            else if (RunAwayTracking)
             {
                 moveDirection = -1 * (player.transform.position.x > selfCollider.transform.position.x ? 1 : -1);
                 lookDirection = moveDirection;
@@ -95,118 +155,45 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
                 lookDirection = player.transform.position.x > selfCollider.transform.position.x ? 1 : -1;
             }
 
-            if (cooldownHandler.timerStatusDict["attackCooldown"] == 0 && !RunAwayTracking)
+            if (!RunAwayTracking)
             {
                 ExecuteEnemyAttack();
             }
         }
 
         // Non tracking movement decisions
-        else if (cooldownHandler.timerStatusDict["attackLockTime"] == 0)
+        else
         {
+            // Flip direction at collision with wall
+            if (touchingDirections.IsGrounded && (touchingDirections.IsOnWall || touchingDirections.WallStop) && cooldownHandler.timerStatusDict["wallDetectionInterval"] == 0)
+            {
+                moveDirection = -1 * lookDirection;
+                yVelocity = 0;
+                cooldownHandler.timerStatusDict["wallDetectionInterval"] = 1;
+            }
             // Default walk cycle movement
-            if (touchingDirections.IsGrounded)
+            else if (touchingDirections.IsGrounded)
             {
                 moveDirection = lookDirection;
                 yVelocity = 0;
             }
-            // Flip direction at collision with wall
-            if (touchingDirections.IsGrounded && touchingDirections.IsOnWall)
-            {
-                moveDirection = -1 * lookDirection;
-                yVelocity = 0;
-            }
             // Not move if in air, allow gravity to affect
-            if (!touchingDirections.IsGrounded)
+            else if (!touchingDirections.IsGrounded)
             {
                 moveDirection = 0;
                 yVelocity = rigidbody.linearVelocityY;
             }
         }
 
-        // Ovveride previous decisions if can't move
-        if (!CanMove)
-        {
-            moveDirection = 0;
-        }
-
-        // Keeps movement direction, look direction and localscale in parity
-        if (lookDirection == -1 && transform.localScale.x > 0) { transform.localScale *= new Vector2(-1, 1); }
-        if (lookDirection == 1 && transform.localScale.x < 0) { transform.localScale *= new Vector2(-1, 1); }
-
-        // Limit enemy movement to maxspeed
-        if (controller.currentSpeed <= controller.maxSpeed && !isSufferingKnockback)
-        {
-            rigidbody.linearVelocity = new Vector2(controller.currentSpeed * moveDirection, yVelocity);
-        }
-        else if (controller.currentSpeed > controller.maxSpeed && !isSufferingKnockback)
-        {
-            rigidbody.linearVelocity = new Vector2(controller.maxSpeed * moveDirection, yVelocity);
-        }
-
-        // Update ismoving variable and animator parameter based on current movement
-        if (moveDirection == 0)
-        {
-            IsMoving = false;
-        }
-        else
-        {
-            IsMoving = true;
-        }
+        return yVelocity;
     }
-
-    public void LookingDirection()
-    {
-        // If enemy can't move, don't change their orientation
-        if (!CanMove) { return; }
-
-        if (moveDirection == 1 && lookDirection != 1)
-        {
-            // Changes look direction to 1 (right)
-            lookDirection = 1;
-            // Flips transform
-            transform.localScale *= new Vector2(-1, 1);
-        }
-        if (moveDirection == -1 && lookDirection != -1)
-        {
-            // Changes look direction to -1 (left)
-            lookDirection = -1;
-            // Flips transform
-            transform.localScale *= new Vector2(-1, 1);
-        }
-    }
-
-    // Detection Methods
-    public void OnCliffDetected()
-    {
-        // Flip enemy if a cliff is detected, but only every few seconds to avoid erratic and repeated flipping
-        if (!CurrentlyTrackingPlayer && touchingDirections.IsGrounded && cliffDetectionZone.detectedColliders.Count == 0)
-        {
-            lookDirection = -1 * lookDirection;
-            moveDirection = lookDirection;
-            transform.localScale *= new Vector2(-1, 1);
-        }
-    }
-
-    public void CalcDistanceToPlayer()
-    {
-        // Calculate the distance to the player with vector math
-        Vector2 offset = transform.position - player.transform.position;
-        distanceToPlayer = offset.magnitude;
-
-        // Once in a set x distance of the player, continue tracking them but stand still
-        if (Math.Abs(transform.position.x - player.transform.position.x) <= controller.runAwayTrackingProximity && RunAwayTracking == false)
-        {
-            RunAwayTracking = true;
-            cooldownHandler.timerStatusDict["runAwayTime"] = 1;
-        }
-    }
-
-    public void FindOptimalMovePath() { }
 
     public void ExecuteEnemyAttack()
     {
-        if (cooldownHandler.timerStatusDict["attackCooldown"] == 0 && CanAttack)
+        if (cooldownHandler.timerStatusDict["attackCooldown"] == 0 && CanAttack && controller.CurrentHealth > 0 
+            && player.transform.position.y > transform.position.y
+            && ((LookDirection == -1 && player.transform.position.x < transform.position.x)
+               || LookDirection == 1 && player.transform.position.x > transform.position.x))
         {
             cooldownHandler.timerStatusDict["attackCooldown"] = 1;
             cooldownHandler.timerStatusDict["attackLockTime"] = 1;
@@ -215,10 +202,5 @@ public class MushroomPathfinding : MonoBehaviour, LogicScript
             CanMove = false;
             isAttacking = true;
         }
-    }
-
-    public void Deactivate()
-    {
-        this.enabled = false;
     }
 }

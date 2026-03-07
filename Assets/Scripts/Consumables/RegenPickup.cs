@@ -37,7 +37,6 @@ public class RegenPickup : MonoBehaviour, IsConsumable, UsesCooldown
         cooldownHandler.SetupTimers(keyList, lengthList, this);
     }
 
-    // Called by pickup script when this pickup is collected
     public bool OnPickup()
     {
         // Only starts buff if health left to gain
@@ -51,7 +50,8 @@ public class RegenPickup : MonoBehaviour, IsConsumable, UsesCooldown
             collider.enabled = false;
 
             // Tell general script it has been picked up
-            pickedUp = true; 
+            pickedUp = true;
+            return false;
         }
        
         // Tells general pickup script to not delete the pickup

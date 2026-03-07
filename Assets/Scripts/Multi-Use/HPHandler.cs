@@ -1,5 +1,3 @@
-using Unity.VisualScripting;
-using UnityEditorInternal;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -10,6 +8,8 @@ public class HPHandler : MonoBehaviour, UsesCooldown
     LogicScript logicScript;
     CooldownTimer cooldownHandler;
     Animator animator;
+    EnemyController enemyController;
+    Rigidbody2D rigidbody;
     VisualAndSoundEffectHandling vsfxHandler;
     GameEndHandler gameEndHandler;
     SpriteRenderer renderer;
@@ -37,6 +37,7 @@ public class HPHandler : MonoBehaviour, UsesCooldown
         logicScript = GetComponent<LogicScript>();
         animator = GetComponent<Animator>();
         cooldownHandler = GetComponent<CooldownTimer>();
+        rigidbody = GetComponent<Rigidbody2D>();
         vsfxHandler = GameObject.Find("GameHandler").GetComponent<VisualAndSoundEffectHandling>();
         gameEndHandler = GameObject.Find("GameHandler").GetComponent<GameEndHandler>();
         renderer = GetComponent<SpriteRenderer>();
@@ -86,8 +87,12 @@ public class HPHandler : MonoBehaviour, UsesCooldown
         // If there is an assigned hit sound, it is played
         if (hitSound != null) { vsfxHandler.PlaySound(hitSound, 2f); }
 
-        cooldownHandler.timerStatusDict["flashInterval"] = 1;
-        cooldownHandler.timerStatusDict["isFlashing"] = 1;
+        // If hit, and not dead, flash
+        if (lastHealth > 0)
+        {
+            cooldownHandler.timerStatusDict["flashInterval"] = 1;
+            cooldownHandler.timerStatusDict["isFlashing"] = 1;
+        }
 
         // If just become dead
         if (controller.CurrentHealth <= 0 && lastHealth > 0)
@@ -99,12 +104,18 @@ public class HPHandler : MonoBehaviour, UsesCooldown
             // Handle the death logic based on entity type
             if (gameObject.tag == "Enemy")
             {
+                // If flying enemy, when die, fall to the ground in death animation
+                enemyController = gameObject.GetComponent<EnemyController>();
+                if (enemyController.isFlyingEnemy)
+                {
+                    rigidbody.gravityScale = 1f;
+                }
+
                 // Add to player's kill count
                 gameData.playerKillCount++;
 
                 // Start delay to death animation, and tell logic script to deactivate its processes
                 cooldownHandler.timerStatusDict["deathDelay"] = 1;
-                logicScript.Deactivate();
             }
             else if (gameObject.tag == "Player")
             {
@@ -149,7 +160,7 @@ public class HPHandler : MonoBehaviour, UsesCooldown
         }
     }
 
-    public void ChangeDrainAmount(float newDrainDamageAmount, float newDrainTimeLeft, GameObject newDrainEffect) { }
+    public void ChangeDrainAmount(float newDrainDamageAmount, float newDrainTimeLeft, GameObject newDrainEffect, string newDrainType) { }
     public void EndDrain() { }
 
     // Allows specific processes to be coded in to happen once a cooldown ends
@@ -186,6 +197,11 @@ public class HPHandler : MonoBehaviour, UsesCooldown
                     GameObject spawnedEffect = Instantiate(currentDrainEffect, new Vector3(transform.position.x + Random.Range(-0.5f, 0.5f), transform.position.y + Random.Range(-0.5f, 0.5f), transform.position.z), Quaternion.Euler(0, 0, 0));
                     vsfxHandler.PlayVisualEffect("toxicEffect", 1, spawnedEffect.GetComponent<SpriteRenderer>());
                 }
+                else if (currentDrainType == "bleedPickup")
+                {
+                    GameObject spawnedEffect = Instantiate(currentDrainEffect, new Vector3(transform.position.x + Random.Range(-0.5f, 0.5f), transform.position.y + Random.Range(-0.5f, 0.5f), transform.position.z), Quaternion.Euler(0, 0, 0));
+                    vsfxHandler.PlayVisualEffect("bleedPickup", 1, spawnedEffect.GetComponent<SpriteRenderer>());
+                }
 
                 // If just become dead
                 if (controller.CurrentHealth <= 0 && lastHealth > 0)
@@ -197,12 +213,20 @@ public class HPHandler : MonoBehaviour, UsesCooldown
                     // Handle the death logic based on entity type
                     if (gameObject.tag == "Enemy")
                     {
+                        // If flying enemy, when die, fall to the ground in death animation
+                        enemyController = gameObject.GetComponent<EnemyController>();
+                        if (enemyController.isFlyingEnemy) 
+                        {
+                            rigidbody.gravityScale = 1f;
+                        }
+
                         // Add to player's kill count
                         gameData.playerKillCount++;
 
                         // Start delay to death animation, and tell logic script to deactivate its processes
                         cooldownHandler.timerStatusDict["deathDelay"] = 1;
-                        logicScript.Deactivate();
+
+                        
                     }
                     else if (gameObject.tag == "Player")
                     {
